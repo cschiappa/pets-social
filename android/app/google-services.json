@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "328316749641",
+    "project_id": "pets-social-3d14e",
+    "storage_bucket": "pets-social-3d14e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328316749641:android:0fc112a845f2a5ae1cbc98",
+        "android_client_info": {
+          "package_name": "com.example.pets_social"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328316749641-oct56gun05kk0lfno5242aqb4uof1ecm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd_WOg_0zs6hZ-UUNuuBqSedfftygw9Ys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328316749641-oct56gun05kk0lfno5242aqb4uof1ecm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
