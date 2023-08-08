@@ -4,9 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:pets_social/models/user.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/screens/comments_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
+
+import 'bone_animation.dart';
+import 'fish_animation.dart';
 
 class PostCard extends StatefulWidget {
   final snap;
@@ -85,6 +89,7 @@ class _PostCardState extends State<PostCard> {
 
           //IMAGE SECTION
           GestureDetector(
+            //double tap for like
             onDoubleTap: () async {
               await FirestoreMethods().likePost(
                   widget.snap['postId'], user!.uid, widget.snap['likes']);
@@ -125,45 +130,122 @@ class _PostCardState extends State<PostCard> {
           ),
 
           //LIKE COMMENT SECTION
-          Row(
-            children: [
-              LikeAnimation(
-                isAnimating: widget.snap['likes'].contains(user!.uid),
-                smallLike: true,
-                child: IconButton(
-                  onPressed: () async {
-                    await FirestoreMethods().likePost(
-                        widget.snap['postId'], user.uid, widget.snap['likes']);
-                  },
-                  icon: widget.snap['likes'].contains(user.uid)
-                      ? const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        )
-                      : const Icon(Icons.favorite_border),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              children: [
+                // LIKES
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: LikeAnimation(
+                    isAnimating: widget.snap['likes'] != null &&
+                        widget.snap['likes'].contains(user!.uid),
+                    smallLike: true,
+                    child: InkWell(
+                      onTap: () async {
+                        await FirestoreMethods().likePost(widget.snap['postId'],
+                            user!.uid, widget.snap['likes']);
+                      },
+                      child: Image.asset(
+                        (widget.snap['likes'] != null &&
+                                widget.snap['likes'].contains(user!.uid))
+                            ? 'assets/like.png'
+                            : 'assets/like_border.png',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.comment_outlined,
+                //FISH
+                FishAnimation(
+                  isAnimating: widget.snap['fish'] != null &&
+                      widget.snap['fish'].contains(user!.uid),
+                  smallLike: true,
+                  child: InkWell(
+                    onTap: () async {
+                      await FirestoreMethods().giveFishToPost(
+                          widget.snap['postId'],
+                          user!.uid,
+                          widget.snap['fish']);
+                    },
+                    child: Image.asset(
+                      (widget.snap['fish'] != null &&
+                              widget.snap['fish'].contains(user!.uid))
+                          ? 'assets/fish.png'
+                          : 'assets/fish_border.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.send,
+                //SizedBox(width: 10), // Add space
+                //BONES
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: BoneAnimation(
+                    isAnimating: widget.snap['bones'] != null &&
+                        widget.snap['bones'].contains(user!.uid),
+                    smallLike: true,
+                    child: InkWell(
+                      onTap: () async {
+                        await FirestoreMethods().giveBoneToPost(
+                            widget.snap['postId'],
+                            user!.uid,
+                            widget.snap['bones']);
+                      },
+                      child: Image.asset(
+                        (widget.snap['bones'] != null &&
+                                widget.snap['bones'].contains(user!.uid))
+                            ? 'assets/bone.png'
+                            : 'assets/bone_border.png',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                  child: Align(
-                alignment: Alignment.bottomRight,
-                child: IconButton(
-                  icon: const Icon(Icons.bookmark_border),
-                  onPressed: () {},
-                ),
-              ))
-            ],
+
+                Expanded(
+                    child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      //COMMENT
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => CommentsScreen())),
+                          child: Image.asset(
+                            'assets/comment.png',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                      ),
+                      //SHARE
+                      InkWell(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.share,
+                        ),
+                      ),
+                      //BOOKMARK
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: InkWell(
+                          onTap: () {},
+                          child: const Icon(Icons.bookmark_border),
+                        ),
+                      ),
+                    ],
+                  ),
+                ))
+              ],
+            ),
           ),
 
           //DESCRIPTION AND COMMENTS
@@ -173,16 +255,43 @@ class _PostCardState extends State<PostCard> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DefaultTextStyle(
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle2!
-                      .copyWith(fontWeight: FontWeight.w800),
-                  child: Text(
-                    '${widget.snap['likes'].length} likes',
-                    style: Theme.of(context).textTheme.bodyText2,
+                Row(children: [
+                  //show number of likes
+                  DefaultTextStyle(
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle2!
+                        .copyWith(fontWeight: FontWeight.w800),
+                    child: Text(
+                      '${widget.snap['likes'].length} likes',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
                   ),
-                ),
+                  SizedBox(width: 10), // Add space
+                  //show number of fish
+                  DefaultTextStyle(
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle2!
+                        .copyWith(fontWeight: FontWeight.w800),
+                    child: Text(
+                      '${widget.snap['fish'] != null ? widget.snap['fish'].length : 0} fish',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ),
+                  SizedBox(width: 10), // Add space
+                  //show number of bones
+                  DefaultTextStyle(
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle2!
+                        .copyWith(fontWeight: FontWeight.w800),
+                    child: Text(
+                      '${widget.snap['bones'] != null ? widget.snap['bones'].length : 0} bones',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ),
+                ]),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.only(

@@ -22,14 +22,17 @@ class FirestoreMethods {
 
       String postId = const Uuid().v1(); //v1 creates unique id based on time
       Post post = Post(
-          description: description,
-          uid: uid,
-          username: username,
-          postId: postId,
-          datePublished: DateTime.now(),
-          postUrl: photoUrl,
-          profImage: profImage,
-          likes: []);
+        description: description,
+        uid: uid,
+        username: username,
+        postId: postId,
+        datePublished: DateTime.now(),
+        postUrl: photoUrl,
+        profImage: profImage,
+        likes: [],
+        fish: [],
+        bones: [],
+      );
 
       _firestore.collection('posts').doc(postId).set(
             post.toJson(),
@@ -50,6 +53,38 @@ class FirestoreMethods {
       } else {
         await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid]),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> giveFishToPost(String postId, String uid, List fish) async {
+    try {
+      if (fish.contains(uid)) {
+        await _firestore.collection('posts').doc(postId).update({
+          'fish': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        await _firestore.collection('posts').doc(postId).update({
+          'fish': FieldValue.arrayUnion([uid]),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> giveBoneToPost(String postId, String uid, List bones) async {
+    try {
+      if (bones.contains(uid)) {
+        await _firestore.collection('posts').doc(postId).update({
+          'bones': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        await _firestore.collection('posts').doc(postId).update({
+          'bones': FieldValue.arrayUnion([uid]),
         });
       }
     } catch (e) {
