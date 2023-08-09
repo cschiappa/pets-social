@@ -88,7 +88,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       _commentController.text,
                       user.uid,
                       user.username,
-                      user.photoUrl);
+                      user.photoUrl,
+                      widget.snap['likes']);
                   //clear comment box after sending
                   setState(() {
                     _commentController.text = "";
