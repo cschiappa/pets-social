@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/comments_screen.dart';
 import 'package:pets_social/utils/colors.dart';
+import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +24,28 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+  int commentLen = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  void getComments() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+
+      commentLen = snap.docs.length;
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -217,8 +241,12 @@ class _PostCardState extends State<PostCard> {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: InkWell(
                           onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => CommentsScreen())),
+                            MaterialPageRoute(
+                              builder: (context) => CommentsScreen(
+                                snap: widget.snap,
+                              ),
+                            ),
+                          ),
                           child: Image.asset(
                             'assets/comment.png',
                             width: 24,
@@ -318,7 +346,7 @@ class _PostCardState extends State<PostCard> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      'View all 200 comments',
+                      'View all $commentLen comments',
                       style:
                           const TextStyle(fontSize: 16, color: secondaryColor),
                     ),
