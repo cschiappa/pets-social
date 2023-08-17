@@ -1,4 +1,4 @@
-# Cristina's Portfolio
+# Pets Social
 
 Welcome to Pets Social, an innovating social media for our best friends in the world, our pets. 
 
