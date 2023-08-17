@@ -22,6 +22,7 @@ Introducing a captivating social media platform designed exclusively for your be
 
 ## Built With
 - Flutter
+- Dart
 - Firebase
 
 ## Features
