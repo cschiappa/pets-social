@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';

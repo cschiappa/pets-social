@@ -51,6 +51,8 @@ class _PostCardState extends State<PostCard> {
   Widget build(BuildContext context) {
     final User? user = Provider.of<UserProvider>(context).getUser;
     return Container(
+      //boundary needed for web
+
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(

@@ -9,6 +9,7 @@ import 'package:pets_social/widgets/text_field_input.dart';
 import '../responsive/mobile_screen_layout.dart';
 import '../responsive/responsive_layout_screen.dart';
 import '../responsive/web_screen_layout.dart';
+import '../utils/global_variables.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -66,7 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: MediaQuery.of(context).size.width > webScreenSize
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : const EdgeInsets.symmetric(horizontal: 32),
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
