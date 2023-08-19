@@ -6,8 +6,8 @@ import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/login_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
-
 import '../widgets/follow_button.dart';
+import 'open_post_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? uid;
@@ -213,13 +213,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             itemBuilder: (context, index) {
                               DocumentSnapshot snap =
                                   (snapshot.data! as dynamic).docs[index];
-
-                              return Container(
-                                child: Image(
-                                  image: NetworkImage(snap['postUrl']),
-                                  fit: BoxFit.cover,
-                                ),
-                              );
+                              return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            OpenPost(postId: snap['postId']),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    child: Image(
+                                      image: NetworkImage(snap['postUrl']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ));
                             },
                           );
                         },
