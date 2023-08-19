@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pets_social/screens/add_post_screen.dart';
 
@@ -13,5 +12,5 @@ List<Widget> homeScreenItems = [
   const SearchScreen(),
   const AddPostScreen(),
   const Text('notif'),
-  ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid),
+  const ProfileScreen(),
 ];

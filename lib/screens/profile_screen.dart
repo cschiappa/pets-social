@@ -10,8 +10,8 @@ import 'package:pets_social/utils/utils.dart';
 import '../widgets/follow_button.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String uid;
-  const ProfileScreen({super.key, required this.uid});
+  final String? uid;
+  const ProfileScreen({super.key, this.uid});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -26,10 +26,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int followers = 0;
   bool isFollowing = false;
   bool isLoading = false;
+  String userId = "";
 
   @override
   void initState() {
     super.initState();
+    userId = widget.uid ?? FirebaseAuth.instance.currentUser!.uid;
     getData();
   }
 
@@ -40,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       var userSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(widget.uid)
+          .doc(userId)
           .get();
 
       //GET POST LENGTH
@@ -131,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          FirebaseAuth.instance.currentUser!.uid == widget.uid
+                          FirebaseAuth.instance.currentUser!.uid == userId
                               ? FollowButton(
                                   text: 'Sign Out',
                                   backgroundColor: mobileBackgroundColor,
@@ -190,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       FutureBuilder(
                         future: FirebaseFirestore.instance
                             .collection('posts')
-                            .where('uid', isEqualTo: widget.uid)
+                            .where('uid', isEqualTo: userId)
                             .get(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
