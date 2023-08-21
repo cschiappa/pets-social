@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:pets_social/widgets/post_card.dart';
@@ -18,9 +17,9 @@ class FeedScreen extends StatelessWidget {
           ? null
           : AppBar(
               backgroundColor: mobileBackgroundColor,
-              centerTitle: false,
-              title: SvgPicture.asset(
-                'assets/logo.svg',
+              centerTitle: true,
+              title: Image.asset(
+                'assets/logo.png',
                 color: primaryColor,
                 height: 32,
               ),

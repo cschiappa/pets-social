@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/screens/signup_screen.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -77,8 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Flexible(child: Container(), flex: 2),
               // svg image
-              SvgPicture.asset(
-                'assets/logo.svg',
+              Image.asset(
+                'assets/logo.png',
                 color: primaryColor,
                 height: 64,
               ),
@@ -142,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: navigateToSignup,
                     child: Container(
                       child: const Text(
-                        "Sign up.",
+                        " Sign up.",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       padding: const EdgeInsets.symmetric(

@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -96,13 +95,16 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(child: Container(), flex: 2, fit: FlexFit.loose),
-                  // svg image
-                  SvgPicture.asset(
-                    'assets/logo.svg',
-                    color: primaryColor,
-                    height: 64,
+                  // logo image
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60.0),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      color: primaryColor,
+                      height: 56,
+                    ),
                   ),
-                  const SizedBox(height: 64),
+                  const SizedBox(height: 44),
                   //circular widget to accept and show selected file
                   Stack(
                     children: [
@@ -199,7 +201,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        child: const Text("Don't have an account?"),
+                        child: const Text("Already have an account?"),
                         padding: const EdgeInsets.symmetric(
                           vertical: 8,
                         ),
@@ -208,7 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         onTap: navigateToLogin,
                         child: Container(
                           child: const Text(
-                            "Login.",
+                            " Login.",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           padding: const EdgeInsets.symmetric(
