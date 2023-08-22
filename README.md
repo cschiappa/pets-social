@@ -16,8 +16,8 @@ Welcome to Pets Social, an innovating social media for our best friends in the w
 Introducing a captivating social media platform designed exclusively for your beloved pets, where they can take center stage and connect with furry companions from around the world. An innovative app that provides a delightful space for pet owners to showcase their adorable companions, fostering meaningful interactions and unforgettable friendships between pets.
 
 
-![Dark_theme]()
-![Light_theme]()
+![Gif](https://github.com/cschiappa/pets-social/blob/master/assets/pets_social_gif.gif?raw=true)
+
 
 
 ## Built With
