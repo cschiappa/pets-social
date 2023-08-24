@@ -9,6 +9,7 @@ import 'package:pets_social/screens/profile_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
+import 'package:pets_social/widgets/save_post_animation.dart';
 import 'package:provider/provider.dart';
 
 import 'bone_animation.dart';
@@ -290,9 +291,31 @@ class _PostCardState extends State<PostCard> {
                       //BOOKMARK
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: InkWell(
-                          onTap: () {},
-                          child: const Icon(Icons.bookmark_border),
+                        child: SavePostAnimation(
+                          isAnimating: user?.savedPost != null &&
+                              user!.savedPost.contains(widget.snap['postId']),
+                          smallLike: true,
+                          child: InkWell(
+                            onTap: () async {
+                              await FirestoreMethods()
+                                  .savePost(widget.snap['postId'], user!.uid,
+                                      user.savedPost)
+                                  .then((_) {
+                                setState(() {
+                                  Provider.of<UserProvider>(context,
+                                          listen: false)
+                                      .refreshUser();
+                                });
+                              });
+                            },
+                            child: Icon(
+                              (user?.savedPost != null &&
+                                      user!.savedPost
+                                          .contains(widget.snap['postId']))
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -158,12 +158,21 @@ class FirestoreMethods {
     }
   }
 
-  //SAVE POST
-  Future<void> savePost(String postId) async {
+//SAVE AND UNSAVE POST
+  Future<void> savePost(
+      String postId, String uid, List<dynamic> savedPost) async {
     try {
-      _firestore.collection('posts').doc(postId).get();
-    } catch (err) {
-      print(err.toString());
+      if (savedPost.contains(postId)) {
+        await _firestore.collection('users').doc(uid).update({
+          'savedPost': FieldValue.arrayRemove([postId]),
+        });
+      } else {
+        await _firestore.collection('users').doc(uid).update({
+          'savedPost': FieldValue.arrayUnion([postId]),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 

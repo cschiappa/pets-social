@@ -8,6 +8,7 @@ class User {
   final String bio;
   final List followers;
   final List following;
+  final List savedPost;
 
   const User({
     required this.email,
@@ -17,6 +18,7 @@ class User {
     required this.bio,
     required this.followers,
     required this.following,
+    required this.savedPost,
   });
 
   Map<String, dynamic> toJson() => {
@@ -27,6 +29,7 @@ class User {
         "bio": bio,
         "followers": followers,
         "following": following,
+        "savedPost": savedPost,
       };
 
   static User fromSnap(DocumentSnapshot snap) {
@@ -38,8 +41,9 @@ class User {
       email: snapshot['email'],
       photoUrl: snapshot['photoUrl'],
       bio: snapshot['bio'],
-      followers: snapshot['followers'],
-      following: snapshot['following'],
+      followers: snapshot['followers'] ?? [],
+      following: snapshot['following'] ?? [],
+      savedPost: snapshot['savedPost'] ?? [],
     );
   }
 }
