@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/user.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/comments_screen.dart';
+import 'package:pets_social/screens/profile_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
@@ -63,9 +63,19 @@ class _PostCardState extends State<PostCard> {
                 .copyWith(right: 0),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 15,
-                  backgroundImage: NetworkImage(widget.snap['profImage']),
+                GestureDetector(
+                  onTap: () {
+                    String uid = widget.snap['uid'];
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(uid: uid),
+                        ));
+                  },
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundImage: NetworkImage(widget.snap['profImage']),
+                  ),
                 ),
                 Expanded(
                   child: Padding(
@@ -74,9 +84,19 @@ class _PostCardState extends State<PostCard> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.snap['username'],
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        GestureDetector(
+                          onTap: () {
+                            String uid = widget.snap['uid'];
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(uid: uid),
+                                ));
+                          },
+                          child: Text(
+                            widget.snap['username'],
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),

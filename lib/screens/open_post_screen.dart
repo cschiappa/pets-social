@@ -8,8 +8,14 @@ import '../utils/global_variables.dart';
 import '../widgets/post_card.dart';
 
 class OpenPost extends StatelessWidget {
-  const OpenPost({super.key, required this.postId});
+  const OpenPost(
+      {super.key,
+      required this.postId,
+      required this.username,
+      required this.fish});
   final String postId;
+  final String username;
+  final List fish;
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +29,13 @@ class OpenPost extends StatelessWidget {
           : AppBar(
               backgroundColor: mobileBackgroundColor,
               centerTitle: false,
-              title: Text('Post from ${user!.username}')),
+              title: Text('Post from $username')),
       body: FutureBuilder(
         future: FirebaseFirestore.instance
             .collection('posts')
             .where('postId', isEqualTo: postId)
+            .where('username', isEqualTo: username)
+            .where('fish', isEqualTo: fish)
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

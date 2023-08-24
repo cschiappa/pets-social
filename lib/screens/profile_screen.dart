@@ -217,8 +217,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   onTap: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            OpenPost(postId: snap['postId']),
+                                        builder: (context) => OpenPost(
+                                            postId: snap['postId'],
+                                            username: snap['username'],
+                                            fish: snap['fish']),
                                       ),
                                     );
                                   },

@@ -63,7 +63,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(uid: uid),
+                              builder: (context) => ProfileScreen(
+                                uid: uid,
+                              ),
                             ));
                       },
                       child: ListTile(
