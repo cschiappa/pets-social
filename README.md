@@ -38,16 +38,16 @@ Introducing a captivating social media platform designed exclusively for your be
 ## Getting Started
 
 ### Prerequisites
-
+- A mobile phone or any other device with access to a web browser.
 
 ### Installation
-
+Coming out soon
 
 ## Contact
 
-LinkedIn - https://www.linkedin.com/in/cristina-pietra/ 
+LinkedIn: https://www.linkedin.com/in/cristina-pietra/ 
 
-Project Link: 
+Project Link: Coming soon
 
 Thank you for visiting my project. I hope you find inspiration and insights as you explore my coding endeavors.
 Feel free to explore more, delve into the code, and reach out if you'd like to learn more. ♡	
