@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/login_screen.dart';
+import 'package:pets_social/screens/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import '../widgets/follow_button.dart';
@@ -11,7 +12,8 @@ import 'open_post_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? uid;
-  const ProfileScreen({super.key, this.uid});
+  final snap;
+  const ProfileScreen({super.key, this.uid, this.snap});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -85,7 +87,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
         : Scaffold(
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
-              title: Text(userData['username']),
+              title: Row(
+                children: [
+                  Text(userData['username']),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shrinkWrap: true,
+                            children: [
+                              'Saved Posts',
+                            ]
+                                .map(
+                                  (e) => InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SavedPosts(),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 16),
+                                      child: Text(e),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.more_vert),
+                  ),
+                ],
+              ),
               centerTitle: false,
             ),
             body: ListView(
@@ -169,74 +210,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     )
                                   : FollowButton(
                                       text: 'Follow',
-                                      backgroundColor:
-                                          Color.fromRGBO(242, 102, 139, 1),
+                                      backgroundColor: const Color.fromRGBO(
+                                          242, 102, 139, 1),
                                       textColor: Colors.white,
-                                      borderColor:
-                                          Color.fromRGBO(242, 102, 139, 1),
+                                      borderColor: const Color.fromRGBO(
+                                          242, 102, 139, 1),
                                       function: () async {
                                         await FirestoreMethods().followUser(
                                           FirebaseAuth
                                               .instance.currentUser!.uid,
                                           userData['uid'],
                                         );
-                                        setState(() {
-                                          isFollowing = true;
-                                          followers++;
-                                        });
+                                        setState(
+                                          () {
+                                            isFollowing = true;
+                                            followers++;
+                                          },
+                                        );
                                       },
-                                    )
+                                    ),
                         ],
                       ),
-                      const Divider(),
-                      FutureBuilder(
-                        future: FirebaseFirestore.instance
-                            .collection('posts')
-                            .where('uid', isEqualTo: userId)
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return GridView.builder(
-                            shrinkWrap: true,
-                            itemCount: (snapshot.data! as dynamic).docs.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 5,
-                                    mainAxisSpacing: 1.5,
-                                    childAspectRatio: 1),
-                            itemBuilder: (context, index) {
-                              DocumentSnapshot snap =
-                                  (snapshot.data! as dynamic).docs[index];
-                              return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => OpenPost(
-                                            postId: snap['postId'],
-                                            username: snap['username'],
-                                            fish: snap['fish']),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    child: Image(
-                                      image: NetworkImage(snap['postUrl']),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ));
-                            },
-                          );
-                        },
-                      )
                     ],
                   ),
-                )
+                ),
+                const Divider(),
+                FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('posts')
+                      .where('uid', isEqualTo: userId)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: (snapshot.data! as dynamic).docs.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 1.5,
+                              childAspectRatio: 1),
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot snap =
+                            (snapshot.data! as dynamic).docs[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => OpenPost(
+                                    postId: snap['postId'],
+                                    username: snap['username'],
+                                    fish: snap['fish']),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            child: Image(
+                              image: NetworkImage(snap['postUrl']),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           );

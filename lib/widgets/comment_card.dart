@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../providers/user_provider.dart';
 import '../resources/firestore_methods.dart';
+import '../screens/profile_screen.dart';
 import 'like_animation.dart';
 
 class CommentCard extends StatefulWidget {
@@ -23,9 +24,19 @@ class _CommentCardState extends State<CommentCard> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       child: Row(children: [
-        CircleAvatar(
-          backgroundImage: NetworkImage(widget.snap['profilePic']),
-          radius: 18,
+        GestureDetector(
+          onTap: () {
+            String uid = widget.snap['uid'];
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(uid: uid),
+                ));
+          },
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(widget.snap['profilePic']),
+            radius: 18,
+          ),
         ),
         Expanded(
           child: Padding(
@@ -34,17 +45,31 @@ class _CommentCardState extends State<CommentCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: widget.snap['name'],
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(
+                //USERNAME AND COMMENT
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        String uid = widget.snap['uid'];
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(uid: uid),
+                            ));
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                            text: widget.snap['name'],
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    RichText(
+                      text: TextSpan(
                         text: ' ${widget.snap['text']}',
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -59,14 +84,6 @@ class _CommentCardState extends State<CommentCard> {
             ),
           ),
         ),
-        // Container(
-        //   padding: const EdgeInsets.all(8),
-        //   //const Icon(Icons.favorite, size: 16),
-        //   child: Image.asset('assets/like_border.png'),
-        //   width: 24,
-        //   height: 24,
-        // ),
-
         LikeAnimation(
           isAnimating: widget.snap['likes'] != null &&
               widget.snap['likes'].contains(user!.uid),

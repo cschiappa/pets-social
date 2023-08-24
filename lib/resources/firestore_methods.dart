@@ -158,6 +158,15 @@ class FirestoreMethods {
     }
   }
 
+  //SAVE POST
+  Future<void> savePost(String postId) async {
+    try {
+      _firestore.collection('posts').doc(postId).get();
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
   //FOLLOW AND UNFOLLOW USER
   Future<void> followUser(String uid, String followId) async {
     try {
