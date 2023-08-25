@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/screens/chat_list_page.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:pets_social/widgets/post_card.dart';
@@ -25,11 +26,15 @@ class FeedScreen extends StatelessWidget {
               ),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ChatList(),
+                    ));
+                  },
                   icon: const Icon(
                     Icons.messenger_outline,
                   ),
-                )
+                ),
               ],
             ),
       body: StreamBuilder(
