@@ -6,6 +6,8 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:pets_social/widgets/post_card.dart';
 
+import '../widgets/post_card_exp.dart';
+
 class FeedScreen extends StatelessWidget {
   const FeedScreen({super.key});
 
@@ -54,7 +56,7 @@ class FeedScreen extends StatelessWidget {
                 horizontal: width > webScreenSize ? width * 0.3 : 0,
                 vertical: width > webScreenSize ? 15 : 0,
               ),
-              child: PostCard(
+              child: PostCardExp(
                 snap: snapshot.data!.docs[index].data(),
               ),
             ),

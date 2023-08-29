@@ -271,9 +271,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                           child: Container(
-                            child: Image(
-                              image: NetworkImage(snap['postUrl']),
-                              fit: BoxFit.cover,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image(
+                                image: NetworkImage(snap['postUrl']),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         );
