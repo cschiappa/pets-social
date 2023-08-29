@@ -53,6 +53,10 @@ class _ChatListState extends State<ChatList> {
     //display all users except current user
     if (_auth.currentUser!.email != data['username']) {
       return ListTile(
+        leading: CircleAvatar(
+          radius: 15,
+          backgroundImage: NetworkImage(data['photoUrl']),
+        ),
         title: Text(data['username']),
         onTap: () {
           //enter chat page when clicked

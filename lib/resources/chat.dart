@@ -17,11 +17,12 @@ class ChatService extends ChangeNotifier {
 
     //create a new message
     Message newMessage = Message(
-        senderId: currentUserId,
-        senderEmail: currentUserEmail,
-        receiverId: receiverId,
-        timestamp: timestamp,
-        message: message);
+      senderId: currentUserId,
+      senderEmail: currentUserEmail,
+      receiverId: receiverId,
+      timestamp: timestamp,
+      message: message,
+    );
 
     //construct chat room id from current user id and receiver id and sort
     List<String> ids = [currentUserId, receiverId];
