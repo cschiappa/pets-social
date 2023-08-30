@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -52,15 +54,17 @@ class _PostCardExpState extends State<PostCardExp> {
   Widget build(BuildContext context) {
     final User? user = Provider.of<UserProvider>(context).getUser;
     return Container(
-      //boundary needed for web
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
-        color: Color.fromARGB(68, 57, 57, 57),
+        gradient: const LinearGradient(
+          colors: [
+            Color.fromARGB(255, 157, 110, 157),
+            Color.fromARGB(255, 240, 177, 136),
+          ],
+        ),
       ),
-      // color: mobileBackgroundColor,
       padding: const EdgeInsets.only(bottom: 10),
       margin: const EdgeInsets.symmetric(vertical: 10),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -338,7 +342,7 @@ class _PostCardExpState extends State<PostCardExp> {
 
           //DESCRIPTION AND COMMENTS
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -353,11 +357,12 @@ class _PostCardExpState extends State<PostCardExp> {
                         children: [
                           TextSpan(
                             text: widget.snap['username'],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13),
                           ),
                           TextSpan(
-                            text: ' ${widget.snap['description']}',
-                          )
+                              text: ' ${widget.snap['description']}',
+                              style: TextStyle(fontSize: 13))
                         ]),
                   ),
                 ),
@@ -426,7 +431,7 @@ class _PostCardExpState extends State<PostCardExp> {
                   child: Text(
                     DateFormat.yMMMd()
                         .format(widget.snap['datePublished'].toDate()),
-                    style: const TextStyle(fontSize: 13, color: Colors.white),
+                    style: const TextStyle(fontSize: 10, color: Colors.white),
                   ),
                 ),
               ],

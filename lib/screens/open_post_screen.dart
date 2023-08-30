@@ -6,6 +6,7 @@ import '../providers/user_provider.dart';
 import '../utils/colors.dart';
 import '../utils/global_variables.dart';
 import '../widgets/post_card.dart';
+import '../widgets/post_card_exp.dart';
 
 class OpenPost extends StatelessWidget {
   const OpenPost(
@@ -51,7 +52,7 @@ class OpenPost extends StatelessWidget {
                 horizontal: width > webScreenSize ? width * 0.3 : 0,
                 vertical: width > webScreenSize ? 15 : 0,
               ),
-              child: PostCard(
+              child: PostCardExp(
                 snap: snapshot.data!.docs[index].data(),
               ),
             ),

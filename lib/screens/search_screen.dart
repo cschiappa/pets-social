@@ -89,8 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 //search post grid
-                return StaggeredGridView.countBuilder(
-                  crossAxisCount: 3,
+                return MasonryGridView.builder(
                   itemCount: (snapshot.data! as dynamic).docs.length,
                   itemBuilder: (context, index) => GestureDetector(
                     onTap: () {
@@ -104,19 +103,18 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           ));
                     },
-                    child: Image.network(
-                        (snapshot.data! as dynamic).docs[index]['postUrl']),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                            (snapshot.data! as dynamic).docs[index]['postUrl']),
+                      ),
+                    ),
                   ),
-                  staggeredTileBuilder: (index) => MediaQuery.of(context)
-                              .size
-                              .width >
-                          webScreenSize
-                      ? StaggeredTile.count(
-                          (index % 7 == 0) ? 1 : 1, (index % 7 == 0) ? 1 : 1)
-                      : StaggeredTile.count(
-                          (index % 7 == 0) ? 2 : 1, (index % 7 == 0) ? 2 : 1),
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
+                  gridDelegate:
+                      const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
                 );
               },
             ),
