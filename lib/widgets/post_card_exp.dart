@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -74,8 +75,8 @@ class _PostCardExpState extends State<PostCardExp> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: Image.network(
-                  widget.snap['postUrl'],
+                child: CachedNetworkImage(
+                  imageUrl: widget.snap['postUrl'],
                 ),
               ),
               //POST HEADER
@@ -358,11 +359,11 @@ class _PostCardExpState extends State<PostCardExp> {
                           TextSpan(
                             text: widget.snap['username'],
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 13),
+                                fontWeight: FontWeight.bold, fontSize: 15),
                           ),
                           TextSpan(
                               text: ' ${widget.snap['description']}',
-                              style: TextStyle(fontSize: 13))
+                              style: TextStyle(fontSize: 15))
                         ]),
                   ),
                 ),
@@ -422,7 +423,7 @@ class _PostCardExpState extends State<PostCardExp> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       'View all $commentLen comments',
-                      style: const TextStyle(fontSize: 13, color: Colors.white),
+                      style: const TextStyle(fontSize: 15, color: Colors.white),
                     ),
                   ),
                 ),
@@ -431,7 +432,7 @@ class _PostCardExpState extends State<PostCardExp> {
                   child: Text(
                     DateFormat.yMMMd()
                         .format(widget.snap['datePublished'].toDate()),
-                    style: const TextStyle(fontSize: 10, color: Colors.white),
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ),
               ],

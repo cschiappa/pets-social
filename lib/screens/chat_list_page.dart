@@ -51,7 +51,7 @@ class _ChatListState extends State<ChatList> {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     //display all users except current user
-    if (_auth.currentUser!.email != data['username']) {
+    if (_auth.currentUser!.email != data['email']) {
       return ListTile(
         leading: CircleAvatar(
           radius: 15,
