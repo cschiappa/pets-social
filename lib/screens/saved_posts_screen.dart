@@ -55,9 +55,10 @@ class _SavedPostsState extends State<SavedPosts> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => OpenPost(
-                          postId: snap['postId'],
-                          username: snap['username'],
-                          fish: snap['fish']),
+                        postId: snap['postId'],
+                        uid: snap['uid'],
+                        username: snap['username'],
+                      ),
                     ),
                   );
                 },

@@ -73,10 +73,42 @@ class _PostCardExpState extends State<PostCardExp> {
           Stack(
             alignment: AlignmentDirectional.topEnd,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: CachedNetworkImage(
-                  imageUrl: widget.snap['postUrl'],
+              GestureDetector(
+                //double tap for like
+                onDoubleTap: () async {
+                  await FirestoreMethods().likePost(
+                      widget.snap['postId'], user!.uid, widget.snap['likes']);
+                  setState(() {
+                    isLikeAnimating = true;
+                  });
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.snap['postUrl'],
+                      ),
+                    ),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: isLikeAnimating ? 1 : 0,
+                      child: LikeAnimation(
+                        isAnimating: isLikeAnimating,
+                        duration: const Duration(
+                          milliseconds: 400,
+                        ),
+                        onEnd: () {
+                          setState(() {
+                            isLikeAnimating = false;
+                          });
+                        },
+                        child: const Icon(Icons.favorite,
+                            color: Colors.white, size: 120),
+                      ),
+                    )
+                  ],
                 ),
               ),
               //POST HEADER
@@ -200,18 +232,26 @@ class _PostCardExpState extends State<PostCardExp> {
                                         vertical: 16),
                                     shrinkWrap: true,
                                     children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          FirestoreMethods().deletePost(
-                                              widget.snap['postId']);
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12, horizontal: 16),
-                                          child: Text('Delete'),
-                                        ),
-                                      ),
+                                      widget.snap['uid'] == user!.uid
+                                          ? InkWell(
+                                              onTap: () async {
+                                                FirestoreMethods().deletePost(
+                                                    widget.snap['postId']);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                child: const Text('Delete'),
+                                              ),
+                                            )
+                                          : const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 12, horizontal: 16),
+                                              child: Text('Block user'),
+                                            )
                                     ],
                                   ),
                                 ),

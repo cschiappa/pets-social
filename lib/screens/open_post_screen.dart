@@ -1,26 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../models/user.dart';
 import '../providers/user_provider.dart';
 import '../utils/colors.dart';
 import '../utils/global_variables.dart';
 import '../widgets/post_card_exp.dart';
 
-class OpenPost extends StatelessWidget {
-  const OpenPost(
-      {super.key,
-      required this.postId,
-      required this.username,
-      required this.fish});
+class OpenPost extends StatefulWidget {
+  OpenPost({
+    super.key,
+    required this.postId,
+    required this.uid,
+    required this.username,
+  });
   final String postId;
   final String username;
-  final List fish;
+  final String uid;
+
+  @override
+  State<OpenPost> createState() => _OpenPostState();
+}
+
+class _OpenPostState extends State<OpenPost> {
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  final itemController = ItemScrollController();
+
+  void scrollToPost(List posts) {
+    itemController.jumpTo(
+      index: posts.indexWhere((element) => element['postId'] == widget.postId),
+      alignment: 0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final User? user = Provider.of<UserProvider>(context).getUser;
-
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -29,14 +46,12 @@ class OpenPost extends StatelessWidget {
           : AppBar(
               backgroundColor: mobileBackgroundColor,
               centerTitle: false,
-              title: Text('Post from $username')),
-      body: FutureBuilder(
-        future: FirebaseFirestore.instance
+              title: Text('Post from ${widget.username}')),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
             .collection('posts')
-            .where('postId', isEqualTo: postId)
-            .where('username', isEqualTo: username)
-            .where('fish', isEqualTo: fish)
-            .get(),
+            .where('uid', isEqualTo: widget.uid)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -44,7 +59,14 @@ class OpenPost extends StatelessWidget {
             );
           }
           // POST CARD
-          return ListView.builder(
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            scrollToPost(snapshot.data!.docs);
+          });
+          return ScrollablePositionedList.builder(
+            initialScrollIndex: snapshot.data!.docs
+                .indexWhere((element) => element['postId'] == widget.postId),
+            itemScrollController: itemController,
+            key: _listKey,
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) => Container(
               margin: EdgeInsets.symmetric(
