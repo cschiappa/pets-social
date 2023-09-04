@@ -83,4 +83,24 @@ class AuthMethods {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  //Delete User
+  Future<void> deleteUserAccount(uid) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    if (user != null) {
+      try {
+        // Delete user data from Firestore
+        await usersCollection.doc(uid).delete();
+
+        // Delete the user's account from Firebase Authentication
+        await user.delete();
+      } catch (e) {
+        // Handle any errors that may occur during deletion
+        print('Error deleting account: $e');
+      }
+    }
+  }
 }

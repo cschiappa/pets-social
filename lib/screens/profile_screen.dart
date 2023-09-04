@@ -9,6 +9,7 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import '../widgets/follow_button.dart';
 import 'open_post_screen.dart';
+import 'package:pets_social/screens/settings.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? uid;
@@ -101,16 +102,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             shrinkWrap: true,
                             children: [
                               'Saved Posts',
+                              'Settings',
                             ]
                                 .map(
                                   (e) => InkWell(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SavedPosts(),
-                                        ),
-                                      );
+                                      if (e == 'Saved Posts') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SavedPosts(),
+                                          ),
+                                        );
+                                      } else if (e == 'Settings') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SettingsPage(),
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
