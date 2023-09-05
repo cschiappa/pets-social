@@ -3,6 +3,9 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
+import '../utils/utils.dart';
+import 'login_screen.dart';
+
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key});
 
@@ -16,6 +19,26 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   bool passEnable = true;
+
+  final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == "success") {
+      AuthMethods().deleteUserAccount();
+    } else {
+      showSnackBar(res, context);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +142,62 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           'Delete',
                           style: TextStyle(fontSize: 16, color: Colors.red),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: ((context) {
+                              return AlertDialog(
+                                title:
+                                    Text('Please introduce your login details'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // text field input for email
+                                    TextFieldInput(
+                                      hintText: 'Enter your email',
+                                      textInputType: TextInputType.emailAddress,
+                                      textEditingController: _emailController,
+                                    ),
+                                    const SizedBox(
+                                      height: 24,
+                                    ),
+                                    //text field unput for password
+                                    TextFieldInput(
+                                      hintText: 'Enter your password',
+                                      textInputType: TextInputType.text,
+                                      textEditingController:
+                                          _passwordController,
+                                      isPass: true,
+                                    ),
+                                    const SizedBox(
+                                      height: 24,
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      loginUser();
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text('Delete Account'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                ],
+                              );
+                            }),
+                          );
+                        },
                       ),
                       TextButton(
                         child: Text(

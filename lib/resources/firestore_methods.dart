@@ -44,6 +44,7 @@ class FirestoreMethods {
     return res;
   }
 
+  //LIKE POST
   Future<void> likePost(String postId, String uid, List likes) async {
     try {
       if (likes.contains(uid)) {
@@ -60,6 +61,7 @@ class FirestoreMethods {
     }
   }
 
+  //GIVE FISH TO POST
   Future<void> giveFishToPost(String postId, String uid, List fish) async {
     try {
       if (fish.contains(uid)) {
@@ -76,6 +78,7 @@ class FirestoreMethods {
     }
   }
 
+  //GIVE BONE TO POST
   Future<void> giveBoneToPost(String postId, String uid, List bones) async {
     try {
       if (bones.contains(uid)) {
@@ -92,6 +95,7 @@ class FirestoreMethods {
     }
   }
 
+  //POST COMMENT
   Future<void> postComment(String postId, String text, String uid, String name,
       String profilePic, List likes) async {
     try {
@@ -122,6 +126,7 @@ class FirestoreMethods {
     }
   }
 
+  //LIKE COMMENT
   Future<void> likeComment(
       String postId, String commentId, String uid, List likes) async {
     try {
@@ -202,6 +207,33 @@ class FirestoreMethods {
       }
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  //BLOCK USER
+  Future<void> blockUser(String uid, String blockedId) async {
+    try {
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(uid).get();
+      List blockedUsers = (snap.data()! as dynamic)['blockedUsers'];
+
+      if (blockedUsers.contains(blockedId)) {
+        await _firestore.collection('users').doc(uid).update(
+          {
+            'blockedUsers': FieldValue.arrayRemove([blockedId])
+          },
+        );
+        print('User unblocked successfully');
+      } else {
+        await _firestore.collection('users').doc(uid).update(
+          {
+            'blockedUsers': FieldValue.arrayUnion([blockedId])
+          },
+        );
+        print('User blocked successfully');
+      }
+    } catch (e) {
+      print('Error blocking user: $e');
     }
   }
 }

@@ -247,10 +247,19 @@ class _PostCardExpState extends State<PostCardExp> {
                                                 child: const Text('Delete'),
                                               ),
                                             )
-                                          : const Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 12, horizontal: 16),
-                                              child: Text('Block user'),
+                                          : InkWell(
+                                              onTap: () async {
+                                                FirestoreMethods().blockUser(
+                                                    user.uid,
+                                                    widget.snap['uid']);
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                child: const Text('Block User'),
+                                              ),
                                             )
                                     ],
                                   ),

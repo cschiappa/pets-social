@@ -77,6 +77,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   stream: FirebaseFirestore.instance
                       .collection('posts')
                       .where('uid', whereIn: user.following)
+                      // .where('uid', whereNotIn: user.blockedUsers)
                       .snapshots(),
                   builder: (context,
                       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>

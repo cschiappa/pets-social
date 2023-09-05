@@ -48,6 +48,7 @@ class AuthMethods {
           following: [],
           followers: [],
           savedPost: [],
+          blockedUsers: [],
         );
 
         await _firestore.collection('users').doc(cred.user!.uid).set(
@@ -85,18 +86,20 @@ class AuthMethods {
   }
 
   //Delete User
-  Future<void> deleteUserAccount(uid) async {
+  Future<void> deleteUserAccount() async {
     final User? user = FirebaseAuth.instance.currentUser;
-    final CollectionReference usersCollection =
-        FirebaseFirestore.instance.collection('users');
 
     if (user != null) {
       try {
-        // Delete user data from Firestore
-        await usersCollection.doc(uid).delete();
-
+        // user.reauthenticateWithCredential()
         // Delete the user's account from Firebase Authentication
         await user.delete();
+
+        //Delete the user's account from Firestore collection
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .delete();
       } catch (e) {
         // Handle any errors that may occur during deletion
         print('Error deleting account: $e');
