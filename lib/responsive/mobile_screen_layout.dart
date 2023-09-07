@@ -42,7 +42,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       body: PageView(
         children: homeScreenItems,
         //if I want to remove slide to side, uncommment bellow
-        //physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         onPageChanged: onPageChanged,
       ),

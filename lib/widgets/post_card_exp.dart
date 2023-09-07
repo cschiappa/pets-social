@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -29,6 +30,7 @@ class PostCardExp extends StatefulWidget {
 class _PostCardExpState extends State<PostCardExp> {
   bool isLikeAnimating = false;
   int commentLen = 0;
+  final CarouselController _controller = CarouselController();
 
   @override
   void initState() {
@@ -276,117 +278,127 @@ class _PostCardExpState extends State<PostCardExp> {
               ),
               //LIKE, FISH, BONE SECTION
               Positioned(
-                bottom: 0,
+                bottom: 8,
                 left: 0,
                 right: 0,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 70),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Color.fromARGB(100, 0, 0, 0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          //ARROW LEFT SWIPE
-                          InkWell(
-                            onTap: () {},
-                            child: const Icon(
-                              Icons.arrow_left,
-                            ),
+                  padding: const EdgeInsets.symmetric(horizontal: 90),
+                  child: Container(
+                    padding: EdgeInsets.all(2.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Color.fromARGB(100, 0, 0, 0),
+                    ),
+                    child: Row(
+                      children: [
+                        //ARROW LEFT SWIPE
+                        InkWell(
+                          onTap: () {
+                            _controller.previousPage();
+                          },
+                          child: const Icon(
+                            Icons.arrow_left,
                           ),
-                          // FISH
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: FishAnimation(
-                              isAnimating: widget.snap['fish'] != null &&
-                                  widget.snap['fish'].contains(user!.uid),
-                              smallLike: true,
-                              child: InkWell(
-                                onTap: () async {
-                                  await FirestoreMethods().giveFishToPost(
-                                      widget.snap['postId'],
-                                      user!.uid,
-                                      widget.snap['fish']);
-                                },
-                                child: Image.asset(
-                                  (widget.snap['fish'] != null &&
-                                          widget.snap['fish']
-                                              .contains(user!.uid))
-                                      ? 'assets/fish.png'
-                                      : 'assets/fish_border.png',
-                                  width: 30,
-                                  height: 30,
+                        ),
+                        Expanded(
+                          child: CarouselSlider(
+                            carouselController: _controller,
+                            options: CarouselOptions(
+                              viewportFraction: 0.4,
+                              aspectRatio: 4,
+                              enableInfiniteScroll: true,
+                              initialPage: 1,
+                              enlargeCenterPage: true,
+                              enlargeFactor: 0.5,
+                              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                            ),
+                            items: [
+                              // FISH
+                              FishAnimation(
+                                isAnimating: widget.snap['fish'] != null &&
+                                    widget.snap['fish'].contains(user!.uid),
+                                smallLike: true,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await FirestoreMethods().giveFishToPost(
+                                        widget.snap['postId'],
+                                        user!.uid,
+                                        widget.snap['fish']);
+                                  },
+                                  child: Image.asset(
+                                    (widget.snap['fish'] != null &&
+                                            widget.snap['fish']
+                                                .contains(user!.uid))
+                                        ? 'assets/fish.png'
+                                        : 'assets/fish_border.png',
+                                    width: 100,
+                                    height: 100,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          //LIKES
-                          LikeAnimation(
-                            isAnimating: widget.snap['likes'] != null &&
-                                widget.snap['likes'].contains(user!.uid),
-                            smallLike: true,
-                            child: InkWell(
-                              onTap: () async {
-                                await FirestoreMethods().likePost(
-                                    widget.snap['postId'],
-                                    user!.uid,
-                                    widget.snap['likes']);
-                              },
-                              child: Image.asset(
-                                (widget.snap['likes'] != null &&
-                                        widget.snap['likes']
-                                            .contains(user!.uid))
-                                    ? 'assets/like.png'
-                                    : 'assets/like_border.png',
-                                width: 40,
-                                height: 40,
-                              ),
-                            ),
-                          ),
-                          //SizedBox(width: 10), // Add space
-                          //BONES
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            child: BoneAnimation(
-                              isAnimating: widget.snap['bones'] != null &&
-                                  widget.snap['bones'].contains(user!.uid),
-                              smallLike: true,
-                              child: InkWell(
-                                onTap: () async {
-                                  await FirestoreMethods().giveBoneToPost(
-                                      widget.snap['postId'],
-                                      user!.uid,
-                                      widget.snap['bones']);
-                                },
-                                child: Image.asset(
-                                  (widget.snap['bones'] != null &&
-                                          widget.snap['bones']
-                                              .contains(user!.uid))
-                                      ? 'assets/bone.png'
-                                      : 'assets/bone_border.png',
-                                  width: 30,
-                                  height: 30,
+                              //LIKES
+                              LikeAnimation(
+                                isAnimating: widget.snap['likes'] != null &&
+                                    widget.snap['likes'].contains(user!.uid),
+                                smallLike: true,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await FirestoreMethods().likePost(
+                                        widget.snap['postId'],
+                                        user!.uid,
+                                        widget.snap['likes']);
+                                  },
+                                  child: Image.asset(
+                                    (widget.snap['likes'] != null &&
+                                            widget.snap['likes']
+                                                .contains(user!.uid))
+                                        ? 'assets/like.png'
+                                        : 'assets/like_border.png',
+                                    width: 100,
+                                    height: 100,
+                                  ),
                                 ),
                               ),
-                            ),
+                              //BONES
+                              BoneAnimation(
+                                isAnimating: widget.snap['bones'] != null &&
+                                    widget.snap['bones'].contains(user!.uid),
+                                smallLike: true,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await FirestoreMethods().giveBoneToPost(
+                                        widget.snap['postId'],
+                                        user!.uid,
+                                        widget.snap['bones']);
+                                  },
+                                  child: Image.asset(
+                                    (widget.snap['bones'] != null &&
+                                            widget.snap['bones']
+                                                .contains(user!.uid))
+                                        ? 'assets/bone.png'
+                                        : 'assets/bone_border.png',
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          //ARROW RIGHT SWIPE
-                          InkWell(
-                            onTap: () {},
-                            child: const Icon(
-                              Icons.arrow_right,
-                            ),
+                        ),
+                        //ARROW RIGHT SWIPE
+                        InkWell(
+                          onTap: () {
+                            _controller.nextPage();
+                          },
+                          child: const Icon(
+                            Icons.arrow_right,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
 
