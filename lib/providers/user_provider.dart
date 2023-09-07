@@ -13,4 +13,13 @@ class UserProvider with ChangeNotifier {
     _user = user;
     notifyListeners();
   }
+
+  // Method to unblock a user by their UID
+  void unblockUser(String uid) {
+    if (_user != null) {
+      _user!.blockedUsers.remove(uid);
+
+      notifyListeners();
+    }
+  }
 }

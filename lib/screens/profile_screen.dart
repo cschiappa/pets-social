@@ -108,6 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   (e) => InkWell(
                                     onTap: () {
                                       if (e == 'Saved Posts') {
+                                        Navigator.pop(context);
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) =>
@@ -115,6 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         );
                                       } else if (e == 'Settings') {
+                                        Navigator.pop(context);
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) =>

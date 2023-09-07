@@ -251,6 +251,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                             )
                                           : InkWell(
                                               onTap: () async {
+                                                Navigator.pop(context);
                                                 FirestoreMethods().blockUser(
                                                     user.uid,
                                                     widget.snap['uid']);

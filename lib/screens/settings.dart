@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pets_social/screens/account_settings.dart';
+import 'package:pets_social/screens/blocked_accounts.dart';
 import 'package:pets_social/utils/colors.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -41,6 +42,13 @@ class _SettingsPageState extends State<SettingsPage> {
           ListTile(
             leading: Icon(Icons.person_off),
             title: Text('Blocked Accounts'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const BlockedAccountsPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.person_add),
