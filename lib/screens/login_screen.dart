@@ -9,6 +9,7 @@ import '../responsive/mobile_screen_layout.dart';
 import '../responsive/responsive_layout_screen.dart';
 import '../responsive/web_screen_layout.dart';
 import '../utils/global_variables.dart';
+import 'forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 64),
               // text field input for email
               TextFieldInput(
-                hintText: 'Enter your email',
+                hintText: 'Email',
                 textInputType: TextInputType.emailAddress,
                 textEditingController: _emailController,
               ),
@@ -93,14 +94,31 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               //text field unput for password
               TextFieldInput(
-                hintText: 'Enter your password',
+                hintText: 'Password',
                 textInputType: TextInputType.text,
                 textEditingController: _passwordController,
                 isPass: true,
               ),
-              const SizedBox(
-                height: 24,
+
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ForgotPasswordPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  child: const Text(
+                    "Forgot your password?",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 15,
+                  ),
+                ),
               ),
+
               //button login
               InkWell(
                 onTap: loginUser,

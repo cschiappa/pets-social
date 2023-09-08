@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:pets_social/models/user.dart' as model;
 import 'package:pets_social/resources/storage_methods.dart';
+import 'package:pets_social/screens/login_screen.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,6 +18,25 @@ class AuthMethods {
     return model.User.fromSnap(snap);
   }
 
+  //Checks if password follows all the requirement
+  bool isPasswordValid(String password) {
+    final lengthRequirement = 5;
+    final uppercaseRegex = RegExp(r'[A-Z]');
+    final lowercaseRegex = RegExp(r'[a-z]');
+    final numberRegex = RegExp(r'[0-9]');
+    final specialCharacterRegex = RegExp(r'[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]');
+
+    if (password.length < lengthRequirement ||
+        !uppercaseRegex.hasMatch(password) ||
+        !lowercaseRegex.hasMatch(password) ||
+        !numberRegex.hasMatch(password) ||
+        !specialCharacterRegex.hasMatch(password)) {
+      return false;
+    }
+
+    return true;
+  }
+
   //sign up user
   Future<String> signUpUser({
     required String email,
@@ -26,35 +47,40 @@ class AuthMethods {
   }) async {
     String res = "Some error occurred";
     try {
-      if (email.isNotEmpty ||
-          password.isNotEmpty ||
-          username.isNotEmpty ||
-          bio.isNotEmpty) {
-        //register user
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
+      if (isPasswordValid(password)) {
+        if (email.isNotEmpty &&
+            password.isNotEmpty &&
+            username.isNotEmpty &&
+            bio.isNotEmpty) {
+          //register user
+          UserCredential cred = await _auth.createUserWithEmailAndPassword(
+              email: email, password: password);
 
-        String photoUrl = await StorageMethods()
-            .uploadImageToStorage('profilePics', file, false);
+          String photoUrl = await StorageMethods()
+              .uploadImageToStorage('profilePics', file, false);
 
-        //add user to database
+          //add user to database
 
-        model.User user = model.User(
-          username: username,
-          uid: cred.user!.uid,
-          email: email,
-          bio: bio,
-          photoUrl: photoUrl,
-          following: [],
-          followers: [],
-          savedPost: [],
-          blockedUsers: [],
-        );
+          model.User user = model.User(
+            username: username,
+            uid: cred.user!.uid,
+            email: email,
+            bio: bio,
+            photoUrl: photoUrl,
+            following: [],
+            followers: [],
+            savedPost: [],
+            blockedUsers: [],
+          );
 
-        await _firestore.collection('users').doc(cred.user!.uid).set(
-              user.toJson(),
-            );
-        res = "success";
+          await _firestore.collection('users').doc(cred.user!.uid).set(
+                user.toJson(),
+              );
+          res = "success";
+        }
+      } else {
+        res =
+            "Your password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character.";
       }
     } catch (err) {
       res = err.toString();
@@ -81,6 +107,7 @@ class AuthMethods {
     return res;
   }
 
+  //Sign Out
   Future<void> signOut() async {
     await _auth.signOut();
   }
@@ -104,6 +131,50 @@ class AuthMethods {
         // Handle any errors that may occur during deletion
         print('Error deleting account: $e');
       }
+    }
+  }
+
+  //Change password
+  Future<void> changePassword(BuildContext context, String newPassword) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    try {
+      if (isPasswordValid(newPassword)) {
+        await user!.updatePassword(newPassword);
+        FirebaseAuth.instance.signOut();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Your password has been changed.'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('There was an error updating the password.'),
+        ),
+      );
+      print('There was an error updating the password.');
+    }
+  }
+
+  Future<bool> verifyCurrentPassword(String currentPassword) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    AuthCredential credential = EmailAuthProvider.credential(
+        email: user!.email!, password: currentPassword);
+
+    try {
+      await user.reauthenticateWithCredential(credential);
+      return true;
+    } catch (e) {
+      print('current password is incorrect');
+      return false;
     }
   }
 }

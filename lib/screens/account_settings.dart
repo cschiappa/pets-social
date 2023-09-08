@@ -64,7 +64,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           ListTile(
             leading: Icon(Icons.lock),
             title: Text('Change Password'),
-            onTap: () {
+            onTap: () async {
+              String currentPassword = _currentPasswordController.text;
+              String newPassword = _passwordController.text;
+              String newPasswordConfirmation = _newPasswordController.text;
+              bool isCurrentPasswordValid =
+                  await AuthMethods().verifyCurrentPassword(currentPassword);
+
               showDialog(
                 context: context,
                 builder: ((context) {
@@ -109,7 +115,26 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (isCurrentPasswordValid) {
+                            if (newPassword == newPasswordConfirmation) {
+                              AuthMethods()
+                                  .changePassword(context, newPassword);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Passwords do not match."),
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Current password is incorrect"),
+                              ),
+                            );
+                          }
+                        },
                         child: Text('Save'),
                       ),
                       TextButton(

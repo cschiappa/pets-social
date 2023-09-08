@@ -32,13 +32,13 @@ class _SavedPostsState extends State<SavedPosts> {
             );
           }
 
+          var savedPostIds = snapshot.data!.get('savedPost') ?? [];
+
           if (!snapshot.hasData || !snapshot.data!.exists) {
             return const Center(
               child: Text('No posts available.'),
             );
           }
-
-          var savedPostIds = snapshot.data!.get('savedPost') ?? [];
 
           return GridView.builder(
             shrinkWrap: true,
