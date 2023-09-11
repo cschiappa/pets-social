@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
-import 'open_post_screen.dart';
+import '../../utils/colors.dart';
+import '../open_post_screen.dart';
 
 class SavedPosts extends StatefulWidget {
   const SavedPosts({super.key});
@@ -28,7 +28,9 @@ class _SavedPostsState extends State<SavedPosts> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: pinkColor,
+              ),
             );
           }
 

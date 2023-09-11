@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pets_social/screens/account_settings.dart';
-import 'package:pets_social/screens/blocked_accounts.dart';
+import 'package:pets_social/screens/settings/account_settings.dart';
+import 'package:pets_social/screens/settings/blocked_accounts.dart';
 import 'package:pets_social/utils/colors.dart';
 
 class SettingsPage extends StatefulWidget {

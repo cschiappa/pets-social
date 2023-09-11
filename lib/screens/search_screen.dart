@@ -48,7 +48,9 @@ class _SearchScreenState extends State<SearchScreen> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: pinkColor,
+                    ),
                   );
                 }
 

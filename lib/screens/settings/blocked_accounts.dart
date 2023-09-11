@@ -6,7 +6,7 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:pets_social/models/user.dart' as model;
 
-import '../resources/firestore_methods.dart';
+import '../../resources/firestore_methods.dart';
 
 class BlockedAccountsPage extends StatefulWidget {
   const BlockedAccountsPage({super.key});

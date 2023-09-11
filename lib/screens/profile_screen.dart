@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/screens/login_screen.dart';
-import 'package:pets_social/screens/saved_posts_screen.dart';
+import 'package:pets_social/screens/initial_screen/login_screen.dart';
+import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import '../widgets/follow_button.dart';
 import 'open_post_screen.dart';
-import 'package:pets_social/screens/settings.dart';
+import 'package:pets_social/screens/settings/settings.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? uid;
@@ -66,8 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         fish += post.data()['fish'].length as int;
         bones += post.data()['bones'].length as int;
       }
-
-      setState(() {});
     } catch (e) {
       showSnackBar(
         e.toString(),
@@ -83,7 +81,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: pinkColor,
+            ),
           )
         : Scaffold(
             appBar: AppBar(
@@ -285,7 +285,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: pinkColor,
+                            ),
                           );
                         }
                         return GridView.builder(

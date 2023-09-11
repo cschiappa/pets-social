@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
+import 'package:provider/provider.dart';
 
-import '../utils/utils.dart';
-import 'login_screen.dart';
+import '../../models/user.dart';
+import '../../utils/utils.dart';
+import '../initial_screen/login_screen.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key});
@@ -20,24 +23,12 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   final TextEditingController _newPasswordController = TextEditingController();
   bool passEnable = true;
 
-  final TextEditingController _emailController = TextEditingController();
-  bool _isLoading = false;
-
-  void loginUser() async {
-    setState(() {
-      _isLoading = true;
-    });
-    String res = await AuthMethods().loginUser(
-        email: _emailController.text, password: _passwordController.text);
-
-    if (res == "success") {
-      AuthMethods().deleteUserAccount();
-    } else {
-      showSnackBar(res, context);
-    }
-    setState(() {
-      _isLoading = false;
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    _currentPasswordController.dispose();
+    _passwordController.dispose();
+    _newPasswordController.dispose();
   }
 
   @override
@@ -65,12 +56,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             leading: Icon(Icons.lock),
             title: Text('Change Password'),
             onTap: () async {
-              String currentPassword = _currentPasswordController.text;
-              String newPassword = _passwordController.text;
-              String newPasswordConfirmation = _newPasswordController.text;
-              bool isCurrentPasswordValid =
-                  await AuthMethods().verifyCurrentPassword(currentPassword);
-
               showDialog(
                 context: context,
                 builder: ((context) {
@@ -107,23 +92,40 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           child: Text('Repeat your new password:'),
                         ),
                         TextFieldInput(
-                            textEditingController: _newPasswordController,
-                            isPass: passEnable,
-                            hintText: 'Repeat new password',
-                            textInputType: TextInputType.text),
+                          textEditingController: _newPasswordController,
+                          isPass: passEnable,
+                          hintText: 'Repeat new password',
+                          textInputType: TextInputType.text,
+                        ),
                       ],
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          String currentPassword =
+                              _currentPasswordController.text;
+                          String newPassword = _passwordController.text;
+                          String newPasswordConfirmation =
+                              _newPasswordController.text;
+                          bool isCurrentPasswordValid = await AuthMethods()
+                              .verifyCurrentPassword(currentPassword);
                           if (isCurrentPasswordValid) {
-                            if (newPassword == newPasswordConfirmation) {
-                              AuthMethods()
-                                  .changePassword(context, newPassword);
+                            if (AuthMethods().isPasswordValid(newPassword)) {
+                              if (newPassword == newPasswordConfirmation) {
+                                AuthMethods()
+                                    .changePassword(context, newPassword);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Passwords do not match."),
+                                  ),
+                                );
+                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text("Passwords do not match."),
+                                  content: Text(
+                                      "Your new password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character."),
                                 ),
                               );
                             }
@@ -172,20 +174,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             context: context,
                             builder: ((context) {
                               return AlertDialog(
-                                title:
-                                    Text('Please introduce your login details'),
+                                title: Text('Please introduce your password'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // text field input for email
-                                    TextFieldInput(
-                                      hintText: 'Enter your email',
-                                      textInputType: TextInputType.emailAddress,
-                                      textEditingController: _emailController,
-                                    ),
-                                    const SizedBox(
-                                      height: 24,
-                                    ),
                                     //text field unput for password
                                     TextFieldInput(
                                       hintText: 'Enter your password',
@@ -201,14 +193,27 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () {
-                                      loginUser();
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen(),
-                                        ),
-                                      );
+                                    onPressed: () async {
+                                      String currentPassword =
+                                          _passwordController.text;
+
+                                      bool isCurrentPasswordValid =
+                                          await AuthMethods()
+                                              .verifyCurrentPassword(
+                                                  currentPassword);
+                                      if (isCurrentPasswordValid) {
+                                        //deleteUser();
+                                        AuthMethods()
+                                            .deleteUserAccount(context);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                "Current password is incorrect"),
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: Text('Delete Account'),
                                   ),

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/user.dart';
 import 'package:pets_social/providers/user_provider.dart';
@@ -15,6 +16,7 @@ import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
 import 'package:pets_social/widgets/save_post_animation.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'bone_animation.dart';
 import 'fish_animation.dart';
@@ -187,7 +189,10 @@ class _PostCardExpState extends State<PostCardExp> {
                           ),
                           //SHARE
                           InkWell(
-                            onTap: () {},
+                            onTap: () async {
+                              final path = widget.snap['postUrl'];
+                              await Share.share('$path');
+                            },
                             child: const Icon(
                               Icons.share,
                             ),

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pets_social/resources/auth_methods.dart';
-import 'package:pets_social/screens/signup_screen.dart';
+import 'package:pets_social/screens/initial_screen/signup_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
-import '../responsive/mobile_screen_layout.dart';
-import '../responsive/responsive_layout_screen.dart';
-import '../responsive/web_screen_layout.dart';
-import '../utils/global_variables.dart';
+import '../../responsive/mobile_screen_layout.dart';
+import '../../responsive/responsive_layout_screen.dart';
+import '../../responsive/web_screen_layout.dart';
+import '../../utils/global_variables.dart';
 import 'forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -138,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                         ),
-                        color: Color.fromRGBO(242, 102, 139, 1)),
+                        color: pinkColor),
                   ),
                 ),
               ),

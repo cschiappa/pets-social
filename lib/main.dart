@@ -5,7 +5,7 @@ import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/responsive/web_screen_layout.dart';
-import 'package:pets_social/screens/login_screen.dart';
+import 'package:pets_social/screens/initial_screen/login_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';

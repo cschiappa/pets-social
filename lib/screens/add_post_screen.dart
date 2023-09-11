@@ -135,7 +135,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         postImage(user!.uid, user.username, user.photoUrl),
                     child: const Text('Post',
                         style: TextStyle(
-                          color: Color.fromRGBO(242, 102, 139, 1),
+                          color: pinkColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         )))
@@ -143,7 +143,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
             body: Column(children: [
               _isLoading
-                  ? const LinearProgressIndicator()
+                  ? const LinearProgressIndicator(
+                      color: pinkColor,
+                    )
                   : const Padding(
                       padding: EdgeInsets.only(top: 0),
                     ),

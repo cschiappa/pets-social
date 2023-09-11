@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/screens/chat_page.dart';
+import 'package:pets_social/screens/chat/chat_page.dart';
+import 'package:pets_social/utils/colors.dart';
 
 class ChatList extends StatefulWidget {
   const ChatList({super.key});
@@ -34,7 +35,9 @@ class _ChatListState extends State<ChatList> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading...');
+          return const Center(
+            child: CircularProgressIndicator(color: pinkColor),
+          );
         }
 
         return ListView(

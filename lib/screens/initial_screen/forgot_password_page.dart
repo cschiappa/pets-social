@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
-import '../utils/global_variables.dart';
+import '../../utils/global_variables.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -16,7 +16,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
   bool _isLoading = false;
 
-  Future passwordReset() async {
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+  }
+
+  Future passwordLinkToEmail() async {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _emailController.text.trim());
@@ -29,6 +35,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           });
     } on FirebaseAuthException catch (e) {
       print(e);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(e.message.toString()),
+          );
+        },
+      );
     }
   }
 
@@ -45,7 +59,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             : const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            Text('Enter your email and we will send you a password reset link'),
+            Text(
+                'Enter your email and we will send you a password reset link:'),
 
             const SizedBox(
               height: 24,
@@ -62,7 +77,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
             //button to send
             InkWell(
-              onTap: () {},
+              onTap: () {
+                passwordLinkToEmail();
+              },
               child: Container(
                 width: double.infinity,
                 alignment: Alignment.center,
@@ -71,7 +88,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                   ),
-                  color: Color.fromRGBO(242, 102, 139, 1),
+                  color: pinkColor,
                 ),
                 child: _isLoading
                     ? const Center(

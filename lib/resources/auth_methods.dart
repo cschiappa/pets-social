@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/models/user.dart' as model;
 import 'package:pets_social/resources/storage_methods.dart';
-import 'package:pets_social/screens/login_screen.dart';
+import 'package:pets_social/screens/initial_screen/login_screen.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -113,7 +113,7 @@ class AuthMethods {
   }
 
   //Delete User
-  Future<void> deleteUserAccount() async {
+  Future<void> deleteUserAccount(context) async {
     final User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
@@ -127,9 +127,20 @@ class AuthMethods {
             .collection('users')
             .doc(user.uid)
             .delete();
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
       } catch (e) {
         // Handle any errors that may occur during deletion
         print('Error deleting account: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('There was an error deleting the account.'),
+          ),
+        );
       }
     }
   }
@@ -140,13 +151,8 @@ class AuthMethods {
     try {
       if (isPasswordValid(newPassword)) {
         await user!.updatePassword(newPassword);
-        FirebaseAuth.instance.signOut();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
+
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Your password has been changed.'),
@@ -163,6 +169,7 @@ class AuthMethods {
     }
   }
 
+  //Verify Current Password
   Future<bool> verifyCurrentPassword(String currentPassword) async {
     final User? user = FirebaseAuth.instance.currentUser;
 

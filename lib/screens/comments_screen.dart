@@ -46,7 +46,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: pinkColor,
+              ),
             );
           }
 
@@ -103,7 +105,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: const Text(
                     'Post',
                     style: TextStyle(
-                      color: Color.fromRGBO(242, 102, 139, 1),
+                      color: pinkColor,
                     ),
                   ),
                 ),

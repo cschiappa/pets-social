@@ -52,9 +52,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
-              color: _page == 0
-                  ? const Color.fromRGBO(242, 102, 139, 1)
-                  : secondaryColor,
+              color: _page == 0 ? pinkColor : secondaryColor,
             ),
             label: '',
             backgroundColor: primaryColor,
@@ -62,9 +60,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.search,
-              color: _page == 1
-                  ? const Color.fromRGBO(242, 102, 139, 1)
-                  : secondaryColor,
+              color: _page == 1 ? pinkColor : secondaryColor,
             ),
             label: '',
             backgroundColor: primaryColor,
@@ -72,9 +68,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.add_circle,
-              color: _page == 2
-                  ? const Color.fromRGBO(242, 102, 139, 1)
-                  : secondaryColor,
+              color: _page == 2 ? pinkColor : secondaryColor,
             ),
             label: '',
             backgroundColor: primaryColor,
@@ -82,9 +76,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.favorite,
-              color: _page == 3
-                  ? const Color.fromRGBO(242, 102, 139, 1)
-                  : secondaryColor,
+              color: _page == 3 ? pinkColor : secondaryColor,
             ),
             label: '',
             backgroundColor: primaryColor,
@@ -92,9 +84,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.person,
-              color: _page == 4
-                  ? const Color.fromRGBO(242, 102, 139, 1)
-                  : secondaryColor,
+              color: _page == 4 ? pinkColor : secondaryColor,
             ),
             label: '',
             backgroundColor: primaryColor,

@@ -5,6 +5,8 @@ import 'package:pets_social/resources/chat.dart';
 import 'package:pets_social/widgets/chat_bubble.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
+import '../../utils/colors.dart';
+
 class ChatPage extends StatefulWidget {
   final String receiverUserEmail;
   final String receiverUserID;
@@ -29,6 +31,12 @@ class _ChatPageState extends State<ChatPage> {
       //clear text after sending
       _messageController.clear();
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _messageController.dispose();
   }
 
   @override
@@ -65,7 +73,9 @@ class _ChatPageState extends State<ChatPage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading...');
+          return const Center(
+            child: CircularProgressIndicator(color: pinkColor),
+          );
         }
 
         return ListView(

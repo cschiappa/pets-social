@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/user.dart';
-import 'package:pets_social/screens/chat_list_page.dart';
+import 'package:pets_social/screens/chat/chat_list_page.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +76,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ? StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('posts')
-                      .where('uid', whereIn: user.following)
+                      .where('uid', whereIn: [...user.following, user.uid])
                       // .where('uid', whereNotIn: user.blockedUsers)
                       .snapshots(),
                   builder: (context,
@@ -84,7 +84,9 @@ class _FeedScreenState extends State<FeedScreen> {
                           snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          color: pinkColor,
+                        ),
                       );
                     }
                     // POST CARD

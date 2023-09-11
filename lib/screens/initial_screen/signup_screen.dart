@@ -5,10 +5,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
-import '../responsive/mobile_screen_layout.dart';
-import '../responsive/responsive_layout_screen.dart';
-import '../responsive/web_screen_layout.dart';
-import '../widgets/text_field_input.dart';
+import '../../responsive/mobile_screen_layout.dart';
+import '../../responsive/responsive_layout_screen.dart';
+import '../../responsive/web_screen_layout.dart';
+import '../../widgets/text_field_input.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -189,7 +189,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(4)),
                             ),
-                            color: Color.fromRGBO(242, 102, 139, 1)),
+                            color: pinkColor),
                       ),
                     ),
                   ),
