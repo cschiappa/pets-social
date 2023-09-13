@@ -7,7 +7,9 @@ import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
+import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -18,6 +20,7 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _file;
+  String? _fileType;
   final TextEditingController _descriptionController = TextEditingController();
   //loading when posting
   bool _isLoading = false;
@@ -32,7 +35,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
     try {
       String res = await FirestoreMethods().uploadPost(
-          _descriptionController.text, _file!, uid, username, profImage);
+          _descriptionController.text,
+          _file!,
+          uid,
+          username,
+          profImage,
+          _fileType!);
 
       if (res == "success") {
         setState(() {
@@ -68,6 +76,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   );
                   setState(() {
                     _file = file;
+                  });
+                },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Take a Video'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  Uint8List file;
+                  String fileType;
+                  (file, fileType) = await pickVideo(
+                    ImageSource.gallery,
+                  );
+                  setState(() {
+                    _file = file;
+                    _fileType = fileType;
                   });
                 },
               ),
@@ -112,6 +136,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     final User? user = Provider.of<UserProvider>(context).getUser;
+    final videoUri = Uri.parse(_file.toString());
 
     return _file == null
         ? Center(
@@ -171,20 +196,26 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 45,
-                    width: 45,
-                    child: AspectRatio(
-                      aspectRatio: 487 / 451,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          image: MemoryImage(_file!),
-                          fit: BoxFit.fill,
-                          alignment: FractionalOffset.topCenter,
-                        )),
-                      ),
-                    ),
-                  ),
+                      height: 45,
+                      width: 45,
+                      child: _file!.isEmpty || _file![0] == 255
+                          ? AspectRatio(
+                              aspectRatio: 487 / 451,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                  image: MemoryImage(_file!),
+                                  fit: BoxFit.fill,
+                                  alignment: FractionalOffset.topCenter,
+                                )),
+                              ),
+                            )
+                          // : AspectRatio(
+                          //     aspectRatio:
+                          //         16 / 9, // Adjust the aspect ratio as needed
+                          //     child: VideoPlayerWidget(videoUrl: videoUri),
+                          //   ),
+                          : Text('video thumbnail')),
                   const Divider(),
                 ],
               )

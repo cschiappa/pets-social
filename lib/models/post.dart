@@ -11,8 +11,9 @@ class Post {
   final likes;
   final bones;
   final fish;
+  final fileType;
 
-  const Post({
+  Post({
     required this.description,
     required this.uid,
     required this.username,
@@ -23,6 +24,7 @@ class Post {
     required this.likes,
     required this.fish,
     required this.bones,
+    required this.fileType,
   });
 
   Map<String, dynamic> toJson() => {
@@ -36,22 +38,23 @@ class Post {
         "likes": likes,
         "fish": fish,
         "bones": bones,
+        "fileType": fileType,
       };
 
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return Post(
-      description: snapshot['description'],
-      uid: snapshot['uid'],
-      username: snapshot['username'],
-      postId: snapshot['postId'],
-      datePublished: snapshot['datePublished'],
-      postUrl: snapshot['postUrl'],
-      profImage: snapshot['profImage'],
-      likes: snapshot['likes'],
-      fish: snapshot['fish'],
-      bones: snapshot['bones'],
-    );
+        description: snapshot['description'],
+        uid: snapshot['uid'],
+        username: snapshot['username'],
+        postId: snapshot['postId'],
+        datePublished: snapshot['datePublished'],
+        postUrl: snapshot['postUrl'],
+        profImage: snapshot['profImage'],
+        likes: snapshot['likes'],
+        fish: snapshot['fish'],
+        bones: snapshot['bones'],
+        fileType: snapshot['fileType']);
   }
 }

@@ -1,8 +1,12 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mime/mime.dart';
 import 'package:pets_social/resources/storage_methods.dart';
+import 'package:pets_social/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 import '../models/post.dart';
+import 'package:path/path.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -14,11 +18,24 @@ class FirestoreMethods {
     String uid,
     String username,
     String profImage,
+    String fileType,
   ) async {
     String res = "An error occurred";
     try {
       String photoUrl =
           await StorageMethods().uploadImageToStorage('posts', file, true);
+
+      // var mime = lookupMimeType('', headerBytes: file);
+      // var extension = extensionFromMime(mime ?? '');
+      // print(extension);
+
+      // var path = File.fromRawPath(file);
+      var mime = lookupMimeType('', headerBytes: file);
+      var extension = extensionFromMime(mime ?? '');
+
+      // File filetwo = new File(file.toString());
+      // String basename = filetwo.path;
+      // #filetwo.ext;
 
       String postId = const Uuid().v1(); //v1 creates unique id based on time
       Post post = Post(
@@ -32,6 +49,7 @@ class FirestoreMethods {
         likes: [],
         fish: [],
         bones: [],
+        fileType: fileType,
       );
 
       _firestore.collection('posts').doc(postId).set(
