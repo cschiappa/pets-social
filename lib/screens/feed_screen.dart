@@ -41,15 +41,70 @@ class _FeedScreenState extends State<FeedScreen> {
     final User? user = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
+      drawer: Drawer(
+        backgroundColor: mobileBackgroundColor,
+        width: 280,
+        child: ListView(children: [
+          Container(
+            height: 73,
+            child: DrawerHeader(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20.0),
+                ),
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 157, 110, 157), // Start color
+                    Color.fromARGB(255, 240, 177, 136), // End color
+                  ],
+                ),
+              ),
+              child: Image.asset(
+                'assets/logo.png',
+                color: primaryColor,
+                scale: 6.5,
+                alignment: Alignment.topCenter,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2)),
+              child: const CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(
+                    'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg'),
+              ),
+            ),
+            title: Text(
+              'profile',
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
+        ]),
+      ),
       appBar: width > webScreenSize
           ? null
           : AppBar(
+              leading: Builder(builder: (context) {
+                return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(
+                    Icons.groups,
+                  ),
+                );
+              }),
               backgroundColor: mobileBackgroundColor,
               centerTitle: true,
               title: Image.asset(
                 'assets/logo.png',
                 color: primaryColor,
-                height: 32,
+                alignment: Alignment.topCenter,
+                scale: 6.5,
               ),
               actions: [
                 IconButton(
@@ -59,7 +114,8 @@ class _FeedScreenState extends State<FeedScreen> {
                     ));
                   },
                   icon: const Icon(
-                    Icons.messenger_outline,
+                    Icons.forum,
+                    size: 20,
                   ),
                 ),
               ],

@@ -5,11 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/models/user.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/screens/feed_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -146,6 +148,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void clearImage() {
     setState(() {
       _file = null;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const FeedScreen(),
+        ),
+      );
     });
   }
 
@@ -155,10 +162,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
     _descriptionController.dispose();
   }
 
+  Future<void> thumbnailMaker(videofile) async {
+    final thumbnailVideo = await VideoThumbnail.thumbnailData(
+      video: videofile.path,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 128,
+      quality: 25,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final User? user = Provider.of<UserProvider>(context).getUser;
-    final videoUri = Uri.parse(_file.toString());
 
     return _file == null
         ? Center(
@@ -237,7 +252,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           //         16 / 9, // Adjust the aspect ratio as needed
                           //     child: VideoPlayerWidget(videoUrl: videoUri),
                           //   ),
-                          : Text('video thumbnail')),
+                          : Text('thumbnail')),
                   const Divider(),
                 ],
               )

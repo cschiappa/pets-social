@@ -146,6 +146,7 @@ class _PostCardExpState extends State<PostCardExp> {
               ),
               //POST HEADER
               Container(
+                color: Color.fromARGB(100, 0, 0, 0),
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                 child: Row(
@@ -271,9 +272,48 @@ class _PostCardExpState extends State<PostCardExp> {
                                       widget.snap['uid'] == user!.uid
                                           ? InkWell(
                                               onTap: () async {
-                                                FirestoreMethods().deletePost(
-                                                    widget.snap['postId']);
                                                 Navigator.of(context).pop();
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          'Are you sure you want to delete this post?'),
+                                                      content: Text(
+                                                          'If you proceed, this post will be permanently deleted.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            FirestoreMethods()
+                                                                .deletePost(widget
+                                                                        .snap[
+                                                                    'postId']);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Text('Delete',
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .red)),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Text(
+                                                            'Cancel',
+                                                            style: TextStyle(
+                                                                fontSize: 16),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                );
                                               },
                                               child: Container(
                                                 padding:
