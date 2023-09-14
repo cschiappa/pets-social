@@ -71,11 +71,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 child: const Text('Take a Photo'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(
+                  Uint8List file;
+                  String fileType;
+                  (file, fileType) = await pickImage(
                     ImageSource.camera,
                   );
                   setState(() {
                     _file = file;
+                    _fileType = fileType;
                   });
                 },
               ),
@@ -87,6 +90,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Uint8List file;
                   String fileType;
                   (file, fileType) = await pickVideo(
+                    ImageSource.camera,
+                  );
+                  setState(() {
+                    _file = file;
+                    _fileType = fileType;
+                  });
+                },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Choose Image from Gallery'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  Uint8List file;
+                  String fileType;
+                  (file, fileType) = await pickImage(
                     ImageSource.gallery,
                   );
                   setState(() {
@@ -97,14 +116,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Choose from gallery'),
+                child: const Text('Choose Video from Gallery'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(
+                  Uint8List file;
+                  String fileType;
+                  (file, fileType) = await pickVideo(
                     ImageSource.gallery,
                   );
                   setState(() {
                     _file = file;
+                    _fileType = fileType;
                   });
                 },
               ),

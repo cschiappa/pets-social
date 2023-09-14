@@ -9,7 +9,10 @@ pickImage(ImageSource source) async {
   XFile? _file = await _imagePicker.pickImage(source: source);
   //if user doesnt pick an image
   if (_file != null) {
-    return await _file.readAsBytes();
+    var filePath = _file.path;
+    final fileExtension = p.extension(filePath);
+    final fileBytes = await _file.readAsBytes();
+    return (fileBytes, fileExtension);
   }
   print('No image selected');
 }
