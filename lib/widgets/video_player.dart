@@ -1,5 +1,5 @@
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final Uri videoUrl;
@@ -10,19 +10,20 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
+  late CachedVideoPlayerController _controller;
   late bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(widget.videoUrl)
-      ..initialize().then((_) {
-        setState(() {
-          _controller.play();
-          _isPlaying = true;
-        });
-      });
+    _controller =
+        CachedVideoPlayerController.network(widget.videoUrl.toString())
+          ..initialize().then((_) {
+            setState(() {
+              _controller.play();
+              _isPlaying = true;
+            });
+          });
   }
 
   void _togglePlayPause() {
@@ -41,7 +42,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return Stack(children: [
       AspectRatio(
         aspectRatio: _controller.value.aspectRatio,
-        child: VideoPlayer(_controller),
+        child: CachedVideoPlayer(_controller),
       ),
       Positioned(
         bottom: 8,

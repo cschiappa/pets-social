@@ -10,7 +10,6 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -193,8 +192,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
               title: const Text('Post to'),
               actions: [
                 TextButton(
-                    onPressed: () =>
-                        postImage(user!.uid, user.username, user.photoUrl),
+                    onPressed: () => postImage(
+                        user!.uid, user.username, user.photoUrl ?? ""),
                     child: const Text('Post',
                         style: TextStyle(
                           color: pinkColor,
@@ -217,9 +216,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      user!.photoUrl,
-                    ),
+                    backgroundImage: (user != null && user.photoUrl != null)
+                        ? NetworkImage(user.photoUrl!)
+                        : AssetImage('assets/default_pic')
+                            as ImageProvider<Object>,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.45,

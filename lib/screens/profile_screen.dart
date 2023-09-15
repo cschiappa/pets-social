@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,9 @@ import 'package:pets_social/screens/initial_screen/login_screen.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../widgets/follow_button.dart';
+import '../widgets/video_player.dart';
 import 'open_post_screen.dart';
 import 'package:pets_social/screens/settings/settings.dart';
 
@@ -302,6 +306,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           itemBuilder: (context, index) {
                             DocumentSnapshot snap =
                                 (snapshot.data! as dynamic).docs[index];
+
+                            Widget mediaWidget;
+                            final String contentType =
+                                getContentTypeFromUrl(snap['fileType']);
+
+                            if (contentType == 'video') {
+                              mediaWidget = Text('video');
+                              // final uint8list = await VideoThumbnail.thumbnailData(
+                              //   video: snap['postUrl'].path,
+                              //   imageFormat: ImageFormat.JPEG,
+                              //   maxWidth: 128,
+                              //   quality: 25,
+                              // );
+                            } else {
+                              // If it's not a video, return an image.
+                              mediaWidget = ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image(
+                                  image: NetworkImage(snap['postUrl']),
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            }
                             return GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(
@@ -314,15 +341,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 );
                               },
-                              child: Container(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image(
-                                    image: NetworkImage(snap['postUrl']),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
+                              child: mediaWidget,
+                              // child: ClipRRect(
+                              //   borderRadius: BorderRadius.circular(10.0),
+                              //   child: Image(
+                              //     image: NetworkImage(snap['postUrl']),
+                              //     fit: BoxFit.cover,
+                              //   ),
+                              // ),
                             );
                           },
                         );

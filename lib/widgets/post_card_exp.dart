@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ import 'package:pets_social/widgets/save_post_animation.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:video_player/video_player.dart';
 
 import 'bone_animation.dart';
 import 'fish_animation.dart';
@@ -34,7 +34,7 @@ class PostCardExp extends StatefulWidget {
 }
 
 class _PostCardExpState extends State<PostCardExp> {
-  late VideoPlayerController _videoController;
+  late CachedVideoPlayerController _videoController;
   bool isLikeAnimating = false;
   int commentLen = 0;
   final CarouselController _controller = CarouselController();
@@ -43,7 +43,7 @@ class _PostCardExpState extends State<PostCardExp> {
   void initState() {
     super.initState();
     final videoUri = Uri.parse(widget.snap['postUrl']);
-    _videoController = VideoPlayerController.networkUrl(videoUri)
+    _videoController = CachedVideoPlayerController.network(videoUri.toString())
       ..initialize().then((_) {
         setState(() {});
       });
@@ -77,6 +77,7 @@ class _PostCardExpState extends State<PostCardExp> {
     final User? user = Provider.of<UserProvider>(context).getUser;
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
     return Container(
+      // height: 500,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         gradient: const LinearGradient(
@@ -115,10 +116,7 @@ class _PostCardExpState extends State<PostCardExp> {
                             imageUrl: widget.snap['postUrl'],
                           );
                         } else if (contentType == 'video') {
-                          return AspectRatio(
-                            aspectRatio: _videoController.value.aspectRatio,
-                            child: VideoPlayerWidget(videoUrl: videoUri),
-                          );
+                          return VideoPlayerWidget(videoUrl: videoUri);
                         } else {
                           return SizedBox.shrink();
                         }
@@ -221,7 +219,8 @@ class _PostCardExpState extends State<PostCardExp> {
                           InkWell(
                             onTap: () async {
                               final path = widget.snap['postUrl'];
-                              await Share.share('$path');
+                              await Share.share('$path',
+                                  subject: 'Pets Social Link');
                             },
                             child: const Icon(
                               Icons.share,

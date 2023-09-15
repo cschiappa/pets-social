@@ -21,7 +21,8 @@ pickImage(ImageSource source) async {
 pickVideo(ImageSource source) async {
   final ImagePicker _videoPicker = ImagePicker();
 
-  XFile? _file = await _videoPicker.pickVideo(source: source);
+  XFile? _file = await _videoPicker.pickVideo(
+      source: source, maxDuration: Duration(minutes: 10));
   //if user doesnt pick an image
   if (_file != null) {
     var filePath = _file.path;

@@ -42,22 +42,25 @@ class AuthMethods {
     required String email,
     required String password,
     required String username,
-    required String bio,
-    required Uint8List file,
+    String? bio,
+    Uint8List? file,
+    String? photoUrl,
   }) async {
     String res = "Some error occurred";
     try {
       if (isPasswordValid(password)) {
-        if (email.isNotEmpty &&
-            password.isNotEmpty &&
-            username.isNotEmpty &&
-            bio.isNotEmpty) {
+        if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
           //register user
           UserCredential cred = await _auth.createUserWithEmailAndPassword(
               email: email, password: password);
 
-          String photoUrl = await StorageMethods()
-              .uploadImageToStorage('profilePics', file, false);
+          if (file != null) {
+            photoUrl = await StorageMethods()
+                .uploadImageToStorage('profilePics', file, false);
+          } else {
+            photoUrl =
+                'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
+          }
 
           //add user to database
 
@@ -65,8 +68,9 @@ class AuthMethods {
             username: username,
             uid: cred.user!.uid,
             email: email,
-            bio: bio,
-            photoUrl: photoUrl,
+            bio: bio ?? "",
+            photoUrl: photoUrl ??
+                'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
             following: [],
             followers: [],
             savedPost: [],

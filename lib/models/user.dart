@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class User {
   final String email;
   final String uid;
-  final String photoUrl;
+  final String? photoUrl;
   final String username;
-  final String bio;
+  final String? bio;
   final List followers;
   final List following;
   final List savedPost;
@@ -14,9 +14,9 @@ class User {
   const User(
       {required this.email,
       required this.uid,
-      required this.photoUrl,
+      this.photoUrl,
       required this.username,
-      required this.bio,
+      this.bio,
       required this.followers,
       required this.following,
       required this.savedPost,
@@ -26,8 +26,9 @@ class User {
         "username": username,
         "uid": uid,
         "email": email,
-        "photoUrl": photoUrl,
-        "bio": bio,
+        "photoUrl": photoUrl ??
+            'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+        "bio": bio ?? "",
         "followers": followers,
         "following": following,
         "savedPost": savedPost,

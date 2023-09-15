@@ -68,7 +68,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(user!.photoUrl),
+                backgroundImage: (user != null && user.photoUrl != null)
+                    ? NetworkImage(user.photoUrl!)
+                    : AssetImage('assets/default_pic') as ImageProvider<Object>,
                 radius: 18,
               ),
               Expanded(
@@ -77,7 +79,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: TextField(
                     controller: _commentController,
                     decoration: InputDecoration(
-                      hintText: 'Comment as ${user.username}',
+                      hintText: 'Comment as ${user!.username}',
                       border: InputBorder.none,
                     ),
                   ),
@@ -90,7 +92,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       _commentController.text,
                       user.uid,
                       user.username,
-                      user.photoUrl,
+                      user.photoUrl ?? "",
                       widget.snap['likes']);
                   //clear comment box after sending
                   setState(() {
