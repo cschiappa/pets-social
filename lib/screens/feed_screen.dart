@@ -130,11 +130,9 @@ class _FeedScreenState extends State<FeedScreen> {
           backgroundColor: Colors.black,
           child: user!.following.isNotEmpty
               ? StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('posts')
-                      .where('uid', whereIn: [...user.following, user.uid])
-                      // .where('uid', whereNotIn: user.blockedUsers)
-                      .snapshots(),
+                  stream: FirebaseFirestore.instance.collection('posts').where(
+                      'uid',
+                      whereIn: [...user.following, user.uid]).snapshots(),
                   builder: (context,
                       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
                           snapshot) {
@@ -145,16 +143,22 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                       );
                     }
+
+                    // Filter the posts to exclude those from blocked users.
+                    final filteredPosts = snapshot.data!.docs.where((doc) {
+                      return !user.blockedUsers.contains(doc['uid']);
+                    }).toList();
+
                     // POST CARD
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      itemCount: filteredPosts.length,
                       itemBuilder: (context, index) => Container(
                         margin: EdgeInsets.symmetric(
                           horizontal: width > webScreenSize ? width * 0.3 : 0,
                           vertical: width > webScreenSize ? 15 : 0,
                         ),
                         child: PostCardExp(
-                          snap: snapshot.data!.docs[index].data(),
+                          snap: filteredPosts[index].data(),
                         ),
                       ),
                     );

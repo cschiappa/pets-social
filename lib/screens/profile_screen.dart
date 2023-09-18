@@ -9,9 +9,7 @@ import 'package:pets_social/screens/initial_screen/login_screen.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 import '../widgets/follow_button.dart';
-import '../widgets/video_player.dart';
 import 'open_post_screen.dart';
 import 'package:pets_social/screens/settings/settings.dart';
 

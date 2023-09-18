@@ -10,10 +10,12 @@ import '../../utils/colors.dart';
 class ChatPage extends StatefulWidget {
   final String receiverUserEmail;
   final String receiverUserID;
+  final String receiverUsername;
   const ChatPage(
       {super.key,
       required this.receiverUserEmail,
-      required this.receiverUserID});
+      required this.receiverUserID,
+      required this.receiverUsername});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -43,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverUserID),
+        title: Text(widget.receiverUsername),
       ),
       body: Column(
         children: [
@@ -106,10 +108,6 @@ class _ChatPageState extends State<ChatPage> {
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
             children: [
-              Text(data['senderId']),
-              const SizedBox(
-                height: 5,
-              ),
               ChatBubble(message: data['message']),
             ]),
       ),

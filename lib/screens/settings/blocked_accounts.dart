@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -16,8 +15,6 @@ class BlockedAccountsPage extends StatefulWidget {
 }
 
 class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

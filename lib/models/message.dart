@@ -6,6 +6,8 @@ class Message {
   final String receiverId;
   final String message;
   final Timestamp timestamp;
+  final String senderUsername;
+  final String receiverUsername;
 
   Message({
     required this.senderId,
@@ -13,6 +15,8 @@ class Message {
     required this.receiverId,
     required this.timestamp,
     required this.message,
+    required this.senderUsername,
+    required this.receiverUsername,
   });
 
   //convert to a map
@@ -23,6 +27,21 @@ class Message {
       'receiverId': receiverId,
       'message': message,
       'timestamp': timestamp,
+      'senderUsername': senderUsername,
+      'receiverUsername': receiverUsername,
     };
+  }
+
+  static Message fromSnap(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+
+    return Message(
+        senderId: snapshot['senderId'],
+        senderEmail: snapshot['senderEmail'],
+        receiverId: snapshot['receiverId'],
+        timestamp: snapshot['timestamp'],
+        message: snapshot['message'],
+        senderUsername: snapshot['senderUsername'],
+        receiverUsername: snapshot['receiverUsername']);
   }
 }

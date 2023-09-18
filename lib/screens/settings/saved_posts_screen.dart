@@ -1,5 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/post.dart';
+import '../../models/user.dart' as model;
+import '../../providers/user_provider.dart';
 import '../../utils/colors.dart';
 import '../open_post_screen.dart';
 
@@ -13,6 +18,8 @@ class SavedPosts extends StatefulWidget {
 class _SavedPostsState extends State<SavedPosts> {
   @override
   Widget build(BuildContext context) {
+    final model.User? user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
@@ -23,58 +30,63 @@ class _SavedPostsState extends State<SavedPosts> {
           ],
         ),
       ),
-      body: FutureBuilder(
-        future: FirebaseFirestore.instance.collection('users').doc('uid').get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: pinkColor,
-              ),
-            );
-          }
-
-          var savedPostIds = snapshot.data!.get('savedPost') ?? [];
-
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(
+      body: user!.savedPost.isEmpty
+          ? const Center(
               child: Text('No posts available.'),
-            );
-          }
-
-          return GridView.builder(
-            shrinkWrap: true,
-            itemCount: savedPostIds.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 1.5,
-                childAspectRatio: 1),
-            itemBuilder: (context, index) {
-              DocumentSnapshot snap = savedPostIds[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => OpenPost(
-                        postId: snap['postId'],
-                        uid: snap['uid'],
-                        username: snap['username'],
-                      ),
+            )
+          : FutureBuilder(
+              future: FirebaseFirestore.instance
+                  .collection('posts')
+                  .where('postId', whereIn: user.savedPost)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: pinkColor,
                     ),
                   );
-                },
-                child: Container(
-                  child: Image(
-                    image: NetworkImage(snap['postUrl']),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+                }
+
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: Text('No posts available.'),
+                  );
+                }
+
+                return GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.docs.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 1.5,
+                      childAspectRatio: 1),
+                  itemBuilder: (context, index) {
+                    Post post = Post.fromSnap(snapshot.data!.docs[index]);
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => OpenPost(
+                              postId: post.postId,
+                              uid: post.uid,
+                              username: post.username,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        child: Image(
+                          image: NetworkImage(post.postUrl),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }

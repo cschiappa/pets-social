@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
-import 'package:provider/provider.dart';
-
-import '../../models/user.dart';
-import '../../utils/utils.dart';
-import '../initial_screen/login_screen.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key});

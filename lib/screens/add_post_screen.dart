@@ -5,10 +5,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/models/user.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/responsive/mobile_screen_layout.dart';
 import 'package:pets_social/screens/feed_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
-import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -47,8 +47,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
         setState(() {
           _isLoading = false;
         });
-        showSnackBar('Posted!', context);
+        // showSnackBar('Posted!', context);
         clearImage();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const MobileScreenLayout(),
+          ),
+        );
       } else {
         setState(() {
           _isLoading = false;
@@ -147,11 +152,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void clearImage() {
     setState(() {
       _file = null;
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const FeedScreen(),
-        ),
-      );
     });
   }
 

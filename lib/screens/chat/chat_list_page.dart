@@ -54,11 +54,11 @@ class _ChatListState extends State<ChatList> {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     //display all users except current user
-    if (_auth.currentUser!.email != data['email']) {
+    if (_auth.currentUser!.uid != data['uid']) {
       return ListTile(
         leading: CircleAvatar(
           radius: 15,
-          backgroundImage: NetworkImage(data['photoUrl']),
+          backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
         ),
         title: Text(data['username']),
         onTap: () {
@@ -67,8 +67,10 @@ class _ChatListState extends State<ChatList> {
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                  receiverUserEmail: data['email'],
-                  receiverUserID: data['uid']),
+                receiverUserEmail: data['email'],
+                receiverUserID: data['uid'],
+                receiverUsername: data['username'],
+              ),
             ),
           );
         },
