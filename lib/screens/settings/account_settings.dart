@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pets_social/screens/settings/profile_settings.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
@@ -41,6 +42,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           ListTile(
             leading: Icon(Icons.groups),
             title: Text('Profiles'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProfileSettings(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.info),

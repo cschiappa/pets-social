@@ -31,8 +31,6 @@ class _ChatListState extends State<ChatList> {
 
   //build a list of users except for the one logged in
   Widget _buildUserList() {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-
     return StreamBuilder<QuerySnapshot>(
       stream:
           FirebaseFirestore.instance.collectionGroup('profiles').snapshots(),
@@ -59,9 +57,10 @@ class _ChatListState extends State<ChatList> {
   //build individual user list items
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
 
     //display all users except current user
-    if (_auth.currentUser!.uid != data['profileUid']) {
+    if (profile!.profileUid != data['profileUid']) {
       return ListTile(
         leading: CircleAvatar(
           radius: 15,

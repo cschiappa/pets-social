@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/resources/storage_methods.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/post.dart';
 import '../models/profile.dart';
+import '../providers/user_provider.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -334,5 +336,29 @@ class FirestoreMethods {
       res = err.toString();
     }
     return res;
+  }
+
+  //DELETE PROFILE
+  Future<void> deleteProfile(profileUid, context) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (profileUid != null) {
+      try {
+        //Delete the user's profile from Firestore collection
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .collection('profiles')
+            .doc(profileUid)
+            .delete();
+      } catch (e) {
+        // Handle any errors that may occur during deletion
+        print('Error deleting account: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('There was an error deleting the account.'),
+          ),
+        );
+      }
+    }
   }
 }
