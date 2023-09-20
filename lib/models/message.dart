@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Message {
+class ModelMessage {
   final String senderId;
   final String senderEmail;
   final String receiverId;
@@ -9,7 +9,7 @@ class Message {
   final String senderUsername;
   final String receiverUsername;
 
-  Message({
+  ModelMessage({
     required this.senderId,
     required this.senderEmail,
     required this.receiverId,
@@ -32,10 +32,10 @@ class Message {
     };
   }
 
-  static Message fromSnap(DocumentSnapshot snap) {
+  static ModelMessage fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
-    return Message(
+    return ModelMessage(
         senderId: snapshot['senderId'],
         senderEmail: snapshot['senderEmail'],
         receiverId: snapshot['receiverId'],

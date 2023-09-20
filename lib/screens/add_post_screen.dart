@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pets_social/models/user.dart';
+import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
@@ -27,7 +27,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   bool _isLoading = false;
 
   void postImage(
-    String uid,
+    String profileUid,
     String username,
     String profImage,
   ) async {
@@ -38,7 +38,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       String res = await FirestoreMethods().uploadPost(
           _descriptionController.text,
           _file!,
-          uid,
+          profileUid,
           username,
           profImage,
           _fileType!);
@@ -47,7 +47,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         setState(() {
           _isLoading = false;
         });
-        // showSnackBar('Posted!', context);
+        showSnackBar('Posted!', context);
         clearImage();
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -172,7 +172,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
 
     return _file == null
         ? Center(
@@ -192,8 +192,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
               title: const Text('Post to'),
               actions: [
                 TextButton(
-                    onPressed: () => postImage(
-                        user!.uid, user.username, user.photoUrl ?? ""),
+                    onPressed: () => postImage(profile!.profileUid,
+                        profile.username, profile.photoUrl ?? ""),
                     child: const Text('Post',
                         style: TextStyle(
                           color: pinkColor,
@@ -216,10 +216,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    backgroundImage: (user != null && user.photoUrl != null)
-                        ? NetworkImage(user.photoUrl!)
-                        : AssetImage('assets/default_pic')
-                            as ImageProvider<Object>,
+                    backgroundImage:
+                        (profile != null && profile.photoUrl != null)
+                            ? NetworkImage(profile.photoUrl!)
+                            : AssetImage('assets/default_pic')
+                                as ImageProvider<Object>,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.45,

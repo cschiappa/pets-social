@@ -5,7 +5,7 @@ import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user.dart';
+import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../widgets/comment_card.dart';
 
@@ -28,7 +28,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
 
     return Scaffold(
       appBar: AppBar(
@@ -68,8 +68,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: (user != null && user.photoUrl != null)
-                    ? NetworkImage(user.photoUrl!)
+                backgroundImage: (profile != null && profile.photoUrl != null)
+                    ? NetworkImage(profile.photoUrl!)
                     : AssetImage('assets/default_pic') as ImageProvider<Object>,
                 radius: 18,
               ),
@@ -79,7 +79,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: TextField(
                     controller: _commentController,
                     decoration: InputDecoration(
-                      hintText: 'Comment as ${user!.username}',
+                      hintText: 'Comment as ${profile!.username}',
                       border: InputBorder.none,
                     ),
                   ),
@@ -90,9 +90,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   await FirestoreMethods().postComment(
                       widget.snap['postId'],
                       _commentController.text,
-                      user.uid,
-                      user.username,
-                      user.photoUrl ?? "",
+                      profile.profileUid,
+                      profile.username,
+                      profile.photoUrl ?? "",
                       widget.snap['likes']);
                   //clear comment box after sending
                   setState(() {

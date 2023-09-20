@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user.dart';
+import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../resources/firestore_methods.dart';
 import '../screens/profile_screen.dart';
@@ -20,17 +20,18 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   @override
   Widget build(BuildContext context) {
-    final User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       child: Row(children: [
         GestureDetector(
           onTap: () {
-            String uid = widget.snap['uid'];
+            String profileUid = widget.snap['profileUid'];
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfileScreen(uid: uid),
+                  builder: (context) => ProfileScreen(profileUid: profileUid),
                 ));
           },
           child: CircleAvatar(
@@ -50,11 +51,12 @@ class _CommentCardState extends State<CommentCard> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        String uid = widget.snap['uid'];
+                        String profileUid = widget.snap['profileUid'];
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(uid: uid),
+                              builder: (context) =>
+                                  ProfileScreen(profileUid: profileUid),
                             ));
                       },
                       child: RichText(
@@ -86,16 +88,19 @@ class _CommentCardState extends State<CommentCard> {
         ),
         LikeAnimation(
           isAnimating: widget.snap['likes'] != null &&
-              widget.snap['likes'].contains(user!.uid),
+              widget.snap['likes'].contains(profile!.profileUid),
           smallLike: true,
           child: InkWell(
             onTap: () async {
-              await FirestoreMethods().likeComment(widget.snap['postId'],
-                  widget.snap['commentId'], user!.uid, widget.snap['likes']);
+              await FirestoreMethods().likeComment(
+                  widget.snap['postId'],
+                  widget.snap['commentId'],
+                  profile!.profileUid,
+                  widget.snap['likes']);
             },
             child: Image.asset(
               (widget.snap['likes'] != null &&
-                      widget.snap['likes'].contains(user!.uid))
+                      widget.snap['likes'].contains(profile!.profileUid))
                   ? 'assets/like.png'
                   : 'assets/like_border.png',
               width: 14,

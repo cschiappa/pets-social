@@ -67,8 +67,8 @@ class _ChatPageState extends State<ChatPage> {
   //build message list
   Widget _buildMessageList() {
     return StreamBuilder(
-      stream: _chatService.getMessages(
-          widget.receiverUserID, _firebaseAuth.currentUser!.uid),
+      stream: _chatService.getMessages(widget.receiverUserID,
+          _firebaseAuth.currentUser!.uid), //THIS IS WRONG
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error${snapshot.error}');
@@ -94,7 +94,7 @@ class _ChatPageState extends State<ChatPage> {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
     //align messages to right or left
-    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
+    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid) //WRONG
         ? Alignment.centerRight
         : Alignment.centerLeft;
 
@@ -104,7 +104,7 @@ class _ChatPageState extends State<ChatPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
             crossAxisAlignment:
-                (data['senderId'] == _firebaseAuth.currentUser!.uid)
+                (data['senderId'] == _firebaseAuth.currentUser!.uid) //WRONG
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
             children: [

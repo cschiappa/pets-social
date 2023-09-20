@@ -2,20 +2,42 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/models/user.dart' as model;
+import 'package:pets_social/models/account.dart';
+import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/storage_methods.dart';
 import 'package:pets_social/screens/initial_screen/login_screen.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<model.User> getUserDetails() async {
+  Future<ModelProfile> getProfileDetails(String? profileUid) async {
     User currentUser = _auth.currentUser!;
+    DocumentSnapshot snap;
 
-    DocumentSnapshot snap =
-        await _firestore.collection('users').doc(currentUser.uid).get();
-    return model.User.fromSnap(snap);
+    if (profileUid != null) {
+      snap = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('profiles')
+          .doc(profileUid)
+          .get();
+    } else {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('profiles')
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        snap = querySnapshot.docs.first;
+      } else {
+        throw Exception('No profiles found.');
+      }
+    }
+    return ModelProfile.fromSnap(snap);
   }
 
   //Checks if password follows all the requirement
@@ -62,11 +84,14 @@ class AuthMethods {
                 'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
           }
 
-          //add user to database
+          ModelAccount account =
+              ModelAccount(email: email, uid: cred.user!.uid);
 
-          model.User user = model.User(
+          String profileUid =
+              const Uuid().v1(); //v1 creates unique id based on time
+          ModelProfile profile = ModelProfile(
             username: username,
-            uid: cred.user!.uid,
+            profileUid: profileUid,
             email: email,
             bio: bio ?? "",
             photoUrl: photoUrl ??
@@ -77,9 +102,26 @@ class AuthMethods {
             blockedUsers: [],
           );
 
-          await _firestore.collection('users').doc(cred.user!.uid).set(
-                user.toJson(),
-              );
+          final batch = _firestore.batch();
+          var accountCollection =
+              _firestore.collection('users').doc(cred.user!.uid);
+          batch.set(accountCollection, account.toJson());
+
+          var profileCollection = _firestore
+              .collection('users')
+              .doc(cred.user!.uid)
+              .collection('profiles')
+              .doc(profile.profileUid);
+
+          batch.set(profileCollection, profile.toJson());
+
+          await batch.commit();
+          //await _firestore.collection('users').doc(cred.user!.uid).set(
+          //user.toJson(),
+
+          // await _firestore.collection('users').doc(cred.user!.uid).collection('profiles').doc(profile.profileUid).set(
+          //       profile.toJson(),
+          //     );
           res = "success";
         }
       } else {

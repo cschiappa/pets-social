@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:pets_social/models/user.dart' as model;
+import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 
 class UserProvider with ChangeNotifier {
-  model.User? _user;
+  ModelProfile? _profile;
   final AuthMethods _authMethods = AuthMethods();
 
-  model.User? get getUser => _user;
+  ModelProfile? get getProfile => _profile;
 
-  Future<void> refreshUser() async {
-    model.User user = await _authMethods.getUserDetails();
-    _user = user;
+  Future<void> refreshProfile({String? profileUid}) async {
+    ModelProfile profile = await _authMethods
+        .getProfileDetails(profileUid ?? _profile?.profileUid);
+    _profile = profile;
     notifyListeners();
   }
 
-  // Method to unblock a user by their UID
-  void unblockUser(String uid) {
-    if (_user != null) {
-      _user!.blockedUsers.remove(uid);
+  // Method to unblock a profile by their UID
+  void unblockUser(String profileUid) {
+    if (_profile != null) {
+      _profile!.blockedUsers.remove(profileUid);
 
       notifyListeners();
     }

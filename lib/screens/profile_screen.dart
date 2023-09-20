@@ -9,14 +9,18 @@ import 'package:pets_social/screens/initial_screen/login_screen.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
+import 'package:provider/provider.dart';
+import '../models/profile.dart';
+import '../providers/user_provider.dart';
 import '../widgets/follow_button.dart';
 import 'open_post_screen.dart';
 import 'package:pets_social/screens/settings/settings.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String? uid;
+  final String? profileUid;
   final snap;
-  const ProfileScreen({super.key, this.uid, this.snap});
+
+  const ProfileScreen({super.key, this.profileUid, this.snap});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -36,7 +40,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    userId = widget.uid ?? FirebaseAuth.instance.currentUser!.uid;
+    final ModelProfile? profile =
+        Provider.of<UserProvider>(context, listen: false).getProfile;
+    userId = widget.profileUid ?? profile!.profileUid;
     getData();
   }
 
@@ -47,13 +53,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       var userSnap = await FirebaseFirestore.instance
           .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('profiles')
           .doc(userId)
           .get();
 
       //GET POST LENGTH
       var postSnap = await FirebaseFirestore.instance
           .collection('posts')
-          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('profileUid',
+              isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get();
 
       postLen = postSnap.docs.length;
@@ -81,6 +90,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+
     return isLoading
         ? const Center(
             child: CircularProgressIndicator(
@@ -217,7 +228,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              FirebaseAuth.instance.currentUser!.uid == userId
+                              profile!.profileUid == userId
                                   ? FollowButton(
                                       text: 'Sign Out',
                                       backgroundColor: mobileBackgroundColor,
@@ -241,9 +252,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           borderColor: Colors.grey,
                                           function: () async {
                                             await FirestoreMethods().followUser(
-                                              FirebaseAuth
-                                                  .instance.currentUser!.uid,
-                                              userData['uid'],
+                                              profile.profileUid,
+                                              userData['profileUid'],
                                             );
                                             setState(() {
                                               isFollowing = false;
@@ -260,9 +270,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               242, 102, 139, 1),
                                           function: () async {
                                             await FirestoreMethods().followUser(
-                                              FirebaseAuth
-                                                  .instance.currentUser!.uid,
-                                              userData['uid'],
+                                              profile.profileUid,
+                                              userData['profileUid'],
                                             );
                                             setState(
                                               () {
@@ -281,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     FutureBuilder(
                       future: FirebaseFirestore.instance
                           .collection('posts')
-                          .where('uid', isEqualTo: userId)
+                          .where('profileUid', isEqualTo: userId)
                           .get(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -333,7 +342,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   MaterialPageRoute(
                                     builder: (context) => OpenPost(
                                       postId: snap['postId'],
-                                      uid: snap['uid'],
+                                      profileUid: snap['profileUid'],
                                       username: snap['username'],
                                     ),
                                   ),

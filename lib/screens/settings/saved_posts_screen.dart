@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/post.dart';
-import '../../models/user.dart' as model;
+import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/colors.dart';
 import '../open_post_screen.dart';
@@ -18,7 +18,7 @@ class SavedPosts extends StatefulWidget {
 class _SavedPostsState extends State<SavedPosts> {
   @override
   Widget build(BuildContext context) {
-    final model.User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,14 +30,14 @@ class _SavedPostsState extends State<SavedPosts> {
           ],
         ),
       ),
-      body: user!.savedPost.isEmpty
+      body: profile!.savedPost.isEmpty
           ? const Center(
               child: Text('No posts available.'),
             )
           : FutureBuilder(
               future: FirebaseFirestore.instance
                   .collection('posts')
-                  .where('postId', whereIn: user.savedPost)
+                  .where('postId', whereIn: profile.savedPost)
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -63,14 +63,15 @@ class _SavedPostsState extends State<SavedPosts> {
                       mainAxisSpacing: 1.5,
                       childAspectRatio: 1),
                   itemBuilder: (context, index) {
-                    Post post = Post.fromSnap(snapshot.data!.docs[index]);
+                    ModelPost post =
+                        ModelPost.fromSnap(snapshot.data!.docs[index]);
                     return GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => OpenPost(
                               postId: post.postId,
-                              uid: post.uid,
+                              profileUid: post.profileUid,
                               username: post.username,
                             ),
                           ),

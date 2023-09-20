@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/screens/chat/chat_page.dart';
 import 'package:pets_social/utils/colors.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/profile.dart';
+import '../../providers/user_provider.dart';
 
 class ChatList extends StatefulWidget {
   const ChatList({super.key});
@@ -27,8 +31,11 @@ class _ChatListState extends State<ChatList> {
 
   //build a list of users except for the one logged in
   Widget _buildUserList() {
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').snapshots(),
+      stream:
+          FirebaseFirestore.instance.collectionGroup('profiles').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('error');
@@ -54,7 +61,7 @@ class _ChatListState extends State<ChatList> {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     //display all users except current user
-    if (_auth.currentUser!.uid != data['uid']) {
+    if (_auth.currentUser!.uid != data['profileUid']) {
       return ListTile(
         leading: CircleAvatar(
           radius: 15,
@@ -68,7 +75,7 @@ class _ChatListState extends State<ChatList> {
             MaterialPageRoute(
               builder: (context) => ChatPage(
                 receiverUserEmail: data['email'],
-                receiverUserID: data['uid'],
+                receiverUserID: data['profileUid'],
                 receiverUsername: data['username'],
               ),
             ),

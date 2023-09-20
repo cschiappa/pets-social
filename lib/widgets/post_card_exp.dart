@@ -4,7 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pets_social/models/user.dart';
+import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/comments_screen.dart';
@@ -69,7 +69,7 @@ class _PostCardExpState extends State<PostCardExp> {
   @override
   Widget build(BuildContext context) {
     final videoUri = Uri.parse(widget.snap['postUrl']);
-    final User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
     return Container(
       // height: 500,
@@ -94,8 +94,8 @@ class _PostCardExpState extends State<PostCardExp> {
               GestureDetector(
                 //double tap for like
                 onDoubleTap: () async {
-                  await FirestoreMethods().likePost(
-                      widget.snap['postId'], user!.uid, widget.snap['likes']);
+                  await FirestoreMethods().likePost(widget.snap['postId'],
+                      profile!.profileUid, widget.snap['likes']);
                   setState(() {
                     isLikeAnimating = true;
                   });
@@ -146,11 +146,12 @@ class _PostCardExpState extends State<PostCardExp> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        String uid = widget.snap['uid'];
+                        String profileUid = widget.snap['profileUid'];
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileScreen(uid: uid),
+                            builder: (context) =>
+                                ProfileScreen(profileUid: profileUid),
                           ),
                         );
                       },
@@ -168,12 +169,12 @@ class _PostCardExpState extends State<PostCardExp> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                String uid = widget.snap['uid'];
+                                String profileUid = widget.snap['profileUid'];
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ProfileScreen(uid: uid),
+                                        ProfileScreen(profileUid: profileUid),
                                   ),
                                 );
                               },
@@ -225,26 +226,28 @@ class _PostCardExpState extends State<PostCardExp> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: SavePostAnimation(
-                              isAnimating: user?.savedPost != null &&
-                                  user!.savedPost
+                              isAnimating: profile?.savedPost != null &&
+                                  profile!.savedPost
                                       .contains(widget.snap['postId']),
                               smallLike: true,
                               child: InkWell(
                                 onTap: () async {
                                   await FirestoreMethods()
-                                      .savePost(widget.snap['postId'],
-                                          user!.uid, user.savedPost)
+                                      .savePost(
+                                          widget.snap['postId'],
+                                          profile!.profileUid,
+                                          profile.savedPost)
                                       .then((_) {
                                     setState(() {
                                       Provider.of<UserProvider>(context,
                                               listen: false)
-                                          .refreshUser();
+                                          .refreshProfile();
                                     });
                                   });
                                 },
                                 child: Icon(
-                                  (user?.savedPost != null &&
-                                          user!.savedPost
+                                  (profile?.savedPost != null &&
+                                          profile!.savedPost
                                               .contains(widget.snap['postId']))
                                       ? Icons.bookmark
                                       : Icons.bookmark_border,
@@ -263,7 +266,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                         vertical: 16),
                                     shrinkWrap: true,
                                     children: [
-                                      widget.snap['uid'] == user!.uid
+                                      widget.snap['profileUid'] ==
+                                              profile!.profileUid
                                           ? InkWell(
                                               onTap: () async {
                                                 Navigator.of(context).pop();
@@ -321,8 +325,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                               onTap: () async {
                                                 Navigator.pop(context);
                                                 FirestoreMethods().blockUser(
-                                                    user.uid,
-                                                    widget.snap['uid']);
+                                                    profile.profileUid,
+                                                    widget.snap['profileUid']);
                                               },
                                               child: Container(
                                                 padding:
@@ -385,19 +389,20 @@ class _PostCardExpState extends State<PostCardExp> {
                               // FISH
                               FishAnimation(
                                 isAnimating: widget.snap['fish'] != null &&
-                                    widget.snap['fish'].contains(user!.uid),
+                                    widget.snap['fish']
+                                        .contains(profile!.profileUid),
                                 smallLike: true,
                                 child: InkWell(
                                   onTap: () async {
                                     await FirestoreMethods().giveFishToPost(
                                         widget.snap['postId'],
-                                        user!.uid,
+                                        profile!.profileUid,
                                         widget.snap['fish']);
                                   },
                                   child: Image.asset(
                                     (widget.snap['fish'] != null &&
                                             widget.snap['fish']
-                                                .contains(user!.uid))
+                                                .contains(profile!.profileUid))
                                         ? 'assets/fish.png'
                                         : 'assets/fish_border.png',
                                     width: 100,
@@ -408,19 +413,20 @@ class _PostCardExpState extends State<PostCardExp> {
                               //LIKES
                               LikeAnimation(
                                 isAnimating: widget.snap['likes'] != null &&
-                                    widget.snap['likes'].contains(user!.uid),
+                                    widget.snap['likes']
+                                        .contains(profile!.profileUid),
                                 smallLike: true,
                                 child: InkWell(
                                   onTap: () async {
                                     await FirestoreMethods().likePost(
                                         widget.snap['postId'],
-                                        user!.uid,
+                                        profile!.profileUid,
                                         widget.snap['likes']);
                                   },
                                   child: Image.asset(
                                     (widget.snap['likes'] != null &&
                                             widget.snap['likes']
-                                                .contains(user!.uid))
+                                                .contains(profile!.profileUid))
                                         ? 'assets/like.png'
                                         : 'assets/like_border.png',
                                     width: 100,
@@ -431,19 +437,20 @@ class _PostCardExpState extends State<PostCardExp> {
                               //BONES
                               BoneAnimation(
                                 isAnimating: widget.snap['bones'] != null &&
-                                    widget.snap['bones'].contains(user!.uid),
+                                    widget.snap['bones']
+                                        .contains(profile!.profileUid),
                                 smallLike: true,
                                 child: InkWell(
                                   onTap: () async {
                                     await FirestoreMethods().giveBoneToPost(
                                         widget.snap['postId'],
-                                        user!.uid,
+                                        profile!.profileUid,
                                         widget.snap['bones']);
                                   },
                                   child: Image.asset(
                                     (widget.snap['bones'] != null &&
                                             widget.snap['bones']
-                                                .contains(user!.uid))
+                                                .contains(profile!.profileUid))
                                         ? 'assets/bone.png'
                                         : 'assets/bone_border.png',
                                     width: 100,

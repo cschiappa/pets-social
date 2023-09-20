@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
-import 'package:pets_social/models/user.dart' as model;
+import 'package:pets_social/models/profile.dart';
 
 import '../../resources/firestore_methods.dart';
 
@@ -15,6 +16,7 @@ class BlockedAccountsPage extends StatefulWidget {
 }
 
 class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,15 +28,15 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
     );
   }
 
-  //build a list of users except for the one logged in
+  //build a list of blocked users
   Widget _buildUserList() {
-    final model.User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
 
-    return user!.blockedUsers.isNotEmpty
+    return profile!.blockedUsers.isNotEmpty
         ? StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-                .collection('users')
-                .where('uid', whereIn: user.blockedUsers)
+                .collectionGroup('profiles')
+                .where('profileUid', whereIn: profile.blockedUsers)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -60,7 +62,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
   //build individual user list items
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    final model.User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     //display all users except current user
     return ListTile(
@@ -71,9 +73,12 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
         title: Text(data['username']),
         trailing: TextButton(
           onPressed: () async {
-            await FirestoreMethods().blockUser(user!.uid, data['uid']);
+            await FirestoreMethods().blockUser(
+              profile!.profileUid,
+              data['profileUid'],
+            );
 
-            userProvider.unblockUser(data['uid']);
+            userProvider.unblockUser(data['profileUid']);
           },
           child: Text('Unblock'),
         ));

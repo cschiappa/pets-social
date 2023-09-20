@@ -169,7 +169,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  //button login
+                  //button signin
                   InkWell(
                     onTap: signUpUser,
                     child: Container(

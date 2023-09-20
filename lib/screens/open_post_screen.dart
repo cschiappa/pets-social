@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../models/user.dart';
+import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../utils/colors.dart';
 import '../utils/global_variables.dart';
@@ -13,12 +13,12 @@ class OpenPost extends StatefulWidget {
   OpenPost({
     super.key,
     required this.postId,
-    required this.uid,
+    required this.profileUid,
     required this.username,
   });
   final String postId;
   final String username;
-  final String uid;
+  final String profileUid;
 
   @override
   State<OpenPost> createState() => _OpenPostState();
@@ -37,7 +37,7 @@ class _OpenPostState extends State<OpenPost> {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = Provider.of<UserProvider>(context).getUser;
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -50,7 +50,7 @@ class _OpenPostState extends State<OpenPost> {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('posts')
-            .where('uid', isEqualTo: widget.uid)
+            .where('profileUid', isEqualTo: widget.profileUid)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

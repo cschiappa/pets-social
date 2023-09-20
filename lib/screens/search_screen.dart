@@ -41,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
       body: isShowUsers
           ? FutureBuilder(
               future: FirebaseFirestore.instance
-                  .collection('users')
+                  .collectionGroup('profiles')
                   .where('username',
                       isGreaterThanOrEqualTo: searchController.text)
                   .get(),
@@ -59,13 +59,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        String uid =
-                            (snapshot.data! as dynamic).docs[index]['uid'];
+                        String profileUid = (snapshot.data! as dynamic)
+                            .docs[index]['profileUid'];
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ProfileScreen(
-                                uid: uid,
+                                profileUid: profileUid,
                               ),
                             ));
                       },
@@ -94,13 +94,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   itemCount: (snapshot.data! as dynamic).docs.length,
                   itemBuilder: (context, index) => GestureDetector(
                     onTap: () {
-                      String uid =
-                          (snapshot.data! as dynamic).docs[index]['uid'];
+                      String profileUid =
+                          (snapshot.data! as dynamic).docs[index]['profileUid'];
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProfileScreen(
-                              uid: uid,
+                              profileUid: profileUid,
                             ),
                           ));
                     },

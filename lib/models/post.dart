@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Post {
+class ModelPost {
   final String? description;
-  final String uid;
+  final String profileUid;
   final String username;
   final String postId;
   final datePublished;
@@ -13,9 +13,9 @@ class Post {
   final fish;
   final fileType;
 
-  Post({
+  ModelPost({
     this.description,
-    required this.uid,
+    required this.profileUid,
     required this.username,
     required this.postId,
     required this.datePublished,
@@ -29,7 +29,7 @@ class Post {
 
   Map<String, dynamic> toJson() => {
         "description": description ?? "",
-        "uid": uid,
+        "profileUid": profileUid,
         "username": username,
         "postId": postId,
         "datePublished": datePublished,
@@ -41,12 +41,12 @@ class Post {
         "fileType": fileType,
       };
 
-  static Post fromSnap(DocumentSnapshot snap) {
+  static ModelPost fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
-    return Post(
+    return ModelPost(
         description: snapshot['description'],
-        uid: snapshot['uid'],
+        profileUid: snapshot['profileUid'],
         username: snapshot['username'],
         postId: snapshot['postId'],
         datePublished: snapshot['datePublished'],
