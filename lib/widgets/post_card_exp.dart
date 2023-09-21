@@ -71,511 +71,520 @@ class _PostCardExpState extends State<PostCardExp> {
     final videoUri = Uri.parse(widget.snap['postUrl']);
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
-    return Container(
-      // height: 500,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
-        gradient: const LinearGradient(
-          colors: [
-            Color.fromARGB(255, 157, 110, 157),
-            Color.fromARGB(255, 240, 177, 136),
-          ],
+    return SizedBox(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          gradient: const LinearGradient(
+            colors: [
+              Color.fromARGB(255, 157, 110, 157),
+              Color.fromARGB(255, 240, 177, 136),
+            ],
+          ),
         ),
-      ),
-      padding: const EdgeInsets.only(bottom: 10),
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // HEADER SECTION
-          Stack(
-            alignment: AlignmentDirectional.topEnd,
-            children: [
-              GestureDetector(
-                //double tap for like
-                onDoubleTap: () async {
-                  await FirestoreMethods().likePost(widget.snap['postId'],
-                      profile!.profileUid, widget.snap['likes']);
-                  setState(() {
-                    isLikeAnimating = true;
-                  });
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: () {
-                        if (contentType == 'image') {
-                          return CachedNetworkImage(
-                            imageUrl: widget.snap['postUrl'],
-                          );
-                        } else if (contentType == 'video') {
-                          return VideoPlayerWidget(videoUrl: videoUri);
-                        } else {
-                          return SizedBox.shrink();
-                        }
-                      }(),
-                    ),
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: isLikeAnimating ? 1 : 0,
-                      child: LikeAnimation(
-                        isAnimating: isLikeAnimating,
-                        duration: const Duration(
-                          milliseconds: 400,
-                        ),
-                        onEnd: () {
-                          setState(() {
-                            isLikeAnimating = false;
-                          });
-                        },
-                        child: const Icon(Icons.favorite,
-                            color: Colors.white, size: 120),
+        padding: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // HEADER SECTION
+            Stack(
+              alignment: AlignmentDirectional.topEnd,
+              children: [
+                GestureDetector(
+                  //double tap for like
+                  onDoubleTap: () async {
+                    await FirestoreMethods().likePost(widget.snap['postId'],
+                        profile!.profileUid, widget.snap['likes']);
+                    setState(() {
+                      isLikeAnimating = true;
+                    });
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20.0),
+                        child: () {
+                          if (contentType == 'image') {
+                            return CachedNetworkImage(
+                              imageUrl: widget.snap['postUrl'],
+                            );
+                          } else if (contentType == 'video') {
+                            return VideoPlayerWidget(videoUrl: videoUri);
+                          } else {
+                            return SizedBox.shrink();
+                          }
+                        }(),
                       ),
-                    )
-                  ],
-                ),
-              ),
-              //POST HEADER
-              Container(
-                color: Color.fromARGB(100, 0, 0, 0),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        String profileUid = widget.snap['profileUid'];
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProfileScreen(profileUid: profileUid),
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: isLikeAnimating ? 1 : 0,
+                        child: LikeAnimation(
+                          isAnimating: isLikeAnimating,
+                          duration: const Duration(
+                            milliseconds: 400,
                           ),
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 15,
-                        backgroundImage: NetworkImage(widget.snap['profImage']),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                String profileUid = widget.snap['profileUid'];
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProfileScreen(profileUid: profileUid),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                widget.snap['username'],
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                        child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          //COMMENT
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: InkWell(
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => CommentsScreen(
-                                    snap: widget.snap,
-                                  ),
-                                ),
-                              ),
-                              child: Image.asset(
-                                'assets/comment.png',
-                                width: 24,
-                                height: 24,
-                              ),
-                            ),
-                          ),
-                          //SHARE
-                          InkWell(
-                            onTap: () async {
-                              final path = widget.snap['postUrl'];
-                              await Share.share('$path',
-                                  subject: 'Pets Social Link');
-                            },
-                            child: const Icon(
-                              Icons.share,
-                            ),
-                          ),
-                          //BOOKMARK
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: SavePostAnimation(
-                              isAnimating: profile?.savedPost != null &&
-                                  profile!.savedPost
-                                      .contains(widget.snap['postId']),
-                              smallLike: true,
-                              child: InkWell(
-                                onTap: () async {
-                                  await FirestoreMethods()
-                                      .savePost(
-                                          widget.snap['postId'],
-                                          profile!.profileUid,
-                                          profile.savedPost)
-                                      .then((_) {
-                                    setState(() {
-                                      Provider.of<UserProvider>(context,
-                                              listen: false)
-                                          .refreshProfile();
-                                    });
-                                  });
-                                },
-                                child: Icon(
-                                  (profile?.savedPost != null &&
-                                          profile!.savedPost
-                                              .contains(widget.snap['postId']))
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_border,
-                                ),
-                              ),
-                            ),
-                          ),
-                          //3 DOTS
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => Dialog(
-                                  child: ListView(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shrinkWrap: true,
-                                    children: [
-                                      widget.snap['profileUid'] ==
-                                              profile!.profileUid
-                                          ? InkWell(
-                                              onTap: () async {
-                                                Navigator.of(context).pop();
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                          'Are you sure you want to delete this post?'),
-                                                      content: Text(
-                                                          'If you proceed, this post will be permanently deleted.'),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            FirestoreMethods()
-                                                                .deletePost(widget
-                                                                        .snap[
-                                                                    'postId']);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text('Delete',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors
-                                                                      .red)),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                                fontSize: 16),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                child: const Text('Delete'),
-                                              ),
-                                            )
-                                          : InkWell(
-                                              onTap: () async {
-                                                Navigator.pop(context);
-                                                FirestoreMethods().blockUser(
-                                                    profile.profileUid,
-                                                    widget.snap['profileUid']);
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                child: const Text('Block User'),
-                                              ),
-                                            )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Icon(Icons.more_vert),
-                          ),
-                        ],
-                      ),
-                    )),
-                  ],
-                ),
-              ),
-              //LIKE, FISH, BONE SECTION
-              Positioned(
-                bottom: 8,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 90),
-                  child: Container(
-                    padding: EdgeInsets.all(2.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Color.fromARGB(100, 0, 0, 0),
-                    ),
-                    child: Row(
-                      children: [
-                        //ARROW LEFT SWIPE
-                        InkWell(
-                          onTap: () {
-                            _controller.previousPage();
+                          onEnd: () {
+                            setState(() {
+                              isLikeAnimating = false;
+                            });
                           },
-                          child: const Icon(
-                            Icons.arrow_left,
-                          ),
+                          child: const Icon(Icons.favorite,
+                              color: Colors.white, size: 120),
                         ),
-                        Expanded(
-                          child: CarouselSlider(
-                            carouselController: _controller,
-                            options: CarouselOptions(
-                              viewportFraction: 0.4,
-                              aspectRatio: 4,
-                              enableInfiniteScroll: true,
-                              initialPage: 1,
-                              enlargeCenterPage: true,
-                              enlargeFactor: 0.5,
-                              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                      )
+                    ],
+                  ),
+                ),
+                //POST HEADER
+                Container(
+                  color: Color.fromARGB(100, 0, 0, 0),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          String profileUid = widget.snap['profileUid'];
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfileScreen(profileUid: profileUid),
                             ),
-                            items: [
-                              // FISH
-                              FishAnimation(
-                                isAnimating: widget.snap['fish'] != null &&
-                                    widget.snap['fish']
-                                        .contains(profile!.profileUid),
-                                smallLike: true,
-                                child: InkWell(
-                                  onTap: () async {
-                                    await FirestoreMethods().giveFishToPost(
-                                        widget.snap['postId'],
-                                        profile!.profileUid,
-                                        widget.snap['fish']);
-                                  },
-                                  child: Image.asset(
-                                    (widget.snap['fish'] != null &&
-                                            widget.snap['fish']
-                                                .contains(profile!.profileUid))
-                                        ? 'assets/fish.png'
-                                        : 'assets/fish_border.png',
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                ),
-                              ),
-                              //LIKES
-                              LikeAnimation(
-                                isAnimating: widget.snap['likes'] != null &&
-                                    widget.snap['likes']
-                                        .contains(profile!.profileUid),
-                                smallLike: true,
-                                child: InkWell(
-                                  onTap: () async {
-                                    await FirestoreMethods().likePost(
-                                        widget.snap['postId'],
-                                        profile!.profileUid,
-                                        widget.snap['likes']);
-                                  },
-                                  child: Image.asset(
-                                    (widget.snap['likes'] != null &&
-                                            widget.snap['likes']
-                                                .contains(profile!.profileUid))
-                                        ? 'assets/like.png'
-                                        : 'assets/like_border.png',
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                ),
-                              ),
-                              //BONES
-                              BoneAnimation(
-                                isAnimating: widget.snap['bones'] != null &&
-                                    widget.snap['bones']
-                                        .contains(profile!.profileUid),
-                                smallLike: true,
-                                child: InkWell(
-                                  onTap: () async {
-                                    await FirestoreMethods().giveBoneToPost(
-                                        widget.snap['postId'],
-                                        profile!.profileUid,
-                                        widget.snap['bones']);
-                                  },
-                                  child: Image.asset(
-                                    (widget.snap['bones'] != null &&
-                                            widget.snap['bones']
-                                                .contains(profile!.profileUid))
-                                        ? 'assets/bone.png'
-                                        : 'assets/bone_border.png',
-                                    width: 100,
-                                    height: 100,
-                                  ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 15,
+                          backgroundImage:
+                              NetworkImage(widget.snap['profImage']),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  String profileUid = widget.snap['profileUid'];
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProfileScreen(profileUid: profileUid),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  widget.snap['username'],
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        //ARROW RIGHT SWIPE
-                        InkWell(
-                          onTap: () {
-                            _controller.nextPage();
-                          },
-                          child: const Icon(
-                            Icons.arrow_right,
-                          ),
+                      ),
+                      Expanded(
+                          child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            //COMMENT
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => CommentsScreen(
+                                      snap: widget.snap,
+                                    ),
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  'assets/comment.png',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                            ),
+                            //SHARE
+                            InkWell(
+                              onTap: () async {
+                                final path = widget.snap['postUrl'];
+                                await Share.share('$path',
+                                    subject: 'Pets Social Link');
+                              },
+                              child: const Icon(
+                                Icons.share,
+                              ),
+                            ),
+                            //BOOKMARK
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: SavePostAnimation(
+                                isAnimating: profile?.savedPost != null &&
+                                    profile!.savedPost
+                                        .contains(widget.snap['postId']),
+                                smallLike: true,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await FirestoreMethods()
+                                        .savePost(
+                                            widget.snap['postId'],
+                                            profile!.profileUid,
+                                            profile.savedPost)
+                                        .then((_) {
+                                      setState(() {
+                                        Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .refreshProfile();
+                                      });
+                                    });
+                                  },
+                                  child: Icon(
+                                    (profile?.savedPost != null &&
+                                            profile!.savedPost.contains(
+                                                widget.snap['postId']))
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_border,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            //3 DOTS
+                            InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    child: ListView(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      shrinkWrap: true,
+                                      children: [
+                                        widget.snap['profileUid'] ==
+                                                profile!.profileUid
+                                            ? InkWell(
+                                                onTap: () async {
+                                                  Navigator.of(context).pop();
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Are you sure you want to delete this post?'),
+                                                        content: Text(
+                                                            'If you proceed, this post will be permanently deleted.'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              FirestoreMethods()
+                                                                  .deletePost(widget
+                                                                          .snap[
+                                                                      'postId']);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Text(
+                                                                'Delete',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .red)),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                  fontSize: 16),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 16),
+                                                  child: const Text('Delete'),
+                                                ),
+                                              )
+                                            : InkWell(
+                                                onTap: () async {
+                                                  Navigator.pop(context);
+                                                  FirestoreMethods().blockUser(
+                                                      profile.profileUid,
+                                                      widget
+                                                          .snap['profileUid']);
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 16),
+                                                  child:
+                                                      const Text('Block User'),
+                                                ),
+                                              )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Icon(Icons.more_vert),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      )),
+                    ],
                   ),
                 ),
-              )
-            ],
-          ),
-
-          //DESCRIPTION AND COMMENTS
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  // width: double.infinity,
-                  padding: const EdgeInsets.only(
-                    top: 8,
-                  ),
-                  child: RichText(
-                    text: TextSpan(
-                        style: const TextStyle(color: primaryColor),
+                //LIKE, FISH, BONE SECTION
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 90),
+                    child: Container(
+                      padding: EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Color.fromARGB(100, 0, 0, 0),
+                      ),
+                      child: Row(
                         children: [
-                          TextSpan(
-                            text: widget.snap['username'],
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                          //ARROW LEFT SWIPE
+                          InkWell(
+                            onTap: () {
+                              _controller.previousPage();
+                            },
+                            child: const Icon(
+                              Icons.arrow_left,
+                            ),
                           ),
-                          TextSpan(
-                              text: ' ${widget.snap['description']}',
-                              style: TextStyle(fontSize: 15))
-                        ]),
-                  ),
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 8),
-                //   child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.end,
-                //       children: [
-                //         //show number of likes
-                //         DefaultTextStyle(
-                //           style: Theme.of(context)
-                //               .textTheme
-                //               .subtitle2!
-                //               .copyWith(fontWeight: FontWeight.w800),
-                //           child: Text(
-                //             '${widget.snap['likes'].length} likes',
-                //             style: Theme.of(context).textTheme.bodyText2,
-                //           ),
-                //         ),
-                //         SizedBox(width: 10), // Add space
-                //         //show number of fish
-                //         DefaultTextStyle(
-                //           style: Theme.of(context)
-                //               .textTheme
-                //               .subtitle2!
-                //               .copyWith(fontWeight: FontWeight.w800),
-                //           child: Text(
-                //             '${widget.snap['fish'] != null ? widget.snap['fish'].length : 0} fish',
-                //             style: Theme.of(context).textTheme.bodyText2,
-                //           ),
-                //         ),
-                //         SizedBox(width: 10), // Add space
-                //         //show number of bones
-                //         DefaultTextStyle(
-                //           style: Theme.of(context)
-                //               .textTheme
-                //               .subtitle2!
-                //               .copyWith(fontWeight: FontWeight.w800),
-                //           child: Text(
-                //             '${widget.snap['bones'] != null ? widget.snap['bones'].length : 0} bones',
-                //             style: Theme.of(context).textTheme.bodyText2,
-                //           ),
-                //         ),
-                //       ]),
-                // ),
-
-                // SHOW NUMBER OF COMMENTS
-                InkWell(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CommentsScreen(
-                        snap: widget.snap,
+                          Expanded(
+                            child: CarouselSlider(
+                              carouselController: _controller,
+                              options: CarouselOptions(
+                                viewportFraction: 0.4,
+                                aspectRatio: 4,
+                                enableInfiniteScroll: true,
+                                initialPage: 1,
+                                enlargeCenterPage: true,
+                                enlargeFactor: 0.5,
+                                enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                              ),
+                              items: [
+                                // FISH
+                                FishAnimation(
+                                  isAnimating: widget.snap['fish'] != null &&
+                                      widget.snap['fish']
+                                          .contains(profile!.profileUid),
+                                  smallLike: true,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await FirestoreMethods().giveFishToPost(
+                                          widget.snap['postId'],
+                                          profile!.profileUid,
+                                          widget.snap['fish']);
+                                    },
+                                    child: Image.asset(
+                                      (widget.snap['fish'] != null &&
+                                              widget.snap['fish'].contains(
+                                                  profile!.profileUid))
+                                          ? 'assets/fish.png'
+                                          : 'assets/fish_border.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
+                                  ),
+                                ),
+                                //LIKES
+                                LikeAnimation(
+                                  isAnimating: widget.snap['likes'] != null &&
+                                      widget.snap['likes']
+                                          .contains(profile!.profileUid),
+                                  smallLike: true,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await FirestoreMethods().likePost(
+                                          widget.snap['postId'],
+                                          profile!.profileUid,
+                                          widget.snap['likes']);
+                                    },
+                                    child: Image.asset(
+                                      (widget.snap['likes'] != null &&
+                                              widget.snap['likes'].contains(
+                                                  profile!.profileUid))
+                                          ? 'assets/like.png'
+                                          : 'assets/like_border.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
+                                  ),
+                                ),
+                                //BONES
+                                BoneAnimation(
+                                  isAnimating: widget.snap['bones'] != null &&
+                                      widget.snap['bones']
+                                          .contains(profile!.profileUid),
+                                  smallLike: true,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await FirestoreMethods().giveBoneToPost(
+                                          widget.snap['postId'],
+                                          profile!.profileUid,
+                                          widget.snap['bones']);
+                                    },
+                                    child: Image.asset(
+                                      (widget.snap['bones'] != null &&
+                                              widget.snap['bones'].contains(
+                                                  profile!.profileUid))
+                                          ? 'assets/bone.png'
+                                          : 'assets/bone_border.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          //ARROW RIGHT SWIPE
+                          InkWell(
+                            onTap: () {
+                              _controller.nextPage();
+                            },
+                            child: const Icon(
+                              Icons.arrow_right,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      'View all $commentLen comments',
-                      style: const TextStyle(fontSize: 15, color: Colors.white),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    DateFormat.yMMMd()
-                        .format(widget.snap['datePublished'].toDate()),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ),
+                )
               ],
             ),
-          )
-        ],
+
+            //DESCRIPTION AND COMMENTS
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    // width: double.infinity,
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                    ),
+                    child: RichText(
+                      text: TextSpan(
+                          style: const TextStyle(color: primaryColor),
+                          children: [
+                            TextSpan(
+                              text: widget.snap['username'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                            TextSpan(
+                                text: ' ${widget.snap['description']}',
+                                style: TextStyle(fontSize: 15))
+                          ]),
+                    ),
+                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(top: 8),
+                  //   child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.end,
+                  //       children: [
+                  //         //show number of likes
+                  //         DefaultTextStyle(
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .subtitle2!
+                  //               .copyWith(fontWeight: FontWeight.w800),
+                  //           child: Text(
+                  //             '${widget.snap['likes'].length} likes',
+                  //             style: Theme.of(context).textTheme.bodyText2,
+                  //           ),
+                  //         ),
+                  //         SizedBox(width: 10), // Add space
+                  //         //show number of fish
+                  //         DefaultTextStyle(
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .subtitle2!
+                  //               .copyWith(fontWeight: FontWeight.w800),
+                  //           child: Text(
+                  //             '${widget.snap['fish'] != null ? widget.snap['fish'].length : 0} fish',
+                  //             style: Theme.of(context).textTheme.bodyText2,
+                  //           ),
+                  //         ),
+                  //         SizedBox(width: 10), // Add space
+                  //         //show number of bones
+                  //         DefaultTextStyle(
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .subtitle2!
+                  //               .copyWith(fontWeight: FontWeight.w800),
+                  //           child: Text(
+                  //             '${widget.snap['bones'] != null ? widget.snap['bones'].length : 0} bones',
+                  //             style: Theme.of(context).textTheme.bodyText2,
+                  //           ),
+                  //         ),
+                  //       ]),
+                  // ),
+
+                  // SHOW NUMBER OF COMMENTS
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CommentsScreen(
+                          snap: widget.snap,
+                        ),
+                      ),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        'View all $commentLen comments',
+                        style:
+                            const TextStyle(fontSize: 15, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      DateFormat.yMMMd()
+                          .format(widget.snap['datePublished'].toDate()),
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

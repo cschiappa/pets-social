@@ -21,26 +21,30 @@ class FirestoreMethods {
     String username,
     String profImage,
     String fileType,
+    Uint8List thumbnail,
   ) async {
     String res = "An error occurred";
     try {
       String photoUrl =
           await StorageMethods().uploadImageToStorage('posts', file, true);
 
+      String videoThumbnail = await StorageMethods()
+          .uploadImageToStorage('videoThumbnails', thumbnail, true);
+
       String postId = const Uuid().v1(); //v1 creates unique id based on time
       ModelPost post = ModelPost(
-        description: description ?? "",
-        profileUid: profileUid,
-        username: username,
-        postId: postId,
-        datePublished: DateTime.now(),
-        postUrl: photoUrl,
-        profImage: profImage,
-        likes: [],
-        fish: [],
-        bones: [],
-        fileType: fileType,
-      );
+          description: description ?? "",
+          profileUid: profileUid,
+          username: username,
+          postId: postId,
+          datePublished: DateTime.now(),
+          postUrl: photoUrl,
+          profImage: profImage,
+          likes: [],
+          fish: [],
+          bones: [],
+          fileType: fileType,
+          videoThumbnail: videoThumbnail);
 
       _firestore.collection('posts').doc(postId).set(
             post.toJson(),
@@ -213,7 +217,12 @@ class FirestoreMethods {
       List following = (snap.data()! as dynamic)['following'];
 
       if (following.contains(followId)) {
-        await _firestore.collection('users').doc(followId).update({
+        var profileSnap = await _firestore
+            .collectionGroup('profiles')
+            .where('profileUid', isEqualTo: followId)
+            .get();
+        DocumentSnapshot profileDoc = profileSnap.docs.first;
+        profileDoc.reference.update({
           'followers': FieldValue.arrayRemove([profileUid])
         });
 
@@ -226,7 +235,12 @@ class FirestoreMethods {
           'following': FieldValue.arrayRemove([followId])
         });
       } else {
-        await _firestore.collection('users').doc(followId).update({
+        var profileSnap = await _firestore
+            .collectionGroup('profiles')
+            .where('profileUid', isEqualTo: followId)
+            .get();
+        DocumentSnapshot profileDoc = profileSnap.docs.first;
+        profileDoc.reference.update({
           'followers': FieldValue.arrayUnion([profileUid])
         });
 
@@ -360,5 +374,49 @@ class FirestoreMethods {
         );
       }
     }
+  }
+
+  //UPDATE PROFILE
+  Future<String> updateProfile({
+    required String profileUid,
+    Uint8List? file,
+    required String newUsername,
+    required String newBio,
+    String? photoUrl,
+  }) async {
+    String res = "Some error occurred";
+    try {
+      if (file != null) {
+        photoUrl = await StorageMethods()
+            .uploadImageToStorage('profilePics', file, false);
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .collection('profiles')
+            .doc(profileUid)
+            .update({
+          'username': newUsername,
+          'bio': newBio,
+          'photoUrl': photoUrl,
+        });
+      } else {
+        // Update the user's profile without changing the image URL
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .collection('profiles')
+            .doc(profileUid)
+            .update({
+          'username': newUsername,
+          'bio': newBio,
+        });
+      }
+
+      res = 'Profile updated succesfully';
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ModelPost {
   final String? description;
@@ -12,6 +15,7 @@ class ModelPost {
   final bones;
   final fish;
   final fileType;
+  final String videoThumbnail;
 
   ModelPost({
     this.description,
@@ -25,6 +29,7 @@ class ModelPost {
     required this.fish,
     required this.bones,
     required this.fileType,
+    required this.videoThumbnail,
   });
 
   Map<String, dynamic> toJson() => {
@@ -39,6 +44,7 @@ class ModelPost {
         "fish": fish,
         "bones": bones,
         "fileType": fileType,
+        "videoThumbnail": videoThumbnail,
       };
 
   static ModelPost fromSnap(DocumentSnapshot snap) {
@@ -55,6 +61,7 @@ class ModelPost {
         likes: snapshot['likes'],
         fish: snapshot['fish'],
         bones: snapshot['bones'],
-        fileType: snapshot['fileType']);
+        fileType: snapshot['fileType'],
+        videoThumbnail: snapshot['videoThumbnail']);
   }
 }

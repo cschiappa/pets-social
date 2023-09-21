@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 //Upload Image
 pickImage(ImageSource source) async {
@@ -12,7 +13,9 @@ pickImage(ImageSource source) async {
     var filePath = _file.path;
     final fileExtension = p.extension(filePath);
     final fileBytes = await _file.readAsBytes();
-    return (fileBytes, fileExtension);
+
+    final thumbnail = fileBytes;
+    return (fileBytes, fileExtension, thumbnail);
   }
   print('No image selected');
 }
@@ -28,7 +31,14 @@ pickVideo(ImageSource source) async {
     var filePath = _file.path;
     final fileExtension = p.extension(filePath);
     final fileBytes = await _file.readAsBytes();
-    return (fileBytes, fileExtension);
+
+    final thumbnail = await VideoThumbnail.thumbnailData(
+      video: filePath,
+      quality: 25,
+      imageFormat: ImageFormat.JPEG,
+    );
+
+    return (fileBytes, fileExtension, thumbnail);
   }
   print('No video selected');
 }

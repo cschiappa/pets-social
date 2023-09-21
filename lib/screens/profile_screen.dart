@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/responsive/mobile_screen_layout.dart';
 import 'package:pets_social/screens/initial_screen/login_screen.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -13,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../widgets/follow_button.dart';
+import '../widgets/text_field_input.dart';
 import 'open_post_screen.dart';
 import 'package:pets_social/screens/settings/settings.dart';
 
@@ -36,6 +39,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isFollowing = false;
   bool isLoading = false;
   String userId = "";
+  late TextEditingController _bioController = TextEditingController();
+  late TextEditingController _usernameController = TextEditingController();
+  Uint8List? _image;
+  bool _isLoading = false;
+
+  void selectImage() async {
+    Uint8List im;
+    String extension;
+    (im, extension) = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
+  }
+
+  void fieldsValues() {
+    final ModelProfile? profile =
+        Provider.of<UserProvider>(context, listen: false).getProfile;
+    _usernameController = TextEditingController(text: profile!.username);
+    _bioController = TextEditingController(text: profile.bio);
+  }
 
   @override
   void initState() {
@@ -44,33 +67,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Provider.of<UserProvider>(context, listen: false).getProfile;
     userId = widget.profileUid ?? profile!.profileUid;
     getData();
+
+    _usernameController = TextEditingController(text: profile!.username);
+    _bioController = TextEditingController(text: profile.bio);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bioController.dispose();
+    _usernameController.dispose();
   }
 
   getData() async {
+    final ModelProfile? profile =
+        Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
       isLoading = true;
     });
     try {
       var userSnap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('profiles')
-          .doc(userId)
+          .collectionGroup('profiles')
+          .where('profileUid', isEqualTo: userId)
           .get();
 
       //GET POST LENGTH
       var postSnap = await FirebaseFirestore.instance
           .collection('posts')
-          .where('profileUid',
-              isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('profileUid', isEqualTo: profile!.profileUid)
           .get();
 
       postLen = postSnap.docs.length;
-      userData = userSnap.data()!;
-      followers = userSnap.data()!['followers'].length;
-      isFollowing = userSnap
-          .data()!['followers']
-          .contains(FirebaseAuth.instance.currentUser!.uid);
+      userData = userSnap.docs.first.data();
+      followers = userData['followers'].length;
+      isFollowing = userData['followers'].contains(profile.profileUid);
 
       for (var post in postSnap.docs) {
         likes += post.data()['likes'].length as int;
@@ -86,6 +116,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  void resetFields() {
+    _usernameController.text = _usernameController.text;
+    _bioController.text = _bioController.text;
+    setState(() {
+      _image = _image;
+    });
+  }
+
+  void updateProfile() async {
+    final ModelProfile? profile =
+        Provider.of<UserProvider>(context, listen: false).getProfile;
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await FirestoreMethods().updateProfile(
+      profileUid: profile!.profileUid,
+      newUsername: _usernameController.text,
+      newBio: _bioController.text,
+      file: _image,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -226,61 +288,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           //BUTTON
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              profile!.profileUid == userId
-                                  ? FollowButton(
-                                      text: 'Sign Out',
-                                      backgroundColor: mobileBackgroundColor,
-                                      textColor: primaryColor,
-                                      borderColor: Colors.grey,
-                                      function: () async {
-                                        await AuthMethods().signOut();
-                                        Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginScreen(),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : isFollowing
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  profile!.profileUid == userId
                                       ? FollowButton(
-                                          text: 'Unfollow',
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
+                                          text: 'Sign Out',
+                                          backgroundColor:
+                                              mobileBackgroundColor,
+                                          textColor: primaryColor,
                                           borderColor: Colors.grey,
                                           function: () async {
-                                            await FirestoreMethods().followUser(
-                                              profile.profileUid,
-                                              userData['profileUid'],
+                                            await AuthMethods().signOut();
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginScreen(),
+                                              ),
                                             );
-                                            setState(() {
-                                              isFollowing = false;
-                                              followers--;
-                                            });
                                           },
                                         )
-                                      : FollowButton(
-                                          text: 'Follow',
-                                          backgroundColor: const Color.fromRGBO(
-                                              242, 102, 139, 1),
-                                          textColor: Colors.white,
-                                          borderColor: const Color.fromRGBO(
-                                              242, 102, 139, 1),
-                                          function: () async {
-                                            await FirestoreMethods().followUser(
-                                              profile.profileUid,
-                                              userData['profileUid'],
-                                            );
-                                            setState(
-                                              () {
-                                                isFollowing = true;
-                                                followers++;
+                                      : isFollowing
+                                          ? FollowButton(
+                                              text: 'Unfollow',
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.black,
+                                              borderColor: Colors.grey,
+                                              function: () async {
+                                                await FirestoreMethods()
+                                                    .followUser(
+                                                  profile.profileUid,
+                                                  userData['profileUid'],
+                                                );
+                                                setState(() {
+                                                  isFollowing = false;
+                                                  followers--;
+                                                });
                                               },
-                                            );
-                                          },
-                                        ),
+                                            )
+                                          : FollowButton(
+                                              text: 'Follow',
+                                              backgroundColor:
+                                                  const Color.fromRGBO(
+                                                      242, 102, 139, 1),
+                                              textColor: Colors.white,
+                                              borderColor: const Color.fromRGBO(
+                                                  242, 102, 139, 1),
+                                              function: () async {
+                                                await FirestoreMethods()
+                                                    .followUser(
+                                                  profile.profileUid,
+                                                  userData['profileUid'],
+                                                );
+                                                setState(
+                                                  () {
+                                                    isFollowing = true;
+                                                    followers++;
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                ],
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    _profileBottomSheet(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.settings,
+                                    size: 20,
+                                  )),
                             ],
                           ),
                         ],
@@ -319,13 +399,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 getContentTypeFromUrl(snap['fileType']);
 
                             if (contentType == 'video') {
-                              mediaWidget = Text('video');
-                              // final uint8list = await VideoThumbnail.thumbnailData(
-                              //   video: snap['postUrl'].path,
-                              //   imageFormat: ImageFormat.JPEG,
-                              //   maxWidth: 128,
-                              //   quality: 25,
-                              // );
+                              mediaWidget = ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image(
+                                  image: NetworkImage(snap['videoThumbnail']),
+                                  fit: BoxFit.cover,
+                                ),
+                              );
                             } else {
                               // If it's not a video, return an image.
                               mediaWidget = ClipRRect(
@@ -393,6 +473,117 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _profileBottomSheet(BuildContext context) {
+    final ModelProfile? profile =
+        Provider.of<UserProvider>(context, listen: false).getProfile;
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      context: context,
+      isScrollControlled: true,
+      builder: ((context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SizedBox(
+            child: GestureDetector(
+              onTap: () {
+                // Close the keyboard when tapping outside the text fields
+                FocusScope.of(context).unfocus();
+              },
+              child: SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.all(50),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Stack(
+                        children: [
+                          _image != null
+                              ? CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: MemoryImage(_image!),
+                                )
+                              : const CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: NetworkImage(
+                                    'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+                                  )),
+                          Positioned(
+                            top: 40,
+                            left: 40,
+                            child: IconButton(
+                              iconSize: 20,
+                              onPressed: selectImage,
+                              icon: const Icon(
+                                Icons.add_a_photo,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      TextFieldInput(
+                        hintText: 'Enter your username',
+                        textInputType: TextInputType.text,
+                        textEditingController: _usernameController,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFieldInput(
+                        hintText: 'Enter your bio',
+                        textInputType: TextInputType.text,
+                        textEditingController: _bioController,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          updateProfile();
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MobileScreenLayout(), // Rebuild the ProfileScreen
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: const ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                              ),
+                              color: pinkColor),
+                          child: _isLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: primaryColor,
+                                  ),
+                                )
+                              : const Text('Update Profile'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }

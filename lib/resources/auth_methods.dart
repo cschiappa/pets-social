@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/storage_methods.dart';
@@ -229,5 +230,12 @@ class AuthMethods {
       print('current password is incorrect');
       return false;
     }
+  }
+
+  //Format date
+  String formatDate(String date) {
+    DateTime newDate = DateTime.parse(date);
+    final formatedDate = DateFormat.MMMMd().format(newDate);
+    return formatedDate;
   }
 }

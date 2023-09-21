@@ -22,6 +22,7 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _file;
   String? _fileType;
+  Uint8List? _thumbnail;
   final TextEditingController _descriptionController = TextEditingController();
   //loading when posting
   bool _isLoading = false;
@@ -41,7 +42,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
           profileUid,
           username,
           profImage,
-          _fileType!);
+          _fileType!,
+          _thumbnail!);
 
       if (res == "success") {
         setState(() {
@@ -79,12 +81,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Navigator.of(context).pop();
                   Uint8List file;
                   String fileType;
-                  (file, fileType) = await pickImage(
+                  Uint8List thumbnail;
+                  (file, fileType, thumbnail) = await pickImage(
                     ImageSource.camera,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
+                    _thumbnail = thumbnail;
                   });
                 },
               ),
@@ -95,12 +99,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Navigator.of(context).pop();
                   Uint8List file;
                   String fileType;
-                  (file, fileType) = await pickVideo(
+                  Uint8List thumbnail;
+                  (file, fileType, thumbnail) = await pickVideo(
                     ImageSource.camera,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
+                    _thumbnail = thumbnail;
                   });
                 },
               ),
@@ -111,12 +117,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Navigator.of(context).pop();
                   Uint8List file;
                   String fileType;
-                  (file, fileType) = await pickImage(
+                  Uint8List thumbnail;
+                  (file, fileType, thumbnail) = await pickImage(
                     ImageSource.gallery,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
+                    _thumbnail = thumbnail;
                   });
                 },
               ),
@@ -127,12 +135,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Navigator.of(context).pop();
                   Uint8List file;
                   String fileType;
-                  (file, fileType) = await pickVideo(
+                  Uint8List thumbnail;
+                  (file, fileType, thumbnail) = await pickVideo(
                     ImageSource.gallery,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
+                    _thumbnail = thumbnail;
                   });
                 },
               ),
@@ -159,15 +169,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void dispose() {
     super.dispose();
     _descriptionController.dispose();
-  }
-
-  Future<void> thumbnailMaker(videofile) async {
-    final thumbnailVideo = await VideoThumbnail.thumbnailData(
-      video: videofile.path,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: 128,
-      quality: 25,
-    );
   }
 
   @override
@@ -253,7 +254,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           //         16 / 9, // Adjust the aspect ratio as needed
                           //     child: VideoPlayerWidget(videoUrl: videoUri),
                           //   ),
-                          : Text('thumbnail')),
+                          : AspectRatio(
+                              aspectRatio: 487 / 451,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                  image: MemoryImage(_thumbnail!),
+                                  fit: BoxFit.fill,
+                                  alignment: FractionalOffset.topCenter,
+                                )),
+                              ),
+                            )),
                   const Divider(),
                 ],
               )

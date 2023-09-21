@@ -50,10 +50,6 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          ListTile(
-            leading: Icon(Icons.person_add),
-            title: Text('Add a New Profile'),
-          ),
         ],
       ),
     );

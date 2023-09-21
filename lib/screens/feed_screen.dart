@@ -41,18 +41,20 @@ class _FeedScreenState extends State<FeedScreen> {
     _usernameController.dispose();
   }
 
-  void selectImage() async {
-    Uint8List im = await pickImage(ImageSource.gallery);
-    setState(() {
-      _image = im;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Provider.of<UserProvider>(context, listen: false).refreshProfile();
+    });
+  }
+
+  void selectImage() async {
+    Uint8List im;
+    String extension;
+    (im, extension) = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
     });
   }
 
@@ -122,7 +124,7 @@ class _FeedScreenState extends State<FeedScreen> {
           ListTile(
             tileColor: Colors.grey[500],
             title: Text('Add a New Pet Profile'),
-            trailing: Icon(Icons.add_box),
+            trailing: Icon(Icons.person_add),
             onTap: () {
               _profileBottomSheet(context);
             },
@@ -278,6 +280,9 @@ class _FeedScreenState extends State<FeedScreen> {
 
   void _profileBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
       context: context,
       isScrollControlled: true,
       builder: ((context) {

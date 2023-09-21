@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pets_social/screens/settings/personal_details.dart';
 import 'package:pets_social/screens/settings/profile_settings.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/resources/auth_methods.dart';
@@ -53,6 +54,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           ListTile(
             leading: Icon(Icons.info),
             title: Text('Personal Details'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PersonalDetailsPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.lock),
