@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
+import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/chat/chat_list_page.dart';
+import 'package:pets_social/screens/prizes_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';
@@ -168,63 +170,62 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
       body: LayoutBuilder(builder: (context, constraints) {
         return LiquidPullToRefresh(
-          key: _refreshIndicatorKey,
-          onRefresh: _handleRefresh,
-          showChildOpacityTransition: false,
-          animSpeedFactor: 4,
-          color: const Color.fromARGB(255, 48, 48, 48),
-          backgroundColor: Colors.black,
-          child: profile!.following.isNotEmpty
-              ? StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('posts')
-                      .where('profileUid', whereIn: [
-                    ...profile.following,
-                    profile.profileUid
-                  ]).snapshots(),
-                  builder: (context,
-                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                          snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: pinkColor,
-                        ),
-                      );
-                    }
+            key: _refreshIndicatorKey,
+            onRefresh: _handleRefresh,
+            showChildOpacityTransition: false,
+            animSpeedFactor: 4,
+            color: const Color.fromARGB(255, 48, 48, 48),
+            backgroundColor: Colors.black,
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('posts')
+                  .where('profileUid', whereIn: [
+                ...profile!.following,
+                profile.profileUid
+              ]).snapshots(),
+              builder: (context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: pinkColor,
+                    ),
+                  );
+                }
 
-                    // Filter the posts to exclude those from blocked users.
-                    final filteredPosts = snapshot.data!.docs.where((doc) {
-                      return !profile.blockedUsers.contains(doc['profileUid']);
-                    }).toList();
+                // Filter the posts to exclude those from blocked users.
+                final filteredPosts = snapshot.data!.docs.where((doc) {
+                  return !profile.blockedUsers.contains(doc['profileUid']);
+                }).toList();
 
-                    // POST CARD
-                    return ListView.builder(
-                      itemCount: filteredPosts.length,
-                      itemBuilder: (context, index) => Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: width > webScreenSize ? width * 0.3 : 0,
-                          vertical: width > webScreenSize ? 15 : 0,
-                        ),
-                        child: PostCardExp(
-                          snap: filteredPosts[index].data(),
-                        ),
+                if (filteredPosts.isEmpty) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                          minWidth: constraints.maxWidth),
+                      child: const Center(
+                        child: Text('Follow someone to see posts'),
                       ),
-                    );
-                  },
-                )
-              : SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                        minWidth: constraints.maxWidth),
-                    child: const Center(
-                      child: Text('Follow someone to see posts'),
+                    ),
+                  );
+                }
+                // POST CARD
+                return ListView.builder(
+                  itemCount: filteredPosts.length,
+                  itemBuilder: (context, index) => Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: width > webScreenSize ? width * 0.3 : 0,
+                      vertical: width > webScreenSize ? 15 : 0,
+                    ),
+                    child: PostCardExp(
+                      snap: filteredPosts[index].data(),
                     ),
                   ),
-                ),
-        );
+                );
+              },
+            ));
       }),
     );
   }
@@ -274,7 +275,13 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       ),
       title: Text(data['username']),
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          Provider.of<UserProvider>(context, listen: false)
+              .refreshProfile(profileUid: data['profileUid']);
+        });
+        Navigator.of(context).pop();
+      },
     );
   }
 

@@ -65,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     final ModelProfile? profile =
         Provider.of<UserProvider>(context, listen: false).getProfile;
+    //verifies if profile belongs to current profile or another profile
     userId = widget.profileUid ?? profile!.profileUid;
     getData();
 
@@ -94,13 +95,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       //GET POST LENGTH
       var postSnap = await FirebaseFirestore.instance
           .collection('posts')
-          .where('profileUid', isEqualTo: profile!.profileUid)
+          .where('profileUid', isEqualTo: userId)
           .get();
 
       postLen = postSnap.docs.length;
       userData = userSnap.docs.first.data();
       followers = userData['followers'].length;
-      isFollowing = userData['followers'].contains(profile.profileUid);
+      isFollowing = userData['followers'].contains(profile!.profileUid);
 
       for (var post in postSnap.docs) {
         likes += post.data()['likes'].length as int;

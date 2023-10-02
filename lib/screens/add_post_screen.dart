@@ -9,6 +9,7 @@ import 'package:pets_social/responsive/mobile_screen_layout.dart';
 import 'package:pets_social/screens/feed_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
+import 'package:pets_social/widgets/crop_image.dart';
 import 'package:provider/provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -23,6 +24,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _file;
   String? _fileType;
   Uint8List? _thumbnail;
+  String? _filePath;
   final TextEditingController _descriptionController = TextEditingController();
   //loading when posting
   bool _isLoading = false;
@@ -82,13 +84,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Uint8List file;
                   String fileType;
                   Uint8List thumbnail;
-                  (file, fileType, thumbnail) = await pickImage(
+                  String filePath;
+                  (file, fileType, thumbnail, filePath) = await pickImage(
                     ImageSource.camera,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
                     _thumbnail = thumbnail;
+                    _filePath = filePath;
                   });
                 },
               ),
@@ -100,13 +104,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Uint8List file;
                   String fileType;
                   Uint8List thumbnail;
-                  (file, fileType, thumbnail) = await pickVideo(
+                  String filePath;
+                  (file, fileType, thumbnail, filePath) = await pickVideo(
                     ImageSource.camera,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
                     _thumbnail = thumbnail;
+                    _filePath = filePath;
                   });
                 },
               ),
@@ -118,13 +124,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Uint8List file;
                   String fileType;
                   Uint8List thumbnail;
-                  (file, fileType, thumbnail) = await pickImage(
+                  String filePath;
+                  (file, fileType, thumbnail, filePath) = await pickImage(
                     ImageSource.gallery,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
                     _thumbnail = thumbnail;
+                    _filePath = filePath;
                   });
                 },
               ),
@@ -136,13 +144,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   Uint8List file;
                   String fileType;
                   Uint8List thumbnail;
-                  (file, fileType, thumbnail) = await pickVideo(
+                  String filePath;
+                  (file, fileType, thumbnail, filePath) = await pickVideo(
                     ImageSource.gallery,
                   );
                   setState(() {
                     _file = file;
                     _fileType = fileType;
                     _thumbnail = thumbnail;
+                    _filePath = filePath;
                   });
                 },
               ),
@@ -183,7 +193,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
               onPressed: () => _selectImage(context),
             ),
           )
-        : Scaffold(
+        : //CropImage(file: _file!, path: _filePath!);
+        Scaffold(
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
               leading: IconButton(

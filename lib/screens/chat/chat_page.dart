@@ -45,6 +45,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: mobileBackgroundColor,
         title: Text(widget.receiverUsername),
       ),
       body: Column(

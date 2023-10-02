@@ -73,57 +73,59 @@ class AuthMethods {
     try {
       if (isPasswordValid(password)) {
         if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
-          //register user
-          UserCredential cred = await _auth.createUserWithEmailAndPassword(
-              email: email, password: password);
+          if (username.length <= 15 && bio!.length <= 150) {
+            //register user
+            UserCredential cred = await _auth.createUserWithEmailAndPassword(
+                email: email, password: password);
 
-          if (file != null) {
-            photoUrl = await StorageMethods()
-                .uploadImageToStorage('profilePics', file, false);
+            if (file != null) {
+              photoUrl = await StorageMethods()
+                  .uploadImageToStorage('profilePics', file, false);
+            } else {
+              photoUrl =
+                  'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
+            }
+
+            ModelAccount account =
+                ModelAccount(email: email, uid: cred.user!.uid);
+
+            String profileUid =
+                const Uuid().v1(); //v1 creates unique id based on time
+            ModelProfile profile = ModelProfile(
+              username: username,
+              profileUid: profileUid,
+              email: email,
+              bio: bio ?? "",
+              photoUrl: photoUrl ??
+                  'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+              following: [],
+              followers: [],
+              savedPost: [],
+              blockedUsers: [],
+            );
+
+            final batch = _firestore.batch();
+            var accountCollection =
+                _firestore.collection('users').doc(cred.user!.uid);
+            batch.set(accountCollection, account.toJson());
+
+            var profileCollection = _firestore
+                .collection('users')
+                .doc(cred.user!.uid)
+                .collection('profiles')
+                .doc(profile.profileUid);
+
+            batch.set(profileCollection, profile.toJson());
+
+            await batch.commit();
+
+            res = "success";
           } else {
-            photoUrl =
-                'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
+            res =
+                "Username must be 30 characters or less and bio must be 150 characters or less.";
           }
-
-          ModelAccount account =
-              ModelAccount(email: email, uid: cred.user!.uid);
-
-          String profileUid =
-              const Uuid().v1(); //v1 creates unique id based on time
-          ModelProfile profile = ModelProfile(
-            username: username,
-            profileUid: profileUid,
-            email: email,
-            bio: bio ?? "",
-            photoUrl: photoUrl ??
-                'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
-            following: [],
-            followers: [],
-            savedPost: [],
-            blockedUsers: [],
-          );
-
-          final batch = _firestore.batch();
-          var accountCollection =
-              _firestore.collection('users').doc(cred.user!.uid);
-          batch.set(accountCollection, account.toJson());
-
-          var profileCollection = _firestore
-              .collection('users')
-              .doc(cred.user!.uid)
-              .collection('profiles')
-              .doc(profile.profileUid);
-
-          batch.set(profileCollection, profile.toJson());
-
-          await batch.commit();
-          //await _firestore.collection('users').doc(cred.user!.uid).set(
-          //user.toJson(),
-
-          // await _firestore.collection('users').doc(cred.user!.uid).collection('profiles').doc(profile.profileUid).set(
-          //       profile.toJson(),
-          //     );
-          res = "success";
+        } else {
+          res = "Please enter all requires fields.";
         }
       } else {
         res =

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:pets_social/resources/storage_methods.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -67,6 +68,9 @@ class FirestoreMethods {
         await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([profileUid]),
         });
+
+        // await FirebaseApi()
+        //     .sendNotification(profileUid, 'Your post was liked!');
       }
     } catch (e) {
       print(e.toString());
@@ -386,34 +390,39 @@ class FirestoreMethods {
   }) async {
     String res = "Some error occurred";
     try {
-      if (file != null) {
-        photoUrl = await StorageMethods()
-            .uploadImageToStorage('profilePics', file, false);
+      if (newUsername.length <= 15 && newBio.length <= 150) {
+        if (file != null) {
+          photoUrl = await StorageMethods()
+              .uploadImageToStorage('profilePics', file, false);
 
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('profiles')
-            .doc(profileUid)
-            .update({
-          'username': newUsername,
-          'bio': newBio,
-          'photoUrl': photoUrl,
-        });
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('profiles')
+              .doc(profileUid)
+              .update({
+            'username': newUsername,
+            'bio': newBio,
+            'photoUrl': photoUrl,
+          });
+        } else {
+          // Update the user's profile without changing the image URL
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('profiles')
+              .doc(profileUid)
+              .update({
+            'username': newUsername,
+            'bio': newBio,
+          });
+        }
+
+        res = 'Profile updated succesfully';
       } else {
-        // Update the user's profile without changing the image URL
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('profiles')
-            .doc(profileUid)
-            .update({
-          'username': newUsername,
-          'bio': newBio,
-        });
+        res =
+            'Username must be 30 characters or less and bio must be 150 characters or less.';
       }
-
-      res = 'Profile updated succesfully';
     } catch (e) {
       res = e.toString();
     }

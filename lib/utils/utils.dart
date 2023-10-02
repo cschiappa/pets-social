@@ -15,7 +15,7 @@ pickImage(ImageSource source) async {
     final fileBytes = await _file.readAsBytes();
 
     final thumbnail = fileBytes;
-    return (fileBytes, fileExtension, thumbnail);
+    return (fileBytes, fileExtension, thumbnail, filePath);
   }
   print('No image selected');
 }
@@ -38,7 +38,7 @@ pickVideo(ImageSource source) async {
       imageFormat: ImageFormat.JPEG,
     );
 
-    return (fileBytes, fileExtension, thumbnail);
+    return (fileBytes, fileExtension, thumbnail, filePath);
   }
   print('No video selected');
 }
