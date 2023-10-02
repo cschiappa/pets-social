@@ -50,6 +50,11 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
+          ListTile(
+            leading: Icon(Icons.report_problem),
+            title: Text('Report a Problem'),
+            onTap: () {},
+          )
         ],
       ),
     );
