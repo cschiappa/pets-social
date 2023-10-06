@@ -14,7 +14,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void dispose() {
@@ -26,15 +26,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _emailController.text.trim());
+      if (!mounted) return;
       showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
+            return const AlertDialog(
               content: Text('Password reset link sent. Check your email.'),
             );
           });
     } on FirebaseAuthException catch (e) {
-      print(e);
+      debugPrint(e.toString());
       showDialog(
         context: context,
         builder: (context) {
@@ -59,7 +60,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             : const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            Text(
+            const Text(
                 'Enter your email and we will send you a password reset link:'),
 
             const SizedBox(

@@ -8,6 +8,7 @@ import 'package:pets_social/utils/utils.dart';
 import '../../responsive/mobile_screen_layout.dart';
 import '../../responsive/responsive_layout_screen.dart';
 import '../../responsive/web_screen_layout.dart';
+import '../../utils/global_variables.dart';
 import '../../widgets/text_field_input.dart';
 import 'login_screen.dart';
 
@@ -37,8 +38,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void selectImage() async {
     Uint8List im;
-    String extension;
-    (im, extension) = await pickImage(ImageSource.gallery);
+    (im) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
     });
@@ -61,8 +61,10 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     if (res != 'success') {
+      if (!mounted) return;
       showSnackBar(res, context);
     } else {
+      if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(
@@ -89,14 +91,17 @@ class _SignupScreenState extends State<SignupScreen> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SafeArea(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+            padding: MediaQuery.of(context).size.width > webScreenSize
+                ? EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width / 3)
+                : const EdgeInsets.symmetric(horizontal: 32),
             width: double.infinity,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(child: Container(), flex: 2, fit: FlexFit.loose),
+                  Flexible(flex: 2, fit: FlexFit.loose, child: Container()),
                   // logo image
                   Padding(
                     padding: const EdgeInsets.only(top: 60.0),
@@ -175,48 +180,45 @@ class _SignupScreenState extends State<SignupScreen> {
                   InkWell(
                     onTap: signUpUser,
                     child: Container(
-                      child: Container(
-                        child: _isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: primaryColor,
-                                ),
-                              )
-                            : const Text('Sign up'),
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: const ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
-                            ),
-                            color: pinkColor),
-                      ),
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: const ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                          ),
+                          color: pinkColor),
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: primaryColor,
+                              ),
+                            )
+                          : const Text('Sign up'),
                     ),
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Flexible(child: Container(), flex: 2, fit: FlexFit.loose),
+                  Flexible(flex: 2, fit: FlexFit.loose, child: Container()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        child: const Text("Already have an account?"),
                         padding: const EdgeInsets.symmetric(
                           vertical: 8,
                         ),
+                        child: const Text("Already have an account?"),
                       ),
                       GestureDetector(
                         onTap: navigateToLogin,
                         child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                          ),
                           child: const Text(
                             " Login.",
                             style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8,
                           ),
                         ),
                       ),

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -16,23 +15,23 @@ class PersonalDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: Text('Personal Details'),
+        title: const Text('Personal Details'),
       ),
       body: ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Username'),
+            leading: const Icon(Icons.person),
+            title: const Text('Username'),
             subtitle: Text(profile!.username),
           ),
           ListTile(
-            leading: Icon(Icons.mail),
-            title: Text('Email'),
+            leading: const Icon(Icons.mail),
+            title: const Text('Email'),
             subtitle: Text(profile.email),
           ),
           ListTile(
-            leading: Icon(Icons.cake),
-            title: Text('Account Birthday'),
+            leading: const Icon(Icons.cake),
+            title: const Text('Account Birthday'),
             subtitle: Text(FirebaseAuth
                 .instance.currentUser!.metadata.creationTime
                 .toString()),

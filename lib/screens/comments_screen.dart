@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -70,7 +69,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
               CircleAvatar(
                 backgroundImage: (profile != null && profile.photoUrl != null)
                     ? NetworkImage(profile.photoUrl!)
-                    : AssetImage('assets/default_pic') as ImageProvider<Object>,
+                    : const AssetImage('assets/default_pic')
+                        as ImageProvider<Object>,
                 radius: 18,
               ),
               Expanded(

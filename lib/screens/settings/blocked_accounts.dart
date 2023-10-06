@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -16,13 +15,12 @@ class BlockedAccountsPage extends StatefulWidget {
 }
 
 class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: mobileBackgroundColor,
       appBar: AppBar(
-        title: Text('Blocked Accounts'),
+        title: const Text('Blocked Accounts'),
       ),
       body: _buildUserList(),
     );
@@ -44,7 +42,9 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text('loading...');
+                return const LinearProgressIndicator(
+                  color: pinkColor,
+                );
               }
 
               return ListView(
@@ -54,7 +54,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
               );
             },
           )
-        : Center(
+        : const Center(
             child: Text('No users blocked.'),
           );
   }
@@ -80,7 +80,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
 
             userProvider.unblockUser(data['profileUid']);
           },
-          child: Text('Unblock'),
+          child: const Text('Unblock'),
         ));
   }
 }

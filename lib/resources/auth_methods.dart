@@ -6,8 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/storage_methods.dart';
-import 'package:pets_social/screens/initial_screen/login_screen.dart';
+import 'package:pets_social/screens/initial_screens/login_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+
+import '../providers/user_provider.dart';
+import 'firebase_messaging.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -43,7 +47,7 @@ class AuthMethods {
 
   //Checks if password follows all the requirement
   bool isPasswordValid(String password) {
-    final lengthRequirement = 5;
+    const lengthRequirement = 5;
     final uppercaseRegex = RegExp(r'[A-Z]');
     final lowercaseRegex = RegExp(r'[a-z]');
     final numberRegex = RegExp(r'[0-9]');
@@ -95,9 +99,8 @@ class AuthMethods {
               username: username,
               profileUid: profileUid,
               email: email,
-              bio: bio ?? "",
-              photoUrl: photoUrl ??
-                  'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+              bio: bio,
+              photoUrl: photoUrl,
               following: [],
               followers: [],
               savedPost: [],
@@ -119,6 +122,7 @@ class AuthMethods {
 
             await batch.commit();
 
+            FirebaseApi().initNotifications();
             res = "success";
           } else {
             res =
@@ -146,6 +150,8 @@ class AuthMethods {
       if (email.isNotEmpty || password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+
+        FirebaseApi().initNotifications();
         res = "success";
       } else {
         res = "Please enter all the fields";
@@ -157,8 +163,10 @@ class AuthMethods {
   }
 
   //Sign Out
-  Future<void> signOut() async {
+  Future<void> signOut(context) async {
+    UserProvider userProvider = Provider.of(context, listen: false);
     await _auth.signOut();
+    await userProvider.disposeProfile();
   }
 
   //Delete User
@@ -184,7 +192,7 @@ class AuthMethods {
         );
       } catch (e) {
         // Handle any errors that may occur during deletion
-        print('Error deleting account: $e');
+        debugPrint('Error deleting account: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('There was an error deleting the account.'),
@@ -214,7 +222,7 @@ class AuthMethods {
           content: Text('There was an error updating the password.'),
         ),
       );
-      print('There was an error updating the password.');
+      debugPrint('There was an error updating the password.');
     }
   }
 
@@ -229,7 +237,7 @@ class AuthMethods {
       await user.reauthenticateWithCredential(credential);
       return true;
     } catch (e) {
-      print('current password is incorrect');
+      debugPrint('current password is incorrect');
       return false;
     }
   }

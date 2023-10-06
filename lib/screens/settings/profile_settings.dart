@@ -2,10 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/utils/colors.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/profile.dart';
-import '../../providers/user_provider.dart';
 import '../../resources/auth_methods.dart';
 import '../../resources/firestore_methods.dart';
 import '../../widgets/text_field_input.dart';
@@ -52,7 +49,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading...');
+          return const LinearProgressIndicator(
+            color: pinkColor,
+          );
         }
 
         return ListView(
@@ -67,8 +66,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   //build individual user list items
   Widget _buildProfileListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+
     //display all users except current user
     return ListTile(
         leading: CircleAvatar(
@@ -77,19 +75,19 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         ),
         title: Text(data['username']),
         trailing: TextButton(
-            child: Text('Delete'),
+            child: const Text('Delete'),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title:
-                        Text('Are you sure you want to delete this profile?'),
-                    content: Text(
+                    title: const Text(
+                        'Are you sure you want to delete this profile?'),
+                    content: const Text(
                         'If you proceed your profile will be deleted permanently and everything associated with this profile will be lost.'),
                     actions: [
                       TextButton(
-                        child: Text(
+                        child: const Text(
                           'Delete',
                           style: TextStyle(fontSize: 16, color: Colors.red),
                         ),
@@ -98,7 +96,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                             context: context,
                             builder: ((context) {
                               return AlertDialog(
-                                title: Text('Please introduce your password'),
+                                title: const Text(
+                                    'Please introduce your password'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -126,28 +125,30 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                               .verifyCurrentPassword(
                                                   currentPassword);
                                       if (isCurrentPasswordValid) {
+                                        if (!mounted) return;
                                         FirestoreMethods().deleteProfile(
                                             data['profileUid'], context);
                                         _passwordController.clear();
                                         Navigator.of(context).pop();
                                         Navigator.of(context).pop();
                                       } else {
+                                        if (!mounted) return;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          SnackBar(
+                                          const SnackBar(
                                             content: Text(
                                                 "Current password is incorrect"),
                                           ),
                                         );
                                       }
                                     },
-                                    child: Text('Delete Profile'),
+                                    child: const Text('Delete Profile'),
                                   ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text('Cancel'),
+                                    child: const Text('Cancel'),
                                   ),
                                 ],
                               );
@@ -156,7 +157,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                         },
                       ),
                       TextButton(
-                        child: Text(
+                        child: const Text(
                           'Cancel',
                           style: TextStyle(fontSize: 16),
                         ),

@@ -1,17 +1,16 @@
 import 'dart:typed_data';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
-import 'package:pets_social/screens/feed_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
-import 'package:pets_social/widgets/crop_image.dart';
 import 'package:provider/provider.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+
+import '../utils/global_variables.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -26,10 +25,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _thumbnail;
   String? _filePath;
   final TextEditingController _descriptionController = TextEditingController();
-  //loading when posting
   bool _isLoading = false;
 
   void postImage(
+    String uid,
     String profileUid,
     String username,
     String profImage,
@@ -39,6 +38,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
     try {
       String res = await FirestoreMethods().uploadPost(
+          uid,
           _descriptionController.text,
           _file!,
           profileUid,
@@ -51,6 +51,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         showSnackBar('Posted!', context);
         clearImage();
         Navigator.of(context).push(
@@ -62,6 +63,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         showSnackBar(res, context);
       }
     } catch (e) {
@@ -70,52 +72,55 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   _selectImage(BuildContext context) async {
+    final bool isWeb = MediaQuery.of(context).size.width < webScreenSize;
     return showDialog(
         context: context,
         builder: (context) {
           return SimpleDialog(
             title: const Text('Create a Post'),
             children: [
-              SimpleDialogOption(
-                padding: const EdgeInsets.all(20),
-                child: const Text('Take a Photo'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  Uint8List file;
-                  String fileType;
-                  Uint8List thumbnail;
-                  String filePath;
-                  (file, fileType, thumbnail, filePath) = await pickImage(
-                    ImageSource.camera,
-                  );
-                  setState(() {
-                    _file = file;
-                    _fileType = fileType;
-                    _thumbnail = thumbnail;
-                    _filePath = filePath;
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                padding: const EdgeInsets.all(20),
-                child: const Text('Take a Video'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  Uint8List file;
-                  String fileType;
-                  Uint8List thumbnail;
-                  String filePath;
-                  (file, fileType, thumbnail, filePath) = await pickVideo(
-                    ImageSource.camera,
-                  );
-                  setState(() {
-                    _file = file;
-                    _fileType = fileType;
-                    _thumbnail = thumbnail;
-                    _filePath = filePath;
-                  });
-                },
-              ),
+              if (isWeb)
+                SimpleDialogOption(
+                  padding: const EdgeInsets.all(20),
+                  child: const Text('Take a Photo'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Uint8List file;
+                    String fileType;
+                    Uint8List thumbnail;
+                    String filePath;
+                    (file, fileType, thumbnail, filePath) = await pickImage(
+                      ImageSource.camera,
+                    );
+                    setState(() {
+                      _file = file;
+                      _fileType = fileType;
+                      _thumbnail = thumbnail;
+                      _filePath = filePath;
+                    });
+                  },
+                ),
+              if (isWeb)
+                SimpleDialogOption(
+                  padding: const EdgeInsets.all(20),
+                  child: const Text('Take a Video'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Uint8List file;
+                    String fileType;
+                    Uint8List thumbnail;
+                    String filePath;
+                    (file, fileType, thumbnail, filePath) = await pickVideo(
+                      ImageSource.camera,
+                    );
+                    setState(() {
+                      _file = file;
+                      _fileType = fileType;
+                      _thumbnail = thumbnail;
+                      _filePath = filePath;
+                    });
+                  },
+                ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
                 child: const Text('Choose Image from Gallery'),
@@ -184,6 +189,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final firebaseauth = FirebaseAuth.instance.currentUser!.uid;
 
     return _file == null
         ? Center(
@@ -204,8 +210,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
               title: const Text('Post to'),
               actions: [
                 TextButton(
-                    onPressed: () => postImage(profile!.profileUid,
-                        profile.username, profile.photoUrl ?? ""),
+                    onPressed: () => postImage(
+                        firebaseauth,
+                        profile!.profileUid,
+                        profile.username,
+                        profile.photoUrl ?? ""),
                     child: const Text('Post',
                         style: TextStyle(
                           color: pinkColor,
@@ -231,7 +240,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     backgroundImage:
                         (profile != null && profile.photoUrl != null)
                             ? NetworkImage(profile.photoUrl!)
-                            : AssetImage('assets/default_pic')
+                            : const AssetImage('assets/default_pic')
                                 as ImageProvider<Object>,
                   ),
                   SizedBox(
@@ -260,11 +269,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 )),
                               ),
                             )
-                          // : AspectRatio(
-                          //     aspectRatio:
-                          //         16 / 9, // Adjust the aspect ratio as needed
-                          //     child: VideoPlayerWidget(videoUrl: videoUri),
-                          //   ),
                           : AspectRatio(
                               aspectRatio: 487 / 451,
                               child: Container(

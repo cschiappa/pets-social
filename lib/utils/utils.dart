@@ -5,32 +5,32 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 
 //Upload Image
 pickImage(ImageSource source) async {
-  final ImagePicker _imagePicker = ImagePicker();
+  final ImagePicker imagePicker = ImagePicker();
 
-  XFile? _file = await _imagePicker.pickImage(source: source);
-  //if user doesnt pick an image
-  if (_file != null) {
-    var filePath = _file.path;
+  XFile? file = await imagePicker.pickImage(source: source);
+
+  if (file != null) {
+    var filePath = file.path;
     final fileExtension = p.extension(filePath);
-    final fileBytes = await _file.readAsBytes();
+    final fileBytes = await file.readAsBytes();
 
     final thumbnail = fileBytes;
     return (fileBytes, fileExtension, thumbnail, filePath);
   }
-  print('No image selected');
+  debugPrint('No image selected');
 }
 
 //Upload Video
 pickVideo(ImageSource source) async {
-  final ImagePicker _videoPicker = ImagePicker();
+  final ImagePicker videoPicker = ImagePicker();
 
-  XFile? _file = await _videoPicker.pickVideo(
-      source: source, maxDuration: Duration(minutes: 10));
-  //if user doesnt pick an image
-  if (_file != null) {
-    var filePath = _file.path;
+  XFile? file = await videoPicker.pickVideo(
+      source: source, maxDuration: const Duration(minutes: 10));
+
+  if (file != null) {
+    var filePath = file.path;
     final fileExtension = p.extension(filePath);
-    final fileBytes = await _file.readAsBytes();
+    final fileBytes = await file.readAsBytes();
 
     final thumbnail = await VideoThumbnail.thumbnailData(
       video: filePath,
@@ -40,7 +40,7 @@ pickVideo(ImageSource source) async {
 
     return (fileBytes, fileExtension, thumbnail, filePath);
   }
-  print('No video selected');
+  debugPrint('No video selected');
 }
 
 //Determine if file is an image or video

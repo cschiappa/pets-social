@@ -35,13 +35,13 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.notifications),
             title: Text('Notifications'),
           ),
           ListTile(
-            leading: Icon(Icons.person_off),
-            title: Text('Blocked Accounts'),
+            leading: const Icon(Icons.person_off),
+            title: const Text('Blocked Accounts'),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -51,8 +51,8 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.report_problem),
-            title: Text('Report a Problem'),
+            leading: const Icon(Icons.report_problem),
+            title: const Text('Report a Problem'),
             onTap: () {},
           )
         ],

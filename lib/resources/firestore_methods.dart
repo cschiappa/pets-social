@@ -4,11 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:pets_social/resources/storage_methods.dart';
-import 'package:provider/provider.dart';
+
 import 'package:uuid/uuid.dart';
 import '../models/post.dart';
 import '../models/profile.dart';
-import '../providers/user_provider.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -16,6 +15,7 @@ class FirestoreMethods {
 
   //upload post
   Future<String> uploadPost(
+    String uid,
     String? description,
     Uint8List file,
     String profileUid,
@@ -33,7 +33,9 @@ class FirestoreMethods {
           .uploadImageToStorage('videoThumbnails', thumbnail, true);
 
       String postId = const Uuid().v1(); //v1 creates unique id based on time
+
       ModelPost post = ModelPost(
+          uid: uid,
           description: description ?? "",
           profileUid: profileUid,
           username: username,
@@ -65,15 +67,28 @@ class FirestoreMethods {
           'likes': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([profileUid]),
+        await _firestore.collection('posts').doc(postId).update(
+          {
+            'likes': FieldValue.arrayUnion([profileUid]),
+          },
+        );
+
+        // final postDoc = _firestore.collection('posts').doc(postId).get();
+        // Map<String, dynamic> data = postDoc.data()!;
+
+        final user = await _firestore
+            .collection('posts')
+            .doc(postId)
+            .get()
+            .then((value) {
+          return value.data()!['uid'];
         });
 
-        // await FirebaseApi()
-        //     .sendNotification(profileUid, 'Your post was liked!');
+        await FirebaseApi().sendNotificationToUser(
+            user, 'hello', 'Your post has been liked by $profileUid');
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -91,7 +106,7 @@ class FirestoreMethods {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -109,7 +124,7 @@ class FirestoreMethods {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -135,10 +150,10 @@ class FirestoreMethods {
           'postId': postId
         });
       } else {
-        print('text is empty');
+        debugPrint('text is empty');
       }
     } catch (e) {
-      print(
+      debugPrint(
         e.toString(),
       );
     }
@@ -168,7 +183,7 @@ class FirestoreMethods {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -177,7 +192,7 @@ class FirestoreMethods {
     try {
       _firestore.collection('posts').doc(postId).delete();
     } catch (err) {
-      print(err.toString());
+      debugPrint(err.toString());
     }
   }
 
@@ -205,7 +220,7 @@ class FirestoreMethods {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -258,7 +273,7 @@ class FirestoreMethods {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -284,7 +299,7 @@ class FirestoreMethods {
             'blockedUsers': FieldValue.arrayRemove([blockedId])
           },
         );
-        print('User unblocked successfully');
+        debugPrint('User unblocked successfully');
       } else {
         await _firestore
             .collection('users')
@@ -296,10 +311,10 @@ class FirestoreMethods {
             'blockedUsers': FieldValue.arrayUnion([blockedId])
           },
         );
-        print('User blocked successfully');
+        debugPrint('User blocked successfully');
       }
     } catch (e) {
-      print('Error blocking user: $e');
+      debugPrint('Error blocking user: $e');
     }
   }
 
@@ -330,8 +345,7 @@ class FirestoreMethods {
           profileUid: profileUid,
           email: FirebaseAuth.instance.currentUser!.email.toString(),
           bio: bio ?? "",
-          photoUrl: photoUrl ??
-              'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+          photoUrl: photoUrl,
           following: [],
           followers: [],
           savedPost: [],
@@ -370,7 +384,7 @@ class FirestoreMethods {
             .delete();
       } catch (e) {
         // Handle any errors that may occur during deletion
-        print('Error deleting account: $e');
+        debugPrint('Error deleting account: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('There was an error deleting the account.'),
@@ -422,6 +436,31 @@ class FirestoreMethods {
       } else {
         res =
             'Username must be 30 characters or less and bio must be 150 characters or less.';
+      }
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
+  }
+
+  //UPDATE POST
+  Future<String> updatePost({
+    required String postId,
+    required String newDescription,
+  }) async {
+    String res = "Some error occurred";
+    try {
+      if (newDescription.length <= 2000) {
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .update({
+          'description': newDescription,
+        });
+
+        res = 'Post updated succesfully';
+      } else {
+        res = 'Description must be 2000 characters or less.';
       }
     } catch (e) {
       res = e.toString();

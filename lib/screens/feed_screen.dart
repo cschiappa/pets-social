@@ -6,17 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/chat/chat_list_page.dart';
-import 'package:pets_social/screens/prizes_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
-import '../responsive/mobile_screen_layout.dart';
-import '../responsive/responsive_layout_screen.dart';
-import '../responsive/web_screen_layout.dart';
+
 import '../utils/utils.dart';
 import '../widgets/post_card_exp.dart';
 import '../widgets/text_field_input.dart';
@@ -53,8 +49,8 @@ class _FeedScreenState extends State<FeedScreen> {
 
   void selectImage() async {
     Uint8List im;
-    String extension;
-    (im, extension) = await pickImage(ImageSource.gallery);
+
+    (im) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
     });
@@ -79,7 +75,7 @@ class _FeedScreenState extends State<FeedScreen> {
     setState(() {
       _isLoading = false;
     });
-
+    if (!mounted) return;
     Navigator.of(context).pop();
     if (res != 'success') {
       showSnackBar(res, context);
@@ -100,7 +96,7 @@ class _FeedScreenState extends State<FeedScreen> {
         backgroundColor: mobileBackgroundColor,
         width: 280,
         child: ListView(children: [
-          Container(
+          SizedBox(
             height: 73,
             child: DrawerHeader(
               decoration: const BoxDecoration(
@@ -125,8 +121,8 @@ class _FeedScreenState extends State<FeedScreen> {
           _buildProfileList(),
           ListTile(
             tileColor: Colors.grey[500],
-            title: Text('Add a New Pet Profile'),
-            trailing: Icon(Icons.person_add),
+            title: const Text('Add a New Pet Profile'),
+            trailing: const Icon(Icons.person_add),
             onTap: () {
               _profileBottomSheet(context);
             },
@@ -232,8 +228,6 @@ class _FeedScreenState extends State<FeedScreen> {
 
   //build list of profiles for drawer
   Widget _buildProfileList() {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -333,7 +327,7 @@ class _FeedScreenState extends State<FeedScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       TextFieldInput(

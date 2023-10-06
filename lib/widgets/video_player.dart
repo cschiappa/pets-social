@@ -24,6 +24,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               _isPlaying = true;
             });
           });
+
+    _controller.setLooping(true);
   }
 
   void _togglePlayPause() {
@@ -50,7 +52,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Color.fromARGB(100, 0, 0, 0),
+            color: const Color.fromARGB(100, 0, 0, 0),
           ),
           child: IconButton(
             icon: Icon(

@@ -7,10 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/utils/colors.dart';
 
 class CropImage extends StatefulWidget {
-  Uint8List file;
-  String path;
+  final Uint8List file;
+  final String path;
 
-  CropImage({super.key, required this.file, required this.path});
+  const CropImage({super.key, required this.file, required this.path});
 
   @override
   State<CropImage> createState() => _CropImageState();
@@ -32,7 +32,7 @@ class _CropImageState extends State<CropImage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: Text('Crop Image'),
+        title: const Text('Crop Image'),
       ),
     );
   }

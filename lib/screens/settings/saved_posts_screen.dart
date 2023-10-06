@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/post.dart';
@@ -77,11 +76,9 @@ class _SavedPostsState extends State<SavedPosts> {
                           ),
                         );
                       },
-                      child: Container(
-                        child: Image(
-                          image: NetworkImage(post.postUrl),
-                          fit: BoxFit.cover,
-                        ),
+                      child: Image(
+                        image: NetworkImage(post.postUrl),
+                        fit: BoxFit.cover,
                       ),
                     );
                   },

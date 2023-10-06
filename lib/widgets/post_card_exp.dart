@@ -13,10 +13,14 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
 import 'package:pets_social/widgets/save_post_animation.dart';
+import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
+import 'package:routemaster/routemaster.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../responsive/mobile_screen_layout.dart';
+import '../utils/global_variables.dart';
 import 'bone_animation.dart';
 import 'fish_animation.dart';
 
@@ -33,6 +37,8 @@ class _PostCardExpState extends State<PostCardExp> {
   bool isLikeAnimating = false;
   int commentLen = 0;
   final CarouselController _controller = CarouselController();
+  late TextEditingController _descriptionController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -51,6 +57,22 @@ class _PostCardExpState extends State<PostCardExp> {
     _videoController.dispose();
   }
 
+  Future<String> updatePost(StateSetter setState) async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await FirestoreMethods().updatePost(
+      postId: widget.snap['postId'],
+      newDescription: _descriptionController.text,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    return res;
+  }
+
   void getComments() async {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
@@ -63,7 +85,6 @@ class _PostCardExpState extends State<PostCardExp> {
     } catch (e) {
       showSnackBar(e.toString(), context);
     }
-    setState(() {});
   }
 
   @override
@@ -113,7 +134,7 @@ class _PostCardExpState extends State<PostCardExp> {
                           } else if (contentType == 'video') {
                             return VideoPlayerWidget(videoUrl: videoUri);
                           } else {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           }
                         }(),
                       ),
@@ -139,7 +160,7 @@ class _PostCardExpState extends State<PostCardExp> {
                 ),
                 //POST HEADER
                 Container(
-                  color: Color.fromARGB(100, 0, 0, 0),
+                  color: const Color.fromARGB(100, 0, 0, 0),
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   child: Row(
@@ -181,7 +202,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                 },
                                 child: Text(
                                   widget.snap['username'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -216,9 +238,10 @@ class _PostCardExpState extends State<PostCardExp> {
                             //SHARE
                             InkWell(
                               onTap: () async {
-                                final path = widget.snap['postUrl'];
-                                await Share.share('$path',
-                                    subject: 'Pets Social Link');
+                                // final path = widget.snap['postUrl'];
+                                // await Share.share('$path',
+                                //     subject: 'Pets Social Link');
+                                Routemaster.of(context).push('/post');
                               },
                               child: const Icon(
                                 Icons.share,
@@ -264,91 +287,114 @@ class _PostCardExpState extends State<PostCardExp> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => Dialog(
-                                    child: ListView(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 16),
-                                      shrinkWrap: true,
-                                      children: [
-                                        widget.snap['profileUid'] ==
-                                                profile!.profileUid
-                                            ? InkWell(
-                                                onTap: () async {
-                                                  Navigator.of(context).pop();
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                        title: Text(
-                                                            'Are you sure you want to delete this post?'),
-                                                        content: Text(
-                                                            'If you proceed, this post will be permanently deleted.'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              FirestoreMethods()
-                                                                  .deletePost(widget
-                                                                          .snap[
-                                                                      'postId']);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Text(
-                                                                'Delete',
+                                    child: StatefulBuilder(builder:
+                                        (BuildContext context,
+                                            StateSetter setState) {
+                                      return ListView(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
+                                        shrinkWrap: true,
+                                        children: [
+                                          if (widget.snap['profileUid'] ==
+                                              profile!.profileUid)
+                                            InkWell(
+                                              onTap: () {
+                                                _profileBottomSheet(
+                                                    context, setState);
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                child: const Text(
+                                                  'Edit',
+                                                ),
+                                              ),
+                                            ),
+                                          widget.snap['profileUid'] ==
+                                                  profile.profileUid
+                                              ? InkWell(
+                                                  onTap: () async {
+                                                    Navigator.of(context).pop();
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Are you sure you want to delete this post?'),
+                                                          content: const Text(
+                                                              'If you proceed, this post will be permanently deleted.'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                FirestoreMethods()
+                                                                    .deletePost(
+                                                                        widget.snap[
+                                                                            'postId']);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                              child: const Text(
+                                                                  'Delete',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color: Colors
+                                                                          .red)),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                              child: const Text(
+                                                                'Cancel',
                                                                 style: TextStyle(
                                                                     fontSize:
-                                                                        16,
-                                                                    color: Colors
-                                                                        .red)),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Text(
-                                                              'Cancel',
-                                                              style: TextStyle(
-                                                                  fontSize: 16),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 16),
-                                                  child: const Text('Delete'),
+                                                                        16),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                )
+                                              : InkWell(
+                                                  onTap: () async {
+                                                    Navigator.pop(context);
+                                                    FirestoreMethods()
+                                                        .blockUser(
+                                                            profile.profileUid,
+                                                            widget.snap[
+                                                                'profileUid']);
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                    child: const Text(
+                                                        'Block User'),
+                                                  ),
                                                 ),
-                                              )
-                                            : InkWell(
-                                                onTap: () async {
-                                                  Navigator.pop(context);
-                                                  FirestoreMethods().blockUser(
-                                                      profile.profileUid,
-                                                      widget
-                                                          .snap['profileUid']);
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 16),
-                                                  child:
-                                                      const Text('Block User'),
-                                                ),
-                                              )
-                                      ],
-                                    ),
+                                        ],
+                                      );
+                                    }),
                                   ),
                                 );
                               },
-                              child: Icon(Icons.more_vert),
+                              child: const Icon(Icons.more_vert),
                             ),
                           ],
                         ),
@@ -364,10 +410,10 @@ class _PostCardExpState extends State<PostCardExp> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 90),
                     child: Container(
-                      padding: EdgeInsets.all(2.0),
+                      padding: const EdgeInsets.all(2.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        color: Color.fromARGB(100, 0, 0, 0),
+                        color: const Color.fromARGB(100, 0, 0, 0),
                       ),
                       child: Row(
                         children: [
@@ -502,12 +548,12 @@ class _PostCardExpState extends State<PostCardExp> {
                           children: [
                             TextSpan(
                               text: widget.snap['username'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                             TextSpan(
                                 text: ' ${widget.snap['description']}',
-                                style: TextStyle(fontSize: 15))
+                                style: const TextStyle(fontSize: 15))
                           ]),
                     ),
                   ),
@@ -586,6 +632,87 @@ class _PostCardExpState extends State<PostCardExp> {
           ],
         ),
       ),
+    );
+  }
+
+  void _profileBottomSheet(BuildContext context, StateSetter setState) {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      context: context,
+      isScrollControlled: true,
+      builder: ((context) {
+        return Padding(
+          padding: MediaQuery.of(context).size.width > webScreenSize
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SizedBox(
+            child: GestureDetector(
+              onTap: () {
+                // Close the keyboard when tapping outside the text fields
+                FocusScope.of(context).unfocus();
+              },
+              child: SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.all(50),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFieldInput(
+                        hintText: 'Change description',
+                        textInputType: TextInputType.text,
+                        textEditingController: _descriptionController,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          updatePost(setState).then((value) {
+                            if (value != 'Post updated succesfully') {
+                              showSnackBar(value, context);
+                            } else {
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MobileScreenLayout(), // Rebuild the ProfileScreen
+                                ),
+                              );
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: const ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                              ),
+                              color: pinkColor),
+                          child: _isLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: primaryColor,
+                                  ),
+                                )
+                              : const Text('Update Post'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }

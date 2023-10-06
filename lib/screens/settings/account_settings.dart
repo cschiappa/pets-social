@@ -41,8 +41,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       body: ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.groups),
-            title: Text('Profiles'),
+            leading: const Icon(Icons.groups),
+            title: const Text('Profiles'),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -52,8 +52,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
-            title: Text('Personal Details'),
+            leading: const Icon(Icons.info),
+            title: const Text('Personal Details'),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -63,20 +63,20 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.lock),
-            title: Text('Change Password'),
+            leading: const Icon(Icons.lock),
+            title: const Text('Change Password'),
             onTap: () async {
               showDialog(
                 context: context,
                 builder: ((context) {
                   return AlertDialog(
-                    title: Text('Change Password'),
+                    title: const Text('Change Password'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         //Current password
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text('Enter your current password:'),
                         ),
                         TextFieldInput(
@@ -85,9 +85,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             hintText: 'Current password',
                             textInputType: TextInputType.text),
                         //Enter new password
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 20.0, bottom: 8.0),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 20.0, bottom: 8.0),
                           child: Text('Enter your new password:'),
                         ),
                         TextFieldInput(
@@ -96,9 +95,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             hintText: 'New password',
                             textInputType: TextInputType.text),
                         //Repeat Password
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 20.0, bottom: 8.0),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 20.0, bottom: 8.0),
                           child: Text('Repeat your new password:'),
                         ),
                         TextFieldInput(
@@ -122,38 +120,42 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           if (isCurrentPasswordValid) {
                             if (AuthMethods().isPasswordValid(newPassword)) {
                               if (newPassword == newPasswordConfirmation) {
+                                if (!mounted) return;
                                 AuthMethods()
                                     .changePassword(context, newPassword);
                               } else {
+                                if (!mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     content: Text("Passwords do not match."),
                                   ),
                                 );
                               }
                             } else {
+                              if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text(
                                       "Your new password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character."),
                                 ),
                               );
                             }
                           } else {
+                            if (!mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text("Current password is incorrect"),
                               ),
                             );
                           }
                         },
-                        child: Text('Save'),
+                        child: const Text('Save'),
                       ),
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Cancel'),
+                        child: const Text('Cancel'),
                       ),
                     ],
                   );
@@ -162,20 +164,20 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.delete),
-            title: Text('Delete Account'),
+            leading: const Icon(Icons.delete),
+            title: const Text('Delete Account'),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title:
-                        Text('Are you sure you want to delete your account?'),
-                    content: Text(
+                    title: const Text(
+                        'Are you sure you want to delete your account?'),
+                    content: const Text(
                         'If you proceed your account will be deleted permanently and everything will be lost.'),
                     actions: [
                       TextButton(
-                        child: Text(
+                        child: const Text(
                           'Delete',
                           style: TextStyle(fontSize: 16, color: Colors.red),
                         ),
@@ -184,7 +186,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             context: context,
                             builder: ((context) {
                               return AlertDialog(
-                                title: Text('Please introduce your password'),
+                                title: const Text(
+                                    'Please introduce your password'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -212,26 +215,27 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                               .verifyCurrentPassword(
                                                   currentPassword);
                                       if (isCurrentPasswordValid) {
-                                        //deleteUser();
+                                        if (!mounted) return;
                                         AuthMethods()
                                             .deleteUserAccount(context);
                                       } else {
+                                        if (!mounted) return;
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          SnackBar(
+                                          const SnackBar(
                                             content: Text(
                                                 "Current password is incorrect"),
                                           ),
                                         );
                                       }
                                     },
-                                    child: Text('Delete Account'),
+                                    child: const Text('Delete Account'),
                                   ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text('Cancel'),
+                                    child: const Text('Cancel'),
                                   ),
                                 ],
                               );
@@ -240,7 +244,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         },
                       ),
                       TextButton(
-                        child: Text(
+                        child: const Text(
                           'Cancel',
                           style: TextStyle(fontSize: 16),
                         ),

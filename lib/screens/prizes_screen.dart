@@ -1,11 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
+import '../utils/global_variables.dart';
 import '../utils/utils.dart';
 
 class PrizesScreen extends StatefulWidget {
@@ -76,11 +77,17 @@ class _PrizesScreenState extends State<PrizesScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final message =
+        ModalRoute.of(context)!.settings.arguments as RemoteMessage?;
     return Scaffold(
         body: SingleChildScrollView(
+      padding: MediaQuery.of(context).size.width > webScreenSize
+          ? EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width / 3)
+          : const EdgeInsets.symmetric(horizontal: 0),
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           Row(
@@ -88,19 +95,19 @@ class _PrizesScreenState extends State<PrizesScreen> {
             children: [
               Container(
                 alignment: Alignment.topLeft,
-                padding: EdgeInsets.all(15),
+                padding: const EdgeInsets.all(15),
                 child: RichText(
                   text: TextSpan(
                     style: DefaultTextStyle.of(context).style,
                     children: <TextSpan>[
                       TextSpan(
                         text: 'Hello ${profile!.username}\n',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: 'How are you feeling today?',
                         style: TextStyle(
                           fontSize: 16,
@@ -115,23 +122,23 @@ class _PrizesScreenState extends State<PrizesScreen> {
                 child: CircleAvatar(
                   backgroundImage: (profile.photoUrl != null)
                       ? NetworkImage(profile.photoUrl!)
-                      : AssetImage('assets/default_pic')
+                      : const AssetImage('assets/default_pic')
                           as ImageProvider<Object>,
                 ),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Container(
             alignment: Alignment.topLeft,
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [
                   Color.fromARGB(255, 157, 110, 157), // Start color
                   Color.fromARGB(255, 240, 177, 136), // End color
@@ -140,7 +147,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
             ),
             child: Column(
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -151,23 +158,33 @@ class _PrizesScreenState extends State<PrizesScreen> {
                     Icon(Icons.notification_add)
                   ],
                 ),
-                Divider(
+                const Divider(
                   color: Colors.white,
                 ),
+                Container(
+                    child: message != null
+                        ? Column(
+                            children: [
+                              Text('${message.notification?.title}'),
+                              Text('${message.notification?.body}'),
+                              Text('${message.data}'),
+                            ],
+                          )
+                        : const Text('No notifications')),
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Container(
               alignment: Alignment.topLeft,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               width: double.infinity,
               height: 120,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     Color.fromARGB(255, 157, 110, 157), // Start color
                     Color.fromARGB(255, 240, 177, 136), // End color
@@ -179,7 +196,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                 children: [
                   Container(
                     alignment: Alignment.topLeft,
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -191,7 +208,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                       ],
                     ),
                   ),
-                  Divider(
+                  const Divider(
                     color: Colors.white,
                   ),
                   Container(
@@ -205,16 +222,16 @@ class _PrizesScreenState extends State<PrizesScreen> {
                   )
                 ],
               )),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               width: double.infinity,
               height: 250,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     Color.fromARGB(255, 157, 110, 157), // Start color
                     Color.fromARGB(255, 240, 177, 136), // End color
@@ -225,7 +242,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                 children: [
                   Container(
                     alignment: Alignment.topLeft,
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -237,14 +254,17 @@ class _PrizesScreenState extends State<PrizesScreen> {
                       ],
                     ),
                   ),
-                  Divider(
+                  const Divider(
                     color: Colors.white,
                   ),
                   Container(
-                    padding: EdgeInsets.all(2.0),
+                    height: MediaQuery.of(context).size.width > webScreenSize
+                        ? 150
+                        : 0,
+                    padding: const EdgeInsets.all(2.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Color.fromARGB(100, 0, 0, 0),
+                      color: const Color.fromARGB(100, 0, 0, 0),
                     ),
                     child: Row(
                       children: [

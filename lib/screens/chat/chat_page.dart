@@ -18,10 +18,10 @@ class ChatPage extends StatefulWidget {
       required this.receiverUsername});
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  ChatPageState createState() => ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

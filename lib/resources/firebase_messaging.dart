@@ -1,21 +1,22 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:path/path.dart';
+import 'package:pets_social/firebase_options.dart';
+
 import 'package:pets_social/main.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
-import 'package:provider/provider.dart';
 
-import '../models/profile.dart';
-import '../providers/user_provider.dart';
+import 'package:http/http.dart' as http;
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
-  print('Title: ${message.notification?.title}');
-  print('Body: ${message.notification?.body}');
-  print('Payload: ${message.data}');
+  debugPrint('Title: ${message.notification?.title}');
+  debugPrint('Body: ${message.notification?.body}');
+  debugPrint('Payload: ${message.data}');
 }
 
 class FirebaseApi {
@@ -25,7 +26,7 @@ class FirebaseApi {
     'high_importance_channel',
     'High Importance Notifications',
     description: 'This channel is used for important notifications',
-    importance: Importance.defaultImportance,
+    importance: Importance.max,
   );
   final _localNotifications = FlutterLocalNotificationsPlugin();
 
@@ -91,7 +92,7 @@ class FirebaseApi {
   Future<void> initNotifications() async {
     await _firebaseMessaging.requestPermission();
     final fCMToken = await _firebaseMessaging.getToken();
-    print('Token: ${fCMToken}');
+    debugPrint('Token: $fCMToken');
     initPushNotifications();
     initLocalNotifications();
 
@@ -111,36 +112,58 @@ class FirebaseApi {
     });
   }
 
-  // Future<void> sendNotification(String profileUid, String message) async {
-  //   try {
-  //     final firebaseMessaging = FirebaseMessaging.instance;
+// SEND NOTIFICATION
+  Future<void> sendNotificationToUser(
+      String userUid, String title, String body) async {
+    const String url =
+        'https://fcm.googleapis.com/v1/projects/pets-social-3d14e/messages:send';
 
-  //     // Retrieve the recipient's FCM token (you should store this token when a user logs in or registers)
-  //     final fCMToken = await _firebaseMessaging.getToken();
-  //     Map message = {};
+    final user =
+        await FirebaseFirestore.instance.collection('users').doc(userUid).get();
 
-  //     if (fCMToken != null && fCMToken.isNotEmpty) {
-  //       // Create the notification message
-  //       message = {
-  //         'notification': {
-  //           'title': 'New Like',
-  //           'body': message,
-  //         },
-  //         'data': {},
-  //         'to': fCMToken,
-  //       };
+    final userFCMToken = user['tokens'][0];
 
-  //       //final response = await firebaseMessaging.send(message);
+    // FCM server key obtained from Firebase Console
+    const String serverKey =
+        '720d7cae3df2df93e30e1d7ac960c267a79167c6'; //this key is wrong
 
-  //       final response = initNotifications();
+    final Map<String, dynamic> notificationData = {
+      "message": {
+        "token": userFCMToken,
+        "notification": {
+          "title": title,
+          "body": body,
+        },
+      }
+    };
 
-  //       // Handle the response if needed
-  //       print('Notification sent: $response');
-  //     } else {
-  //       print('Recipient does not have a valid FCM token.');
-  //     }
-  //   } catch (e) {
-  //     print('Error sending notification: $e');
-  //   }
-  // }
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $serverKey',
+    };
+
+    try {
+      // final firstResponse = await http.post(
+      //   Uri.parse(
+      //       'https://console.firebase.google.com/u/0/project/pets-social-3d14e/settings/serviceaccounts/adminsdk'),
+      //   headers: headers,
+      //   body: json.encode(notificationData),
+      // );
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(notificationData),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Notification sent: ${response.body}');
+      } else {
+        debugPrint(
+            'Failed to send notification. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error sending notification: $e');
+    }
+  }
 }

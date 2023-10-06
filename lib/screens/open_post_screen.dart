@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/widgets/like_animation.dart';
-import 'package:provider/provider.dart';
+
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../models/profile.dart';
-import '../providers/user_provider.dart';
+
 import '../utils/colors.dart';
 import '../utils/global_variables.dart';
 import '../widgets/post_card_exp.dart';
 
 class OpenPost extends StatefulWidget {
-  OpenPost({
+  const OpenPost({
     super.key,
     required this.postId,
     required this.profileUid,
@@ -37,7 +35,6 @@ class _OpenPostState extends State<OpenPost> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(

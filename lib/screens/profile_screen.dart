@@ -1,19 +1,19 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
-import 'package:pets_social/screens/initial_screen/login_screen.dart';
+import 'package:pets_social/screens/initial_screens/login_screen.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
+import '../utils/global_variables.dart';
 import '../widgets/follow_button.dart';
 import '../widgets/text_field_input.dart';
 import 'open_post_screen.dart';
@@ -46,8 +46,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void selectImage() async {
     Uint8List im;
-    String extension;
-    (im, extension) = await pickImage(ImageSource.gallery);
+
+    (im) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
     });
@@ -65,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     final ModelProfile? profile =
         Provider.of<UserProvider>(context, listen: false).getProfile;
+
     //verifies if profile belongs to current profile or another profile
     userId = widget.profileUid ?? profile!.profileUid;
     getData();
@@ -145,8 +146,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
 
     if (res != 'success') {
+      if (!mounted) return;
       showSnackBar(res, context);
     } else {
+      if (!mounted) return;
       Navigator.of(context).pop();
     }
   }
@@ -219,232 +222,242 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               centerTitle: false,
             ),
-            body: Stack(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10.0),
-                      bottomRight: Radius.circular(10.0),
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 157, 110, 157), // Start color
-                        Color.fromARGB(255, 240, 177, 136), // End color
-                      ],
-                    ),
-                  ),
-                  alignment: Alignment.topCenter,
-                  height: 60,
-                ),
-                ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          //PROFILE PIC
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.black, // Border color
-                                width: 5.0, // Border width
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              backgroundImage: NetworkImage(
-                                userData['photoUrl'],
-                              ),
-                              radius: 40,
-                            ),
-                          ),
-                          //USERNAME
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              userData['username'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          //DESCRIPTION
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              userData['bio'],
-                            ),
-                          ),
-                          //PROFILE STATS
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              buildStatColumn(likes, "likes"),
-                              buildStatColumn(fish, "fish"),
-                              buildStatColumn(bones, "bones"),
-                              buildStatColumn(followers, "followers"),
-                            ],
-                          ),
-                          //BUTTON
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  profile!.profileUid == userId
-                                      ? FollowButton(
-                                          text: 'Sign Out',
-                                          backgroundColor:
-                                              mobileBackgroundColor,
-                                          textColor: primaryColor,
-                                          borderColor: Colors.grey,
-                                          function: () async {
-                                            await AuthMethods().signOut();
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const LoginScreen(),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                      : isFollowing
-                                          ? FollowButton(
-                                              text: 'Unfollow',
-                                              backgroundColor: Colors.white,
-                                              textColor: Colors.black,
-                                              borderColor: Colors.grey,
-                                              function: () async {
-                                                await FirestoreMethods()
-                                                    .followUser(
-                                                  profile.profileUid,
-                                                  userData['profileUid'],
-                                                );
-                                                setState(() {
-                                                  isFollowing = false;
-                                                  followers--;
-                                                });
-                                              },
-                                            )
-                                          : FollowButton(
-                                              text: 'Follow',
-                                              backgroundColor:
-                                                  const Color.fromRGBO(
-                                                      242, 102, 139, 1),
-                                              textColor: Colors.white,
-                                              borderColor: const Color.fromRGBO(
-                                                  242, 102, 139, 1),
-                                              function: () async {
-                                                await FirestoreMethods()
-                                                    .followUser(
-                                                  profile.profileUid,
-                                                  userData['profileUid'],
-                                                );
-                                                setState(
-                                                  () {
-                                                    isFollowing = true;
-                                                    followers++;
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                ],
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    _profileBottomSheet(context);
-                                  },
-                                  icon: Icon(
-                                    Icons.settings,
-                                    size: 20,
-                                  )),
-                            ],
-                          ),
+            body: Container(
+              padding: MediaQuery.of(context).size.width > webScreenSize
+                  ? EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width / 3)
+                  : const EdgeInsets.symmetric(horizontal: 0),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10.0),
+                        bottomRight: Radius.circular(10.0),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color.fromARGB(255, 157, 110, 157), // Start color
+                          Color.fromARGB(255, 240, 177, 136), // End color
                         ],
                       ),
                     ),
-                    const Divider(),
-                    FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('posts')
-                          .where('profileUid', isEqualTo: userId)
-                          .get(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: pinkColor,
+                    alignment: Alignment.topCenter,
+                    height: 60,
+                  ),
+                  ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            //PROFILE PIC
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black, // Border color
+                                  width: 5.0, // Border width
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                backgroundImage: NetworkImage(
+                                  userData['photoUrl'],
+                                ),
+                                radius: 40,
+                              ),
                             ),
-                          );
-                        }
-                        return GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: (snapshot.data! as dynamic).docs.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 1.5,
-                                  childAspectRatio: 1),
-                          itemBuilder: (context, index) {
-                            DocumentSnapshot snap =
-                                (snapshot.data! as dynamic).docs[index];
-
-                            Widget mediaWidget;
-                            final String contentType =
-                                getContentTypeFromUrl(snap['fileType']);
-
-                            if (contentType == 'video') {
-                              mediaWidget = ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image(
-                                  image: NetworkImage(snap['videoThumbnail']),
-                                  fit: BoxFit.cover,
+                            //USERNAME
+                            Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                userData['username'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            //DESCRIPTION
+                            Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                userData['bio'],
+                              ),
+                            ),
+                            //PROFILE STATS
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                buildStatColumn(likes, "likes"),
+                                buildStatColumn(fish, "fish"),
+                                buildStatColumn(bones, "bones"),
+                                buildStatColumn(followers, "followers"),
+                              ],
+                            ),
+                            //BUTTON
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    profile!.profileUid == userId
+                                        ? FollowButton(
+                                            text: 'Sign Out',
+                                            backgroundColor:
+                                                mobileBackgroundColor,
+                                            textColor: primaryColor,
+                                            borderColor: Colors.grey,
+                                            function: () async {
+                                              await AuthMethods()
+                                                  .signOut(context);
+                                              if (!mounted) return;
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const LoginScreen(),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        : isFollowing
+                                            ? FollowButton(
+                                                text: 'Unfollow',
+                                                backgroundColor: Colors.white,
+                                                textColor: Colors.black,
+                                                borderColor: Colors.grey,
+                                                function: () async {
+                                                  await FirestoreMethods()
+                                                      .followUser(
+                                                    profile.profileUid,
+                                                    userData['profileUid'],
+                                                  );
+                                                  setState(() {
+                                                    isFollowing = false;
+                                                    followers--;
+                                                  });
+                                                },
+                                              )
+                                            : FollowButton(
+                                                text: 'Follow',
+                                                backgroundColor:
+                                                    const Color.fromRGBO(
+                                                        242, 102, 139, 1),
+                                                textColor: Colors.white,
+                                                borderColor:
+                                                    const Color.fromRGBO(
+                                                        242, 102, 139, 1),
+                                                function: () async {
+                                                  await FirestoreMethods()
+                                                      .followUser(
+                                                    profile.profileUid,
+                                                    userData['profileUid'],
+                                                  );
+                                                  setState(
+                                                    () {
+                                                      isFollowing = true;
+                                                      followers++;
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                  ],
                                 ),
-                              );
-                            } else {
-                              // If it's not a video, return an image.
-                              mediaWidget = ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image(
-                                  image: NetworkImage(snap['postUrl']),
-                                  fit: BoxFit.cover,
-                                ),
-                              );
-                            }
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => OpenPost(
-                                      postId: snap['postId'],
-                                      profileUid: snap['profileUid'],
-                                      username: snap['username'],
-                                    ),
+                                IconButton(
+                                    onPressed: () {
+                                      _profileBottomSheet(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.settings,
+                                      size: 20,
+                                    )),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(),
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('posts')
+                            .where('profileUid', isEqualTo: userId)
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: pinkColor,
+                              ),
+                            );
+                          }
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            itemCount: (snapshot.data! as dynamic).docs.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 1.5,
+                                    childAspectRatio: 1),
+                            itemBuilder: (context, index) {
+                              DocumentSnapshot snap =
+                                  (snapshot.data! as dynamic).docs[index];
+
+                              Widget mediaWidget;
+                              final String contentType =
+                                  getContentTypeFromUrl(snap['fileType']);
+
+                              if (contentType == 'video') {
+                                mediaWidget = ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image(
+                                    image: NetworkImage(snap['videoThumbnail']),
+                                    fit: BoxFit.cover,
                                   ),
                                 );
-                              },
-                              child: mediaWidget,
-                              // child: ClipRRect(
-                              //   borderRadius: BorderRadius.circular(10.0),
-                              //   child: Image(
-                              //     image: NetworkImage(snap['postUrl']),
-                              //     fit: BoxFit.cover,
-                              //   ),
-                              // ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                              } else {
+                                // If it's not a video, return an image.
+                                mediaWidget = ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image(
+                                    image: NetworkImage(snap['postUrl']),
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => OpenPost(
+                                        postId: snap['postId'],
+                                        profileUid: snap['profileUid'],
+                                        username: snap['username'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: mediaWidget,
+                                // child: ClipRRect(
+                                //   borderRadius: BorderRadius.circular(10.0),
+                                //   child: Image(
+                                //     image: NetworkImage(snap['postUrl']),
+                                //     fit: BoxFit.cover,
+                                //   ),
+                                // ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
   }
@@ -478,8 +491,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _profileBottomSheet(BuildContext context) {
-    final ModelProfile? profile =
-        Provider.of<UserProvider>(context, listen: false).getProfile;
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -488,8 +499,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       builder: ((context) {
         return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: MediaQuery.of(context).size.width > webScreenSize
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SizedBox(
             child: GestureDetector(
               onTap: () {
@@ -527,7 +541,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       TextFieldInput(
@@ -554,7 +568,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  MobileScreenLayout(), // Rebuild the ProfileScreen
+                                  const MobileScreenLayout(), // Rebuild the ProfileScreen
                             ),
                           );
                         },

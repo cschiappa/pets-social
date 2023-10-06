@@ -15,6 +15,10 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  disposeProfile() {
+    _profile = null;
+  }
+
   // Method to unblock a profile by their UID
   void unblockUser(String profileUid) {
     if (_profile != null) {

@@ -1,14 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/responsive/web_screen_layout.dart';
-import 'package:pets_social/screens/initial_screen/login_screen.dart';
+import 'package:pets_social/screens/initial_screens/login_screen.dart';
+import 'package:pets_social/screens/prizes_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:pets_social/widgets/routemaster.dart';
 import 'package:provider/provider.dart';
+import 'package:routemaster/routemaster.dart';
 import 'firebase_options.dart';
 import 'screens/notifications_screen.dart';
 
@@ -19,7 +21,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseApi().initNotifications();
+
   runApp(const MyApp());
 }
 
@@ -33,6 +35,10 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => UserProvider(),
+          child: MaterialApp.router(
+            routerDelegate: routemaster,
+            routeInformationParser: const RoutemasterParser(),
+          ),
         ),
       ],
       child: MaterialApp(
@@ -69,7 +75,7 @@ class MyApp extends StatelessWidget {
           },
         ),
         routes: {
-          NotificationScreen.route: (context) => const NotificationScreen()
+          NotificationScreen.route: (context) => const PrizesScreen(),
         },
       ),
     );
