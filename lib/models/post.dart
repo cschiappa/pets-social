@@ -56,7 +56,7 @@ class ModelPost {
         profileUid: snapshot['profileUid'],
         username: snapshot['username'],
         postId: snapshot['postId'],
-        datePublished: snapshot['datePublished'],
+        datePublished: snapshot['datePublished'].toDate(),
         postUrl: snapshot['postUrl'],
         profImage: snapshot['profImage'],
         likes: snapshot['likes'],

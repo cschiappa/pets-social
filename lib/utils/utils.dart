@@ -53,7 +53,9 @@ String getContentTypeFromUrl(fileType) {
     '.png',
     '.gif',
     '.bmp',
-    '.webp'
+    '.webp',
+    '.jfif ',
+    '.svg',
   ];
 
   if (imageExtensions.contains(fileType)) {
@@ -61,7 +63,7 @@ String getContentTypeFromUrl(fileType) {
   }
 
   // Check if the URL ends with a known video file extension
-  final videoExtensions = ['.mp4', '.avi', '.mov', '.mkv', '.webm'];
+  final videoExtensions = ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.gif'];
 
   if (videoExtensions.contains(fileType)) {
     return 'video';

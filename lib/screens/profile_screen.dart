@@ -384,6 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         future: FirebaseFirestore.instance
                             .collection('posts')
                             .where('profileUid', isEqualTo: userId)
+                            .orderBy('datePublished', descending: true)
                             .get(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==

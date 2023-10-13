@@ -84,8 +84,18 @@ class FirestoreMethods {
           return value.data()!['uid'];
         });
 
-        await FirebaseApi().sendNotificationToUser(
-            user, 'hello', 'Your post has been liked by $profileUid');
+        final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+            await _firestore
+                .collectionGroup('profiles')
+                .where('profileUid', isEqualTo: profileUid)
+                .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          final actionUser = querySnapshot.docs[0].data()['username'];
+
+          await FirebaseApi().sendNotificationToUser(
+              user, 'New notification', '$actionUser liked your post.');
+        }
       }
     } catch (e) {
       debugPrint(e.toString());

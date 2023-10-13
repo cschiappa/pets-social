@@ -6,7 +6,9 @@ import 'package:pets_social/screens/open_post_screen.dart';
 import 'package:pets_social/screens/profile_screen.dart';
 import 'package:pets_social/utils/colors.dart';
 
+import '../models/post.dart';
 import '../utils/global_variables.dart';
+import '../utils/utils.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -19,12 +21,6 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   bool isShowUsers = false;
   var userData = {};
-
-  @override
-  void dispose() {
-    super.dispose();
-    searchController.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +92,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   ? const EdgeInsets.symmetric(horizontal: 200)
                   : const EdgeInsets.symmetric(horizontal: 0),
               child: FutureBuilder(
-                future: FirebaseFirestore.instance.collection('posts').get(),
+                future: FirebaseFirestore.instance
+                    .collection('posts')
+                    .orderBy('datePublished', descending: true)
+                    .get(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
@@ -104,39 +103,76 @@ class _SearchScreenState extends State<SearchScreen> {
                       color: pinkColor,
                     ));
                   }
+
                   //search post grid
                   return MasonryGridView.builder(
                     itemCount: (snapshot.data! as dynamic).docs.length,
-                    itemBuilder: (context, index) => GestureDetector(
-                      onTap: () {
-                        String profileUid = (snapshot.data! as dynamic)
-                            .docs[index]['profileUid'];
-                        String username =
-                            (snapshot.data! as dynamic).docs[index]['username'];
-                        String postId =
-                            (snapshot.data! as dynamic).docs[index]['postId'];
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OpenPost(
-                                  postId: postId,
-                                  profileUid: profileUid,
-                                  username: username),
-                            ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network((snapshot.data! as dynamic)
-                              .docs[index]['postUrl']),
+                    itemBuilder: (context, index) {
+                      ModelPost post =
+                          ModelPost.fromSnap(snapshot.data!.docs[index]);
+
+                      Widget mediaWidget;
+                      final String contentType =
+                          getContentTypeFromUrl(post.fileType);
+
+                      if (contentType == 'video') {
+                        mediaWidget = ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image(
+                            image: NetworkImage(post.videoThumbnail),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      } else if (contentType == 'image') {
+                        // If it's not a video, return an image.
+                        mediaWidget = ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image(
+                            image: NetworkImage(post.postUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      } else {
+                        mediaWidget = const Text('file format not available');
+                      }
+
+                      if (!snapshot.hasData) {
+                        return const Center(
+                            child: CircularProgressIndicator(
+                          color: pinkColor,
+                        ));
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          String profileUid = (snapshot.data! as dynamic)
+                              .docs[index]['profileUid'];
+                          String username = (snapshot.data! as dynamic)
+                              .docs[index]['username'];
+                          String postId =
+                              (snapshot.data! as dynamic).docs[index]['postId'];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OpenPost(
+                                    postId: postId,
+                                    profileUid: profileUid,
+                                    username: username),
+                              ));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: mediaWidget,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                     gridDelegate: MediaQuery.of(context).size.width >
                             webScreenSize
                         ? const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4)
+                            crossAxisCount: 6)
                         : const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
                   );
@@ -144,5 +180,11 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
   }
 }

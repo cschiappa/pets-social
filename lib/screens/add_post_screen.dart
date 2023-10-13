@@ -6,6 +6,8 @@ import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
+import 'package:pets_social/responsive/web_screen_layout.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +58,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
         clearImage();
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const MobileScreenLayout(),
+            builder: (context) => const ResponsiveLayout(
+                webScreenLayout: WebScreenLayout(),
+                mobileScreenLayout: MobileScreenLayout()),
           ),
         );
       } else {

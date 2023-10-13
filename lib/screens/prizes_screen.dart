@@ -163,11 +163,11 @@ class _PrizesScreenState extends State<PrizesScreen> {
                 ),
                 Container(
                     child: message != null
-                        ? Column(
+                        ? Row(
                             children: [
-                              Text('${message.notification?.title}'),
+                              //Text('${message.notification?.title}'),
                               Text('${message.notification?.body}'),
-                              Text('${message.data}'),
+                              //Text('${message.data}'),
                             ],
                           )
                         : const Text('No notifications')),
@@ -257,97 +257,99 @@ class _PrizesScreenState extends State<PrizesScreen> {
                   const Divider(
                     color: Colors.white,
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.width > webScreenSize
-                        ? 150
-                        : 0,
-                    padding: const EdgeInsets.all(2.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: const Color.fromARGB(100, 0, 0, 0),
-                    ),
-                    child: Row(
-                      children: [
-                        //ARROW LEFT SWIPE
-                        InkWell(
-                          onTap: () {
-                            _controller.previousPage();
-                          },
-                          child: const Icon(
-                            Icons.arrow_left,
-                          ),
-                        ),
-                        Expanded(
-                          child: CarouselSlider(
-                            carouselController: _controller,
-                            options: CarouselOptions(
-                              viewportFraction: 0.4,
-                              aspectRatio: 2,
-                              enableInfiniteScroll: true,
-                              initialPage: 1,
-                              enlargeCenterPage: true,
-                              enlargeFactor: 0.5,
-                              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                  SingleChildScrollView(
+                    child: Container(
+                      // height: MediaQuery.of(context).size.width > webScreenSize
+                      //     ? 150
+                      //     : 0,
+                      padding: const EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: const Color.fromARGB(100, 0, 0, 0),
+                      ),
+                      child: Row(
+                        children: [
+                          //ARROW LEFT SWIPE
+                          InkWell(
+                            onTap: () {
+                              _controller.previousPage();
+                            },
+                            child: const Icon(
+                              Icons.arrow_left,
                             ),
-                            items: [
-                              // FISH
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    (fish > 0)
-                                        ? 'assets/fish.png'
-                                        : 'assets/fish_border.png',
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  Text('$fish fish')
-                                ],
-                              ),
-
-                              //LIKES
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    (likes > 0)
-                                        ? 'assets/like.png'
-                                        : 'assets/like_border.png',
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  Text((likes == 1)
-                                      ? '$likes like'
-                                      : '$likes likes')
-                                ],
-                              ),
-
-                              //BONES
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    (bones > 0)
-                                        ? 'assets/bone.png'
-                                        : 'assets/bone_border.png',
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                                  Text((bones == 1)
-                                      ? '$bones bone'
-                                      : '$bones bones')
-                                ],
-                              ),
-                            ],
                           ),
-                        ),
-                        //ARROW RIGHT SWIPE
-                        InkWell(
-                          onTap: () {
-                            _controller.nextPage();
-                          },
-                          child: const Icon(
-                            Icons.arrow_right,
+                          Expanded(
+                            child: CarouselSlider(
+                              carouselController: _controller,
+                              options: CarouselOptions(
+                                viewportFraction: 0.4,
+                                aspectRatio: 2,
+                                enableInfiniteScroll: true,
+                                initialPage: 1,
+                                enlargeCenterPage: true,
+                                enlargeFactor: 0.5,
+                                enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                              ),
+                              items: [
+                                // FISH
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      (fish > 0)
+                                          ? 'assets/fish.png'
+                                          : 'assets/fish_border.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
+                                    Text('$fish fish')
+                                  ],
+                                ),
+
+                                //LIKES
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      (likes > 0)
+                                          ? 'assets/like.png'
+                                          : 'assets/like_border.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
+                                    Text((likes == 1)
+                                        ? '$likes like'
+                                        : '$likes likes')
+                                  ],
+                                ),
+
+                                //BONES
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      (bones > 0)
+                                          ? 'assets/bone.png'
+                                          : 'assets/bone_border.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
+                                    Text((bones == 1)
+                                        ? '$bones bone'
+                                        : '$bones bones')
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          //ARROW RIGHT SWIPE
+                          InkWell(
+                            onTap: () {
+                              _controller.nextPage();
+                            },
+                            child: const Icon(
+                              Icons.arrow_right,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

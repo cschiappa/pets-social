@@ -75,7 +75,7 @@ class _WebScreenLayoutState extends State<WebScreenLayout> {
           IconButton(
             onPressed: () => navigationTapped(3),
             icon: Icon(
-              Icons.favorite,
+              Icons.star,
               color: _page == 3 ? primaryColor : secondaryColor,
             ),
           ),

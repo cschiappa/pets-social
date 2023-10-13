@@ -5,10 +5,12 @@ import '../../models/post.dart';
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/colors.dart';
+import '../../utils/utils.dart';
 import '../open_post_screen.dart';
 
 class SavedPosts extends StatefulWidget {
-  const SavedPosts({super.key});
+  final snap;
+  const SavedPosts({super.key, this.snap});
 
   @override
   State<SavedPosts> createState() => _SavedPostsState();
@@ -64,6 +66,32 @@ class _SavedPostsState extends State<SavedPosts> {
                   itemBuilder: (context, index) {
                     ModelPost post =
                         ModelPost.fromSnap(snapshot.data!.docs[index]);
+
+                    Widget mediaWidget;
+                    final String contentType =
+                        getContentTypeFromUrl(post.fileType);
+
+                    if (contentType == 'video') {
+                      mediaWidget = ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image(
+                          image: NetworkImage(post.videoThumbnail),
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    } else if (contentType == 'image') {
+                      // If it's not a video, return an image.
+                      mediaWidget = ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image(
+                          image: NetworkImage(post.postUrl),
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    } else {
+                      mediaWidget = const Text('file format not available');
+                    }
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -76,10 +104,7 @@ class _SavedPostsState extends State<SavedPosts> {
                           ),
                         );
                       },
-                      child: Image(
-                        image: NetworkImage(post.postUrl),
-                        fit: BoxFit.cover,
-                      ),
+                      child: mediaWidget,
                     );
                   },
                 );

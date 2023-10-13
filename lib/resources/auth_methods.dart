@@ -100,7 +100,8 @@ class AuthMethods {
               profileUid: profileUid,
               email: email,
               bio: bio,
-              photoUrl: photoUrl,
+              photoUrl: photoUrl ??
+                  'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
               following: [],
               followers: [],
               savedPost: [],

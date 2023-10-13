@@ -17,8 +17,6 @@ import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:routemaster/routemaster.dart';
-import 'package:share_plus/share_plus.dart';
-
 import '../responsive/mobile_screen_layout.dart';
 import '../utils/global_variables.dart';
 import 'bone_animation.dart';
@@ -133,6 +131,10 @@ class _PostCardExpState extends State<PostCardExp> {
                             );
                           } else if (contentType == 'video') {
                             return VideoPlayerWidget(videoUrl: videoUri);
+                          } else if (contentType == 'unknown') {
+                            return const SizedBox.shrink(
+                              child: Center(child: Text('unknown format')),
+                            );
                           } else {
                             return const SizedBox.shrink();
                           }
@@ -241,7 +243,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                 // final path = widget.snap['postUrl'];
                                 // await Share.share('$path',
                                 //     subject: 'Pets Social Link');
-                                Routemaster.of(context).push('/post');
+                                Routemaster.of(context).push(
+                                    '/post/[postId]/[profileUid]/[username]');
                               },
                               child: const Icon(
                                 Icons.share,
@@ -286,111 +289,125 @@ class _PostCardExpState extends State<PostCardExp> {
                               onTap: () {
                                 showDialog(
                                   context: context,
-                                  builder: (context) => Dialog(
-                                    child: StatefulBuilder(builder:
-                                        (BuildContext context,
-                                            StateSetter setState) {
-                                      return ListView(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                        shrinkWrap: true,
-                                        children: [
-                                          if (widget.snap['profileUid'] ==
-                                              profile!.profileUid)
-                                            InkWell(
-                                              onTap: () {
-                                                _profileBottomSheet(
-                                                    context, setState);
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                child: const Text(
-                                                  'Edit',
+                                  builder: (context) => Padding(
+                                    padding: MediaQuery.of(context).size.width >
+                                            webScreenSize
+                                        ? EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                3)
+                                        : const EdgeInsets.all(0),
+                                    child: Dialog(
+                                      child: StatefulBuilder(builder:
+                                          (BuildContext context,
+                                              StateSetter setState) {
+                                        return ListView(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16),
+                                          shrinkWrap: true,
+                                          children: [
+                                            if (widget.snap['profileUid'] ==
+                                                profile!.profileUid)
+                                              InkWell(
+                                                onTap: () {
+                                                  _profileBottomSheet(
+                                                      context, setState);
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 16),
+                                                  child: const Text(
+                                                    'Edit',
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          widget.snap['profileUid'] ==
-                                                  profile.profileUid
-                                              ? InkWell(
-                                                  onTap: () async {
-                                                    Navigator.of(context).pop();
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                          title: const Text(
-                                                              'Are you sure you want to delete this post?'),
-                                                          content: const Text(
-                                                              'If you proceed, this post will be permanently deleted.'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                FirestoreMethods()
-                                                                    .deletePost(
-                                                                        widget.snap[
-                                                                            'postId']);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: const Text(
-                                                                  'Delete',
+                                            widget.snap['profileUid'] ==
+                                                    profile.profileUid
+                                                ? InkWell(
+                                                    onTap: () async {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                            title: const Text(
+                                                                'Are you sure you want to delete this post?'),
+                                                            content: const Text(
+                                                                'If you proceed, this post will be permanently deleted.'),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  FirestoreMethods()
+                                                                      .deletePost(
+                                                                          widget
+                                                                              .snap['postId']);
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child: const Text(
+                                                                    'Delete',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Colors
+                                                                            .red)),
+                                                              ),
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child:
+                                                                    const Text(
+                                                                  'Cancel',
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                          16,
-                                                                      color: Colors
-                                                                          .red)),
-                                                            ),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: const Text(
-                                                                'Cancel',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                    child: const Text('Delete'),
+                                                                          16),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 12,
+                                                          horizontal: 16),
+                                                      child:
+                                                          const Text('Delete'),
+                                                    ),
+                                                  )
+                                                : InkWell(
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      FirestoreMethods()
+                                                          .blockUser(
+                                                              profile
+                                                                  .profileUid,
+                                                              widget.snap[
+                                                                  'profileUid']);
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 12,
+                                                          horizontal: 16),
+                                                      child: const Text(
+                                                          'Block User'),
+                                                    ),
                                                   ),
-                                                )
-                                              : InkWell(
-                                                  onTap: () async {
-                                                    Navigator.pop(context);
-                                                    FirestoreMethods()
-                                                        .blockUser(
-                                                            profile.profileUid,
-                                                            widget.snap[
-                                                                'profileUid']);
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                    child: const Text(
-                                                        'Block User'),
-                                                  ),
-                                                ),
-                                        ],
-                                      );
-                                    }),
+                                          ],
+                                        );
+                                      }),
+                                    ),
                                   ),
                                 );
                               },

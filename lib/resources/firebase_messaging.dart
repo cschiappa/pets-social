@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:pets_social/firebase_options.dart';
+import 'package:googleapis_auth/auth.dart';
+import 'package:googleapis_auth/auth_io.dart';
 
 import 'package:pets_social/main.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
@@ -81,7 +81,7 @@ class FirebaseApi {
             _androidChannel.id,
             _androidChannel.name,
             channelDescription: _androidChannel.description,
-            icon: '@drawable/ic launcher',
+            icon: '@drawable/ic_launcher',
           ),
         ),
         payload: jsonEncode(message.toMap()),
@@ -123,9 +123,7 @@ class FirebaseApi {
 
     final userFCMToken = user['tokens'][0];
 
-    // FCM server key obtained from Firebase Console
-    const String serverKey =
-        '720d7cae3df2df93e30e1d7ac960c267a79167c6'; //this key is wrong
+    //var client = await obtainAuthenticatedClient();
 
     final Map<String, dynamic> notificationData = {
       "message": {
@@ -139,17 +137,10 @@ class FirebaseApi {
 
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $serverKey',
+      //'Authorization': 'Bearer ${client.credentials.accessToken.data}',
     };
 
     try {
-      // final firstResponse = await http.post(
-      //   Uri.parse(
-      //       'https://console.firebase.google.com/u/0/project/pets-social-3d14e/settings/serviceaccounts/adminsdk'),
-      //   headers: headers,
-      //   body: json.encode(notificationData),
-      // );
-
       final response = await http.post(
         Uri.parse(url),
         headers: headers,
@@ -164,6 +155,12 @@ class FirebaseApi {
       }
     } catch (e) {
       debugPrint('Error sending notification: $e');
+    } finally {
+      //client.close();
     }
   }
+
+  //Future<AuthClient> obtainAuthenticatedClient() async {
+
+  //}
 }

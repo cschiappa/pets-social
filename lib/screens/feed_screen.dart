@@ -175,10 +175,10 @@ class _FeedScreenState extends State<FeedScreen> {
             child: StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('posts')
-                  .where('profileUid', whereIn: [
-                ...profile!.following,
-                profile.profileUid
-              ]).snapshots(),
+                  .where('profileUid',
+                      whereIn: [...profile!.following, profile.profileUid])
+                  .orderBy('datePublished', descending: true)
+                  .snapshots(),
               builder: (context,
                   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

@@ -48,6 +48,7 @@ class _OpenPostState extends State<OpenPost> {
         stream: FirebaseFirestore.instance
             .collection('posts')
             .where('profileUid', isEqualTo: widget.profileUid)
+            .orderBy('datePublished', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
