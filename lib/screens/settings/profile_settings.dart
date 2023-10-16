@@ -54,9 +54,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           );
         }
 
+        final profileDocs = snapshot.data!.docs;
+        final hasMultipleProfiles = profileDocs.length > 1;
+
         return ListView(
           children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildProfileListItem(doc))
+              .map<Widget>(
+                  (doc) => _buildProfileListItem(doc, hasMultipleProfiles))
               .toList(),
         );
       },
@@ -64,111 +68,118 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 
   //build individual user list items
-  Widget _buildProfileListItem(DocumentSnapshot document) {
+  Widget _buildProfileListItem(
+      DocumentSnapshot document, bool hasMultipleProfiles) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     //display all users except current user
     return ListTile(
-        leading: CircleAvatar(
-          radius: 15,
-          backgroundImage: NetworkImage(data['photoUrl']),
-        ),
-        title: Text(data['username']),
-        trailing: TextButton(
-            child: const Text('Delete'),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text(
-                        'Are you sure you want to delete this profile?'),
-                    content: const Text(
-                        'If you proceed your profile will be deleted permanently and everything associated with this profile will be lost.'),
-                    actions: [
-                      TextButton(
-                        child: const Text(
-                          'Delete',
-                          style: TextStyle(fontSize: 16, color: Colors.red),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: ((context) {
-                              return AlertDialog(
-                                title: const Text(
-                                    'Please introduce your password'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    //text field unput for password
-                                    TextFieldInput(
-                                      hintText: 'Enter your password',
-                                      textInputType: TextInputType.text,
-                                      textEditingController:
-                                          _passwordController,
-                                      isPass: true,
-                                    ),
-                                    const SizedBox(
-                                      height: 24,
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () async {
-                                      String currentPassword =
-                                          _passwordController.text;
+      leading: CircleAvatar(
+        radius: 15,
+        backgroundImage: NetworkImage(data['photoUrl']),
+      ),
+      title: Text(data['username']),
+      trailing: hasMultipleProfiles
+          ? TextButton(
+              child: const Text('Delete'),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text(
+                          'Are you sure you want to delete this profile?'),
+                      content: const Text(
+                          'If you proceed your profile will be deleted permanently and everything associated with this profile will be lost.'),
+                      actions: [
+                        TextButton(
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(fontSize: 16, color: Colors.red),
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: ((context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                      'Please introduce your password'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      //text field unput for password
+                                      TextFieldInput(
+                                        hintText: 'Enter your password',
+                                        textInputType: TextInputType.text,
+                                        textEditingController:
+                                            _passwordController,
+                                        isPass: true,
+                                      ),
+                                      const SizedBox(
+                                        height: 24,
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () async {
+                                        String currentPassword =
+                                            _passwordController.text;
 
-                                      bool isCurrentPasswordValid =
-                                          await AuthMethods()
-                                              .verifyCurrentPassword(
-                                                  currentPassword);
-                                      if (isCurrentPasswordValid) {
-                                        if (!mounted) return;
-                                        FirestoreMethods().deleteProfile(
-                                            data['profileUid'], context);
+                                        bool isCurrentPasswordValid =
+                                            await AuthMethods()
+                                                .verifyCurrentPassword(
+                                                    currentPassword);
+                                        if (isCurrentPasswordValid) {
+                                          if (!mounted) return;
+                                          FirestoreMethods().deleteProfile(
+                                              data['profileUid'], context);
+                                          _passwordController.clear();
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          if (!mounted) return;
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  "Current password is incorrect"),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: const Text('Delete Profile'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
                                         _passwordController.clear();
                                         Navigator.of(context).pop();
                                         Navigator.of(context).pop();
-                                      } else {
-                                        if (!mounted) return;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                                "Current password is incorrect"),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    child: const Text('Delete Profile'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                ],
-                              );
-                            }),
-                          );
-                        },
-                      ),
-                      TextButton(
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 16),
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            );
+                          },
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  );
-                },
-              );
-            }));
+                        TextButton(
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+            )
+          : null,
+    );
   }
 }

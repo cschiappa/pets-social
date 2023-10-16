@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
+import 'package:pets_social/responsive/web_screen_layout.dart';
 import 'package:pets_social/screens/initial_screens/login_screen.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -567,8 +569,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const MobileScreenLayout(), // Rebuild the ProfileScreen
+                              builder: (context) => const ResponsiveLayout(
+                                  webScreenLayout: WebScreenLayout(),
+                                  mobileScreenLayout:
+                                      MobileScreenLayout()), // Rebuild the ProfileScreen
                             ),
                           );
                         },

@@ -12,7 +12,7 @@ class WelcomePageTwo extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(
-              height: 160,
+              height: 150,
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 30),

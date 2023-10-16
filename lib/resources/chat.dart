@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/models/message.dart';
+import 'package:provider/provider.dart';
+
+import '../models/profile.dart';
+import '../providers/user_provider.dart';
 
 class ChatService extends ChangeNotifier {
   //get instance of auth and firestore
@@ -9,55 +13,53 @@ class ChatService extends ChangeNotifier {
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
   //SEND MESSAGE
-  Future<void> sendMessage(String receiverId, String message) async {
-    //get current user info
-    final String currentUserId = _fireStore
-        .collection('users')
-        .doc('uid')
-        .collection('profiles')
-        .doc('profileUid')
-        .toString();
-    final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
-    final String currentUserUsername = _fireStore
-        .collection('users')
-        .doc('uid')
-        .collection('profiles')
-        .doc('username')
-        .toString();
-    final Timestamp timestamp = Timestamp.now();
+  Future<String> sendMessage(String receiverUid, String receiverUsername,
+      String message, context) async {
+    final ModelProfile? profile =
+        Provider.of<UserProvider>(context, listen: false).getProfile;
+    String res = "An error occurred";
+    try {
+      final currentProfileEmail = _firebaseAuth.currentUser!.email.toString();
 
-    //create a new message
-    ModelMessage newMessage = ModelMessage(
-      senderId: currentUserId,
-      senderEmail: currentUserEmail,
-      receiverId: receiverId,
-      timestamp: timestamp,
-      message: message,
-      senderUsername: currentUserUsername,
-      receiverUsername: currentUserUsername,
-    );
+      final Timestamp timestamp = Timestamp.now();
 
-    //construct chat room id from current user id and receiver id and sort
-    List<String> ids = [currentUserId, receiverId];
-    ids.sort();
-    String chatRoomId = ids.join("_"); //combine ids into a single string
+      //create a new message
+      ModelMessage newMessage = ModelMessage(
+        senderUid: profile!.profileUid,
+        senderEmail: currentProfileEmail,
+        receiverUid: receiverUid,
+        timestamp: timestamp,
+        message: message,
+        senderUsername: profile.username,
+        receiverUsername: receiverUsername,
+      );
 
-    //add new message to database
-    await _fireStore
-        .collection('chat_rooms')
-        .doc(chatRoomId)
-        .collection('messages')
-        .add(newMessage.toMap());
+      //construct chat room id from current user id and receiver id and sort
+      List<String> ids = [profile.profileUid, receiverUid];
+      ids.sort();
+      String chatRoomId = ids.join("_"); //combine ids into a single string
+
+      await _fireStore
+          .collection('chats')
+          .doc(chatRoomId)
+          .collection('messages')
+          .add(newMessage.toJson());
+
+      res = "success";
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
   }
 
   //GET MESSAGES
-  Stream<QuerySnapshot> getMessages(String userId, String otherUserId) {
-    List<String> ids = [userId, otherUserId];
+  Stream<QuerySnapshot> getMessages(String userUid, String otherUserUid) {
+    List<String> ids = [userUid, otherUserUid];
     ids.sort();
     String chatRoomId = ids.join("_");
 
     return _fireStore
-        .collection('chat_rooms')
+        .collection('chats')
         .doc(chatRoomId)
         .collection('messages')
         .orderBy('timestamp', descending: false)

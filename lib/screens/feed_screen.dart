@@ -76,6 +76,9 @@ class _FeedScreenState extends State<FeedScreen> {
     });
     if (!mounted) return;
     Navigator.of(context).pop();
+
+    _usernameController.clear();
+    _bioController.clear();
     if (res != 'success') {
       showSnackBar(res, context);
     } else {

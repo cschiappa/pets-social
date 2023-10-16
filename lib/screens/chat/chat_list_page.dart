@@ -15,22 +15,95 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
+  bool isShowUsers = false;
+  final TextEditingController searchController = TextEditingController();
+  List<ModelProfile> profiles = [];
+  List<ModelProfile> profilesFiltered = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final ModelProfile? profile =
+          Provider.of<UserProvider>(context, listen: false).getProfile;
+      QuerySnapshot<Map<String, dynamic>> usersSnapshot =
+          await FirebaseFirestore.instance
+              .collectionGroup('profiles')
+              .where('profileUid', whereIn: profile!.following)
+              .get();
+
+      for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
+        ModelProfile profile = ModelProfile.fromSnap(doc);
+
+        profiles.add(profile);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chats'),
-        backgroundColor: Colors.black,
-      ),
-      body: _buildUserList(),
-    );
+        appBar: AppBar(
+          backgroundColor: mobileBackgroundColor,
+          title: TextFormField(
+            controller: searchController,
+            decoration: const InputDecoration(
+              labelText: 'Search for user',
+              labelStyle: TextStyle(color: pinkColor),
+            ),
+            onChanged: (value) {
+              setState(
+                () {
+                  isShowUsers = true;
+                  profilesFiltered = profiles
+                      .where((element) => element.username
+                          .toLowerCase()
+                          .contains(value.toLowerCase()))
+                      .toList();
+                },
+              );
+            },
+          ),
+        ),
+        body: isShowUsers
+            ? ListView.builder(
+                itemCount: profilesFiltered.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(
+                            receiverUserEmail: profilesFiltered[index].email,
+                            receiverUserID: profilesFiltered[index].profileUid,
+                            receiverUsername: profilesFiltered[index].username,
+                          ),
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(profilesFiltered[index].photoUrl!),
+                      ),
+                      title: Text(profilesFiltered[index].username),
+                    ),
+                  );
+                },
+              )
+            : _buildUserList());
   }
 
   //build a list of users except for the one logged in
   Widget _buildUserList() {
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     return StreamBuilder<QuerySnapshot>(
-      stream:
-          FirebaseFirestore.instance.collectionGroup('profiles').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collectionGroup('profiles')
+          .where('profileUid', whereIn: profile!.following)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('error');

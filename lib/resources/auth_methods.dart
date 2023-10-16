@@ -130,7 +130,7 @@ class AuthMethods {
                 "Username must be 30 characters or less and bio must be 150 characters or less.";
           }
         } else {
-          res = "Please enter all requires fields.";
+          res = "You must choose an email and password.";
         }
       } else {
         res =
@@ -148,17 +148,17 @@ class AuthMethods {
     String res = "An error occurred";
 
     try {
-      if (email.isNotEmpty || password.isNotEmpty) {
+      if (email.isNotEmpty && password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
 
         FirebaseApi().initNotifications();
         res = "success";
       } else {
-        res = "Please enter all the fields";
+        res = "Please enter a valid email and password.";
       }
     } catch (err) {
-      res = err.toString();
+      res = "Incorrect email or password. Please try again.";
     }
     return res;
   }

@@ -34,7 +34,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         backgroundColor: mobileBackgroundColor,
         title: const Row(
           children: [
-            Text('Settings'),
+            Text('Account Settings'),
           ],
         ),
       ),
@@ -123,6 +123,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                 if (!mounted) return;
                                 AuthMethods()
                                     .changePassword(context, newPassword);
+
+                                _currentPasswordController.clear();
+                                _newPasswordController.clear();
+                                _passwordController.clear();
                               } else {
                                 if (!mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -153,6 +157,9 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                       ),
                       TextButton(
                         onPressed: () {
+                          _currentPasswordController.clear();
+                          _newPasswordController.clear();
+                          _passwordController.clear();
                           Navigator.of(context).pop();
                         },
                         child: const Text('Cancel'),

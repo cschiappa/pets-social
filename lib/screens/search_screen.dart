@@ -47,13 +47,14 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         title: TextFormField(
-            controller: searchController,
-            decoration: const InputDecoration(
-              labelText: 'Search for user',
-              labelStyle: TextStyle(color: pinkColor),
-            ),
-            onChanged: (value) {
-              setState(() {
+          controller: searchController,
+          decoration: const InputDecoration(
+            labelText: 'Search for user',
+            labelStyle: TextStyle(color: pinkColor),
+          ),
+          onChanged: (value) {
+            setState(
+              () {
                 isShowUsers = true;
 
                 profilesFiltered = profiles
@@ -61,8 +62,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         .toLowerCase()
                         .contains(value.toLowerCase()))
                     .toList();
-              });
-            }),
+              },
+            );
+          },
+        ),
       ),
       //searching for someone
       body: isShowUsers
