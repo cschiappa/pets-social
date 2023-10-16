@@ -49,8 +49,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   void selectImage() async {
     Uint8List im;
-
-    (im) = await pickImage(ImageSource.gallery);
+    (im, _, _, _) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
     });
@@ -95,39 +94,49 @@ class _FeedScreenState extends State<FeedScreen> {
       drawer: Drawer(
         backgroundColor: mobileBackgroundColor,
         width: 280,
-        child: ListView(children: [
-          SizedBox(
-            height: 73,
-            child: DrawerHeader(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20.0),
-                ),
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 157, 110, 157), // Start color
-                    Color.fromARGB(255, 240, 177, 136), // End color
-                  ],
+        child: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 73,
+                width: double.infinity,
+                child: DrawerHeader(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20.0),
+                    ),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 157, 110, 157), // Start color
+                        Color.fromARGB(255, 240, 177, 136), // End color
+                      ],
+                    ),
+                  ),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    color: primaryColor,
+                    scale: 6.5,
+                    alignment: Alignment.topCenter,
+                  ),
                 ),
               ),
-              child: Image.asset(
-                'assets/logo.png',
-                color: primaryColor,
-                scale: 6.5,
-                alignment: Alignment.topCenter,
-              ),
-            ),
+              _buildProfileList(),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ListTile(
+                    tileColor: Colors.grey[500],
+                    title: const Text('Add a New Pet Profile'),
+                    trailing: const Icon(Icons.person_add),
+                    onTap: () {
+                      _profileBottomSheet(context);
+                    },
+                  ),
+                ),
+              )
+            ],
           ),
-          _buildProfileList(),
-          ListTile(
-            tileColor: Colors.grey[500],
-            title: const Text('Add a New Pet Profile'),
-            trailing: const Icon(Icons.person_add),
-            onTap: () {
-              _profileBottomSheet(context);
-            },
-          )
-        ]),
+        ),
       ),
       appBar: width > webScreenSize
           ? null
@@ -172,56 +181,62 @@ class _FeedScreenState extends State<FeedScreen> {
             animSpeedFactor: 4,
             color: const Color.fromARGB(255, 48, 48, 48),
             backgroundColor: Colors.black,
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('posts')
-                  .where('profileUid',
-                      whereIn: [...profile!.following, profile.profileUid])
-                  .orderBy('datePublished', descending: true)
-                  .snapshots(),
-              builder: (context,
-                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: pinkColor,
-                    ),
-                  );
-                }
+            child: profile == null
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('posts')
+                        .where('profileUid',
+                            whereIn: [...profile.following, profile.profileUid])
+                        .orderBy('datePublished', descending: true)
+                        .snapshots(),
+                    builder: (context,
+                        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                            snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: pinkColor,
+                          ),
+                        );
+                      }
 
-                // Filter the posts to exclude those from blocked users.
-                final filteredPosts = snapshot.data!.docs.where((doc) {
-                  return !profile.blockedUsers.contains(doc['profileUid']);
-                }).toList();
+                      // Filter the posts to exclude those from blocked users.
+                      final filteredPosts = snapshot.data!.docs.where((doc) {
+                        return !profile.blockedUsers
+                            .contains(doc['profileUid']);
+                      }).toList();
 
-                if (filteredPosts.isEmpty) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                          minWidth: constraints.maxWidth),
-                      child: const Center(
-                        child: Text('Follow someone to see posts'),
-                      ),
-                    ),
-                  );
-                }
-                // POST CARD
-                return ListView.builder(
-                  itemCount: filteredPosts.length,
-                  itemBuilder: (context, index) => Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: width > webScreenSize ? width * 0.3 : 0,
-                      vertical: width > webScreenSize ? 15 : 0,
-                    ),
-                    child: PostCardExp(
-                      snap: filteredPosts[index].data(),
-                    ),
-                  ),
-                );
-              },
-            ));
+                      if (filteredPosts.isEmpty) {
+                        return SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                                minWidth: constraints.maxWidth),
+                            child: const Center(
+                              child: Text('Follow someone to see posts'),
+                            ),
+                          ),
+                        );
+                      }
+                      // POST CARD
+                      return ListView.builder(
+                        itemCount: filteredPosts.length,
+                        itemBuilder: (context, index) => Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: width > webScreenSize ? width * 0.3 : 0,
+                            vertical: width > webScreenSize ? 15 : 0,
+                          ),
+                          child: PostCardExp(
+                            snap: filteredPosts[index].data(),
+                          ),
+                        ),
+                      );
+                    },
+                  ));
       }),
     );
   }
@@ -269,6 +284,12 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       ),
       title: Text(data['username']),
+      selected: Provider.of<UserProvider>(context, listen: false)
+              .getProfile
+              ?.profileUid ==
+          data['profileUid'],
+      selectedTileColor: pinkColor,
+      selectedColor: Colors.white,
       onTap: () {
         setState(() {
           Provider.of<UserProvider>(context, listen: false)

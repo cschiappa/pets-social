@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:http/http.dart';
+import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/screens/open_post_screen.dart';
 import 'package:pets_social/screens/profile_screen.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -21,6 +21,24 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   bool isShowUsers = false;
   var userData = {};
+  List<ModelProfile> profiles = [];
+  List<ModelProfile> profilesFiltered = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      QuerySnapshot<Map<String, dynamic>> usersSnapshot =
+          await FirebaseFirestore.instance.collectionGroup('profiles').get();
+
+      for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
+        ModelProfile profile = ModelProfile.fromSnap(doc);
+
+        profiles.add(profile);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,56 +52,40 @@ class _SearchScreenState extends State<SearchScreen> {
               labelText: 'Search for user',
               labelStyle: TextStyle(color: pinkColor),
             ),
-            onFieldSubmitted: (String _) {
+            onChanged: (value) {
               setState(() {
                 isShowUsers = true;
+
+                profilesFiltered = profiles
+                    .where((element) => element.username
+                        .toLowerCase()
+                        .contains(value.toLowerCase()))
+                    .toList();
               });
             }),
       ),
       //searching for someone
       body: isShowUsers
-          ? FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collectionGroup('profiles')
-                  .where('username',
-                      isGreaterThanOrEqualTo: searchController.text)
-                  .get(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: pinkColor,
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: (snapshot.data! as dynamic).docs.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        String profileUid = (snapshot.data! as dynamic)
-                            .docs[index]['profileUid'];
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                profileUid: profileUid,
-                              ),
-                            ));
-                      },
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              (snapshot.data! as dynamic).docs[index]
-                                  ['photoUrl']),
-                        ),
-                        title: Text((snapshot.data! as dynamic).docs[index]
-                            ['username']),
-                      ),
-                    );
+          ? ListView.builder(
+              itemCount: profilesFiltered.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            profileUid: profilesFiltered[index].profileUid,
+                          ),
+                        ));
                   },
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(profilesFiltered[index].photoUrl!),
+                    ),
+                    title: Text(profilesFiltered[index].username),
+                  ),
                 );
               },
             )

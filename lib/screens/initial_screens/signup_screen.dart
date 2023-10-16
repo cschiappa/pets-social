@@ -38,7 +38,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void selectImage() async {
     Uint8List im;
-    (im) = await pickImage(ImageSource.gallery);
+    (im, _, _, _) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
     });
@@ -65,13 +65,14 @@ class _SignupScreenState extends State<SignupScreen> {
       showSnackBar(res, context);
     } else {
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(
             mobileScreenLayout: MobileScreenLayout(),
             webScreenLayout: WebScreenLayout(),
           ),
         ),
+        (_) => false,
       );
     }
   }

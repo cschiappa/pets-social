@@ -39,13 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (res == "success") {
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(
             mobileScreenLayout: MobileScreenLayout(),
             webScreenLayout: WebScreenLayout(),
           ),
         ),
+        (_) => false,
       );
     } else {
       if (!mounted) return;

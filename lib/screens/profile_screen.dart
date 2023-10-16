@@ -46,8 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void selectImage() async {
     Uint8List im;
-
-    (im) = await pickImage(ImageSource.gallery);
+    (im, _, _, _) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
     });

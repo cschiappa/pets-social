@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ class PersonalDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final DateFormat format = DateFormat("dd/MM/yyyy");
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
@@ -32,9 +35,8 @@ class PersonalDetailsPage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.cake),
             title: const Text('Account Birthday'),
-            subtitle: Text(FirebaseAuth
-                .instance.currentUser!.metadata.creationTime
-                .toString()),
+            subtitle: Text(format.format(
+                FirebaseAuth.instance.currentUser!.metadata.creationTime!)),
           ),
         ],
       ),

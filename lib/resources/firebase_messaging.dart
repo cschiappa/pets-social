@@ -123,7 +123,7 @@ class FirebaseApi {
 
     final userFCMToken = user['tokens'][0];
 
-    //var client = await obtainAuthenticatedClient();
+    var client = await obtainAuthenticatedClient();
 
     final Map<String, dynamic> notificationData = {
       "message": {
@@ -137,7 +137,7 @@ class FirebaseApi {
 
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
-      //'Authorization': 'Bearer ${client.credentials.accessToken.data}',
+      'Authorization': 'Bearer ${client.credentials.accessToken.data}',
     };
 
     try {
@@ -156,11 +156,18 @@ class FirebaseApi {
     } catch (e) {
       debugPrint('Error sending notification: $e');
     } finally {
-      //client.close();
+      client.close();
     }
   }
 
-  //Future<AuthClient> obtainAuthenticatedClient() async {
+  Future<AuthClient> obtainAuthenticatedClient() async {
+    final accountCredentials = ServiceAccountCredentials.fromJson(utf8.decode(
+        base64.decode(const String.fromEnvironment("SERVICE_ACCOUNT"))));
+    var scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
 
-  //}
+    AuthClient client =
+        await clientViaServiceAccount(accountCredentials, scopes);
+
+    return client;
+  }
 }
