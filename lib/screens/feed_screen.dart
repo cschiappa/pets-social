@@ -47,7 +47,7 @@ class _FeedScreenState extends State<FeedScreen> {
     });
   }
 
-  void selectImage() async {
+  void selectImage(context, setState) async {
     Uint8List im;
     (im, _, _, _) = await pickImage(ImageSource.gallery);
     setState(() {
@@ -225,6 +225,7 @@ class _FeedScreenState extends State<FeedScreen> {
                           ),
                         );
                       }
+
                       // POST CARD
                       return ListView.builder(
                         itemCount: filteredPosts.length,
@@ -311,92 +312,97 @@ class _FeedScreenState extends State<FeedScreen> {
       context: context,
       isScrollControlled: true,
       builder: ((context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: SizedBox(
-            child: GestureDetector(
-              onTap: () {
-                // Close the keyboard when tapping outside the text fields
-                FocusScope.of(context).unfocus();
-              },
-              child: SafeArea(
-                child: Container(
-                  padding: const EdgeInsets.all(50),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Stack(
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SizedBox(
+                child: GestureDetector(
+                  onTap: () {
+                    // Close the keyboard when tapping outside the text fields
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.all(50),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          _image != null
-                              ? CircleAvatar(
-                                  radius: 40,
-                                  backgroundImage: MemoryImage(_image!),
-                                )
-                              : const CircleAvatar(
-                                  radius: 40,
-                                  backgroundImage: NetworkImage(
-                                    'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
-                                  )),
-                          Positioned(
-                            top: 40,
-                            left: 40,
-                            child: IconButton(
-                              iconSize: 20,
-                              onPressed: selectImage,
-                              icon: const Icon(
-                                Icons.add_a_photo,
+                          Stack(
+                            children: [
+                              _image != null
+                                  ? CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage: MemoryImage(_image!),
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage: NetworkImage(
+                                        'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+                                      )),
+                              Positioned(
+                                top: 40,
+                                left: 40,
+                                child: IconButton(
+                                  iconSize: 20,
+                                  onPressed: () =>
+                                      selectImage(context, setState),
+                                  icon: const Icon(
+                                    Icons.add_a_photo,
+                                  ),
+                                ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          TextFieldInput(
+                            hintText: 'Enter your username',
+                            textInputType: TextInputType.text,
+                            textEditingController: _usernameController,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          TextFieldInput(
+                            hintText: 'Enter your bio',
+                            textInputType: TextInputType.text,
+                            textEditingController: _bioController,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          InkWell(
+                            onTap: () => createProfile(),
+                            child: Container(
+                              width: double.infinity,
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: const ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(4)),
+                                  ),
+                                  color: pinkColor),
+                              child: _isLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                        color: pinkColor,
+                                      ),
+                                    )
+                                  : const Text('Create Profile'),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFieldInput(
-                        hintText: 'Enter your username',
-                        textInputType: TextInputType.text,
-                        textEditingController: _usernameController,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFieldInput(
-                        hintText: 'Enter your bio',
-                        textInputType: TextInputType.text,
-                        textEditingController: _bioController,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      InkWell(
-                        onTap: () => createProfile(),
-                        child: Container(
-                          width: double.infinity,
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                              ),
-                              color: pinkColor),
-                          child: _isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                    color: primaryColor,
-                                  ),
-                                )
-                              : const Text('Create Profile'),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       }),
     );

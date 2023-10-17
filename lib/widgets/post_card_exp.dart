@@ -37,6 +37,8 @@ class _PostCardExpState extends State<PostCardExp> {
   final CarouselController _controller = CarouselController();
   final TextEditingController _descriptionController = TextEditingController();
   bool _isLoading = false;
+  var profileData;
+  var profileDocs;
 
   @override
   void initState() {
@@ -47,12 +49,28 @@ class _PostCardExpState extends State<PostCardExp> {
         setState(() {});
       });
     getComments();
+    getData();
   }
 
   @override
   void dispose() {
     super.dispose();
     _videoController.dispose();
+  }
+
+  getData() async {
+    try {
+      profileData = await FirebaseFirestore.instance
+          .collectionGroup('profiles')
+          .where('profileUid', isEqualTo: widget.snap['profileUid'])
+          .get();
+
+      setState(() {
+        profileDocs = profileData.docs.first.data();
+      });
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
   }
 
   Future<String> updatePost(StateSetter setState) async {
@@ -179,10 +197,12 @@ class _PostCardExpState extends State<PostCardExp> {
                           );
                         },
                         child: CircleAvatar(
-                          radius: 15,
-                          backgroundImage:
-                              NetworkImage(widget.snap['profImage']),
-                        ),
+                            radius: 15,
+                            backgroundImage: profileDocs != null
+                                ? NetworkImage(
+                                    profileDocs['photoUrl'],
+                                  )
+                                : null),
                       ),
                       Expanded(
                         child: Padding(
@@ -203,7 +223,10 @@ class _PostCardExpState extends State<PostCardExp> {
                                   );
                                 },
                                 child: Text(
-                                  widget.snap['username'],
+                                  //widget.snap['username'],
+                                  profileDocs == null
+                                      ? ""
+                                      : profileDocs['username'],
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -566,7 +589,9 @@ class _PostCardExpState extends State<PostCardExp> {
                           style: const TextStyle(color: primaryColor),
                           children: [
                             TextSpan(
-                              text: widget.snap['username'],
+                              text: profileDocs == null
+                                  ? ""
+                                  : profileDocs['username'],
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),

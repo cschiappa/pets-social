@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:routemaster/routemaster.dart';
 import 'firebase_options.dart';
 import 'screens/notifications_screen.dart';
+import 'package:googleapis_auth/googleapis_auth.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 

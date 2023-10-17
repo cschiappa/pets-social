@@ -122,7 +122,7 @@ class AuthMethods {
 
             await batch.commit();
 
-            FirebaseApi().initNotifications();
+            //FirebaseApi().initNotifications();
             res = "success";
           } else {
             res =
@@ -151,7 +151,7 @@ class AuthMethods {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
 
-        FirebaseApi().initNotifications();
+        //FirebaseApi().initNotifications();
         res = "success";
       } else {
         res = "Please enter a valid email and password.";

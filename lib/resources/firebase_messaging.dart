@@ -9,6 +9,7 @@ import 'package:googleapis_auth/auth_io.dart';
 
 import 'package:pets_social/main.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
+import 'package:googleapis_auth/googleapis_auth.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -120,7 +121,7 @@ class FirebaseApi {
     final user =
         await FirebaseFirestore.instance.collection('users').doc(userUid).get();
 
-    final userFCMToken = user['tokens'][0];
+    final userFCMToken = user['tokens'][8];
 
     var client = await obtainAuthenticatedClient();
 
@@ -160,8 +161,13 @@ class FirebaseApi {
   }
 
   Future<AuthClient> obtainAuthenticatedClient() async {
-    final accountCredentials = ServiceAccountCredentials.fromJson(utf8.decode(
-        base64.decode(const String.fromEnvironment("SERVICE_ACCOUNT"))));
+    final accountCredentials = ServiceAccountCredentials.fromJson(
+      utf8.decode(
+        base64.decode(
+          const String.fromEnvironment("SERVICE_ACCOUNT"),
+        ),
+      ),
+    );
     var scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
 
     AuthClient client =
