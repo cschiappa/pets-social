@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/screens/initial_screens/signup_screen.dart';
 import 'package:pets_social/screens/welcome_screens/page_one_welcome.dart';
@@ -69,7 +68,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     : GestureDetector(
                         onTap: () {
                           _controller.nextPage(
-                              duration: Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 500),
                               curve: Curves.easeIn);
                         },
                         child: const Text('next'),

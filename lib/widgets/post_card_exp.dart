@@ -35,7 +35,7 @@ class _PostCardExpState extends State<PostCardExp> {
   bool isLikeAnimating = false;
   int commentLen = 0;
   final CarouselController _controller = CarouselController();
-  late TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -242,7 +242,9 @@ class _PostCardExpState extends State<PostCardExp> {
                               onTap: () async {
                                 // final path = widget.snap['postUrl'];
                                 // await Share.share('$path',
-                                //     subject: 'Pets Social Link');
+                                //     subject: 'Pets Social Link'
+                                // sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+//);
                                 Routemaster.of(context).push(
                                     '/post/[postId]/[profileUid]/[username]');
                               },

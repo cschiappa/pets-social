@@ -1,8 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:pets_social/models/message.dart';
+
 import 'package:pets_social/resources/chat.dart';
 import 'package:pets_social/widgets/chat_bubble.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
@@ -29,7 +27,6 @@ class ChatPage extends StatefulWidget {
 class ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {

@@ -43,62 +43,68 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
+    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: mobileBackgroundColor,
-          title: TextFormField(
-            controller: searchController,
-            decoration: const InputDecoration(
-              labelText: 'Search for user',
-              labelStyle: TextStyle(color: pinkColor),
-            ),
-            onChanged: (value) {
-              setState(
-                () {
-                  isShowUsers = true;
-                  profilesFiltered = profiles
-                      .where((element) => element.username
-                          .toLowerCase()
-                          .contains(value.toLowerCase()))
-                      .toList();
-                },
-              );
-            },
+      appBar: AppBar(
+        backgroundColor: mobileBackgroundColor,
+        title: TextFormField(
+          controller: searchController,
+          decoration: const InputDecoration(
+            labelText: 'Search for user',
+            labelStyle: TextStyle(color: pinkColor),
           ),
+          onChanged: (value) {
+            setState(
+              () {
+                isShowUsers = true;
+                profilesFiltered = profiles
+                    .where((element) => element.username
+                        .toLowerCase()
+                        .contains(value.toLowerCase()))
+                    .toList();
+              },
+            );
+          },
         ),
-        body: isShowUsers
-            ? ListView.builder(
-                itemCount: profilesFiltered.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            receiverUserEmail: profilesFiltered[index].email,
-                            receiverUserID: profilesFiltered[index].profileUid,
-                            receiverUsername: profilesFiltered[index].username,
-                          ),
+      ),
+      body: isShowUsers
+          ? ListView.builder(
+              itemCount: profilesFiltered.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          receiverUserEmail: profilesFiltered[index].email,
+                          receiverUserID: profilesFiltered[index].profileUid,
+                          receiverUsername: profilesFiltered[index].username,
                         ),
-                      );
-                    },
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(profilesFiltered[index].photoUrl!),
                       ),
-                      title: Text(profilesFiltered[index].username),
+                    );
+                  },
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(profilesFiltered[index].photoUrl!),
                     ),
-                  );
-                },
-              )
-            : _buildUserList());
+                    title: Text(profilesFiltered[index].username),
+                  ),
+                );
+              },
+            )
+          : profile!.following.isEmpty
+              ? const Center(child: Text('Follow someone to start chatting!'))
+              : _buildUserList(),
+    );
   }
 
-  //build a list of users except for the one logged in
+  //build a list of profiles
   Widget _buildUserList() {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collectionGroup('profiles')
