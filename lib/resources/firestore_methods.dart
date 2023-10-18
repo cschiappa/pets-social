@@ -73,9 +73,7 @@ class FirestoreMethods {
           },
         );
 
-        // final postDoc = _firestore.collection('posts').doc(postId).get();
-        // Map<String, dynamic> data = postDoc.data()!;
-
+        //get user that made the post
         final user = await _firestore
             .collection('posts')
             .doc(postId)
@@ -84,6 +82,7 @@ class FirestoreMethods {
           return value.data()!['uid'];
         });
 
+        //get profile that liked the post
         final QuerySnapshot<Map<String, dynamic>> querySnapshot =
             await _firestore
                 .collectionGroup('profiles')

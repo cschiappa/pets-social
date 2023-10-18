@@ -121,7 +121,7 @@ class FirebaseApi {
     final user =
         await FirebaseFirestore.instance.collection('users').doc(userUid).get();
 
-    final userFCMToken = user['tokens'][8];
+    final userFCMToken = user['tokens'][9];
 
     var client = await obtainAuthenticatedClient();
 

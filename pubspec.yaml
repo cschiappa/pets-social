@@ -56,6 +56,7 @@ dependencies:
   scroll_snap_list: ^0.9.1
   scrollable_positioned_list: ^0.3.8
   share_plus: ^7.1.0
+  shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
   uuid: ^3.0.7
   video_thumbnail: ^0.5.3
