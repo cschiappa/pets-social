@@ -5,13 +5,13 @@ import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/screens/open_post_screen.dart';
 import 'package:pets_social/screens/profile_screen.dart';
 import 'package:pets_social/utils/colors.dart';
-
 import '../models/post.dart';
 import '../utils/global_variables.dart';
 import '../utils/utils.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final snap;
+  const SearchScreen({super.key, this.snap});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -23,21 +23,41 @@ class _SearchScreenState extends State<SearchScreen> {
   var userData = {};
   List<ModelProfile> profiles = [];
   List<ModelProfile> profilesFiltered = [];
+  var profileData;
+  var profileDocs;
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      QuerySnapshot<Map<String, dynamic>> usersSnapshot =
-          await FirebaseFirestore.instance.collectionGroup('profiles').get();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        QuerySnapshot<Map<String, dynamic>> usersSnapshot =
+            await FirebaseFirestore.instance.collectionGroup('profiles').get();
 
-      for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
-        ModelProfile profile = ModelProfile.fromSnap(doc);
+        for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
+          ModelProfile profile = ModelProfile.fromSnap(doc);
 
-        profiles.add(profile);
-      }
-    });
+          profiles.add(profile);
+        }
+      },
+    );
+    getData();
+  }
+
+  getData() async {
+    try {
+      profileData = await FirebaseFirestore.instance
+          .collectionGroup('profiles')
+          .where('profileUid', isEqualTo: widget.snap['profileUid'])
+          .get();
+
+      setState(() {
+        profileDocs = profileData.docs.first.data();
+      });
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
   }
 
   @override
@@ -152,8 +172,6 @@ class _SearchScreenState extends State<SearchScreen> {
                         onTap: () {
                           String profileUid = (snapshot.data! as dynamic)
                               .docs[index]['profileUid'];
-                          String username = (snapshot.data! as dynamic)
-                              .docs[index]['username'];
                           String postId =
                               (snapshot.data! as dynamic).docs[index]['postId'];
                           Navigator.push(
@@ -162,7 +180,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                 builder: (context) => OpenPost(
                                     postId: postId,
                                     profileUid: profileUid,
-                                    username: username),
+                                    username: profileDocs == null
+                                        ? ""
+                                        : profileDocs['username']),
                               ));
                         },
                         child: Padding(

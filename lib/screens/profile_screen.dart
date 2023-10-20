@@ -438,7 +438,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       builder: (context) => OpenPost(
                                         postId: snap['postId'],
                                         profileUid: snap['profileUid'],
-                                        username: snap['username'],
+                                        username: userData['username'],
                                       ),
                                     ),
                                   );

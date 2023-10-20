@@ -17,6 +17,30 @@ class SavedPosts extends StatefulWidget {
 }
 
 class _SavedPostsState extends State<SavedPosts> {
+  var profileData;
+  var profileDocs;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    try {
+      profileData = await FirebaseFirestore.instance
+          .collectionGroup('profiles')
+          .where('profileUid', isEqualTo: widget.snap['profileUid'])
+          .get();
+
+      setState(() {
+        profileDocs = profileData.docs.first.data();
+      });
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
@@ -99,7 +123,9 @@ class _SavedPostsState extends State<SavedPosts> {
                             builder: (context) => OpenPost(
                               postId: post.postId,
                               profileUid: post.profileUid,
-                              username: post.username,
+                              username: profileDocs == null
+                                  ? ""
+                                  : profileDocs['username'],
                             ),
                           ),
                         );

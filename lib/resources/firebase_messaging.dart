@@ -121,19 +121,9 @@ class FirebaseApi {
     final user =
         await FirebaseFirestore.instance.collection('users').doc(userUid).get();
 
-    final userFCMToken = user['tokens'][9];
+    final List<String> userFCMTokenList = List<String>.from(user['tokens']);
 
     var client = await obtainAuthenticatedClient();
-
-    final Map<String, dynamic> notificationData = {
-      "message": {
-        "token": userFCMToken,
-        "notification": {
-          "title": title,
-          "body": body,
-        },
-      }
-    };
 
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -141,17 +131,29 @@ class FirebaseApi {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: json.encode(notificationData),
-      );
+      for (String userFCMToken in userFCMTokenList) {
+        final Map<String, dynamic> notificationData = {
+          "message": {
+            "token": userFCMToken,
+            "notification": {
+              "title": title,
+              "body": body,
+            },
+          }
+        };
 
-      if (response.statusCode == 200) {
-        debugPrint('Notification sent: ${response.body}');
-      } else {
-        debugPrint(
-            'Failed to send notification. Status code: ${response.statusCode}');
+        final response = await http.post(
+          Uri.parse(url),
+          headers: headers,
+          body: json.encode(notificationData),
+        );
+
+        if (response.statusCode == 200) {
+          debugPrint('Notification sent: ${response.body}');
+        } else {
+          debugPrint(
+              'Failed to send notification. Status code: ${response.statusCode}');
+        }
       }
     } catch (e) {
       debugPrint('Error sending notification: $e');
