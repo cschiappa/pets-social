@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:googleapis_auth/auth_io.dart';
 
 import 'package:pets_social/main.dart';
+import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
 
@@ -176,5 +177,34 @@ class FirebaseApi {
         await clientViaServiceAccount(accountCredentials, scopes);
 
     return client;
+  }
+
+  Future<void> notificationMethod(
+      String postId, String profileUid, String action) async {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    //get user that made the post
+    final user =
+        await _firestore.collection('posts').doc(postId).get().then((value) {
+      return value.data()!['uid'];
+    });
+
+    //get profile that liked the post
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+        .collectionGroup('profiles')
+        .where('profileUid', isEqualTo: profileUid)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final actionUser = querySnapshot.docs[0].data()['username'];
+
+      await FirebaseApi().sendNotificationToUser(
+          user, 'New notification', '$actionUser $action your post.');
+    }
+  }
+
+  Future<void> followNotificationMethod(
+      followedProfile, followingProfile) async {
+    await FirebaseApi().sendNotificationToUser(followedProfile,
+        'New notification', '$followingProfile started following you.');
   }
 }

@@ -71,28 +71,7 @@ class FirestoreMethods {
           },
         );
 
-        //get user that made the post
-        final user = await _firestore
-            .collection('posts')
-            .doc(postId)
-            .get()
-            .then((value) {
-          return value.data()!['uid'];
-        });
-
-        //get profile that liked the post
-        final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-            await _firestore
-                .collectionGroup('profiles')
-                .where('profileUid', isEqualTo: profileUid)
-                .get();
-
-        if (querySnapshot.docs.isNotEmpty) {
-          final actionUser = querySnapshot.docs[0].data()['username'];
-
-          await FirebaseApi().sendNotificationToUser(
-              user, 'New notification', '$actionUser liked your post.');
-        }
+        FirebaseApi().notificationMethod(postId, profileUid, 'liked');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -108,9 +87,13 @@ class FirestoreMethods {
           'fish': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).update({
-          'fish': FieldValue.arrayUnion([profileUid]),
-        });
+        await _firestore.collection('posts').doc(postId).update(
+          {
+            'fish': FieldValue.arrayUnion([profileUid]),
+          },
+        );
+
+        FirebaseApi().notificationMethod(postId, profileUid, 'gave a fish to');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -126,9 +109,13 @@ class FirestoreMethods {
           'bones': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).update({
-          'bones': FieldValue.arrayUnion([profileUid]),
-        });
+        await _firestore.collection('posts').doc(postId).update(
+          {
+            'bones': FieldValue.arrayUnion([profileUid]),
+          },
+        );
+
+        FirebaseApi().notificationMethod(postId, profileUid, 'gave a bone to');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -278,6 +265,8 @@ class FirestoreMethods {
             .update({
           'following': FieldValue.arrayUnion([followId])
         });
+
+        FirebaseApi().followNotificationMethod(profileUid, followId);
       }
     } catch (e) {
       debugPrint(e.toString());
