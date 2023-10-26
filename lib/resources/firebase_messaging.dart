@@ -200,13 +200,13 @@ class FirebaseApi {
       final actionUser = querySnapshot.docs[0].data()['username'];
 
       await FirebaseApi().sendNotificationToUser(
-          user, 'New notification', '$actionUser $action your post.');
+          user, 'Pets Social', '$actionUser $action your post.');
     }
   }
 
   Future<void> followNotificationMethod(
       followedProfile, followingProfile) async {
-    await FirebaseApi().sendNotificationToUser(followedProfile,
-        'New notification', '$followingProfile started following you.');
+    await FirebaseApi().sendNotificationToUser(followedProfile, 'Pets Social',
+        '$followingProfile started following you.');
   }
 }

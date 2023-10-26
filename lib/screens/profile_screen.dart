@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
@@ -369,7 +370,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 IconButton(
                                     onPressed: () {
-                                      _profileBottomSheet(context);
+                                      userData['profileUid'] ==
+                                              profile.profileUid
+                                          ? _profileBottomSheet(context)
+                                          : showDialog(
+                                              context: context,
+                                              builder: ((context) => Padding(
+                                                    padding: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width >
+                                                            webScreenSize
+                                                        ? EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width /
+                                                                    3)
+                                                        : const EdgeInsets.all(
+                                                            0),
+                                                    child: Dialog(
+                                                      child: ListView(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 16),
+                                                        shrinkWrap: true,
+                                                        children: [
+                                                          InkWell(
+                                                            onTap: () async {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              FirestoreMethods()
+                                                                  .blockUser(
+                                                                      profile
+                                                                          .profileUid,
+                                                                      widget.snap[
+                                                                          'profileUid']);
+                                                            },
+                                                            child: Container(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 12,
+                                                                  horizontal:
+                                                                      16),
+                                                              child: const Text(
+                                                                  'Block User'),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )),
+                                            );
                                     },
                                     icon: const Icon(
                                       Icons.settings,
