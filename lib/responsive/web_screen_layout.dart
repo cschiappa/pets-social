@@ -22,8 +22,8 @@ class _WebScreenLayoutState extends State<WebScreenLayout> {
 
   @override
   void dispose() {
-    super.dispose();
     pageController.dispose();
+    super.dispose();
   }
 
   void navigationTapped(int page) {

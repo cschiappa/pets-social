@@ -21,10 +21,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _currentPasswordController.dispose();
     _passwordController.dispose();
     _newPasswordController.dispose();
+    super.dispose();
   }
 
   @override

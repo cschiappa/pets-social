@@ -18,8 +18,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
+    super.dispose();
   }
 
   Future passwordLinkToEmail() async {

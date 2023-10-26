@@ -105,12 +105,14 @@ class FirebaseApi {
   }
 
   Future<void> saveTokenToDatabase(String token) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      'tokens': FieldValue.arrayUnion([token]),
-    });
+    if (FirebaseAuth.instance.currentUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'tokens': FieldValue.arrayUnion([token]),
+      });
+    }
   }
 
 // SEND NOTIFICATION

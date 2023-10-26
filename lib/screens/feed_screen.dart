@@ -34,9 +34,9 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+    super.dispose();
   }
 
   @override

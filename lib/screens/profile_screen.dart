@@ -77,9 +77,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+    super.dispose();
   }
 
   getData() async {

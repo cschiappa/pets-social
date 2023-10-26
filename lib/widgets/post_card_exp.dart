@@ -54,8 +54,9 @@ class _PostCardExpState extends State<PostCardExp> {
 
   @override
   void dispose() {
-    super.dispose();
     _videoController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   getData() async {
@@ -108,6 +109,7 @@ class _PostCardExpState extends State<PostCardExp> {
     final videoUri = Uri.parse(widget.snap['postUrl']);
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
+
     return SizedBox(
       child: Container(
         decoration: BoxDecoration(
@@ -137,45 +139,57 @@ class _PostCardExpState extends State<PostCardExp> {
                       isLikeAnimating = true;
                     });
                   },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: () {
-                          if (contentType == 'image') {
-                            return CachedNetworkImage(
-                              imageUrl: widget.snap['postUrl'],
-                            );
-                          } else if (contentType == 'video') {
-                            return VideoPlayerWidget(videoUrl: videoUri);
-                          } else if (contentType == 'unknown') {
-                            return const SizedBox.shrink(
-                              child: Center(child: Text('unknown format')),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        }(),
-                      ),
-                      AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: isLikeAnimating ? 1 : 0,
-                        child: LikeAnimation(
-                          isAnimating: isLikeAnimating,
-                          duration: const Duration(
-                            milliseconds: 400,
-                          ),
-                          onEnd: () {
-                            setState(() {
-                              isLikeAnimating = false;
-                            });
-                          },
-                          child: const Icon(Icons.favorite,
-                              color: Colors.white, size: 120),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.black,
+                    ),
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxHeight: 600),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: () {
+                            if (contentType == 'image') {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.snap['postUrl'],
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              );
+                            } else if (contentType == 'video') {
+                              return VideoPlayerWidget(videoUrl: videoUri);
+                            } else if (contentType == 'unknown') {
+                              return const SizedBox.shrink(
+                                child: Center(child: Text('unknown format')),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          }(),
                         ),
-                      )
-                    ],
+                        AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: isLikeAnimating ? 1 : 0,
+                          child: LikeAnimation(
+                            isAnimating: isLikeAnimating,
+                            duration: const Duration(
+                              milliseconds: 400,
+                            ),
+                            onEnd: () {
+                              setState(() {
+                                isLikeAnimating = false;
+                              });
+                            },
+                            child: const Icon(Icons.favorite,
+                                color: Colors.white, size: 120),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 //POST HEADER

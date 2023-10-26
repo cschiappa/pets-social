@@ -186,8 +186,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _descriptionController.dispose();
+    super.dispose();
   }
 
   @override

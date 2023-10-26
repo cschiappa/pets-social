@@ -62,8 +62,8 @@ class _SavePostAnimationState extends State<SavePostAnimation>
 
   @override
   void dispose() {
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   @override

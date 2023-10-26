@@ -29,11 +29,11 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+    super.dispose();
   }
 
   void selectImage() async {

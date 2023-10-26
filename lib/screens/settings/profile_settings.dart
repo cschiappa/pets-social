@@ -19,8 +19,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   void dispose() {
-    super.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
   @override

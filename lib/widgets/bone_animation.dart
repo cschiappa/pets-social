@@ -62,8 +62,8 @@ class _BoneAnimationState extends State<BoneAnimation>
 
   @override
   void dispose() {
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   @override

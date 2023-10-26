@@ -42,9 +42,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      AspectRatio(
-        aspectRatio: _controller.value.aspectRatio,
-        child: CachedVideoPlayer(_controller),
+      SizedBox.expand(
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: SizedBox(
+              height: _controller.value.size.height,
+              width: _controller.value.size.width,
+              child: CachedVideoPlayer(_controller)),
+        ),
       ),
       Positioned(
         bottom: 8,
@@ -69,7 +74,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 }

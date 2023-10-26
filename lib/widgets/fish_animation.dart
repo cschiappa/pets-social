@@ -62,8 +62,8 @@ class _FishAnimationState extends State<FishAnimation>
 
   @override
   void dispose() {
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   @override

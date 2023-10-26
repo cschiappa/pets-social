@@ -154,7 +154,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image(
                             image: NetworkImage(post.postUrl),
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fitWidth,
                           ),
                         );
                       } else {
@@ -187,9 +187,17 @@ class _SearchScreenState extends State<SearchScreen> {
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: mediaWidget,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                              color: Colors.black,
+                            ),
+                            width: double.infinity,
+                            constraints: const BoxConstraints(maxHeight: 300),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: mediaWidget,
+                            ),
                           ),
                         ),
                       );
@@ -209,7 +217,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     searchController.dispose();
+    super.dispose();
   }
 }
