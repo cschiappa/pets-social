@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pets_social/screens/settings/account_settings.dart';
 import 'package:pets_social/screens/settings/blocked_accounts.dart';
+import 'package:pets_social/screens/settings/feedback.dart';
 import 'package:pets_social/utils/colors.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -53,7 +54,10 @@ class _SettingsPageState extends State<SettingsPage> {
           ListTile(
             leading: const Icon(Icons.report_problem),
             title: const Text('Report a Problem'),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const FeedbackScreen()));
+            },
           )
         ],
       ),
