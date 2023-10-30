@@ -25,4 +25,16 @@ class StorageMethods {
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
   }
+
+  Future<void> uploadNotificationToStorage(String userUid, Map<String, dynamic> notificationData) async {
+  await Firebase.initializeApp();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  try {
+    await firestore.collection('notifications').doc(FirebaseAuth.instance.uid).add(notificationData);
+    print('Notification data saved to Firestore for profile: $userUid');
+  } catch (e) {
+    print('Error saving notification data: $e');
+  }
+}
 }

@@ -151,6 +151,8 @@ class FirebaseApi {
           body: json.encode(notificationData),
         );
 
+        uploadNotificationToStorage(userUid, notificationData);
+
         if (response.statusCode == 200) {
           debugPrint('Notification sent: ${response.body}');
         } else {
