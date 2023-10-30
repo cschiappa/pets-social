@@ -16,7 +16,6 @@ import 'package:pets_social/widgets/save_post_animation.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
-import 'package:routemaster/routemaster.dart';
 import 'package:share_plus/share_plus.dart';
 import '../responsive/mobile_screen_layout.dart';
 import '../utils/global_variables.dart';
@@ -279,7 +278,7 @@ class _PostCardExpState extends State<PostCardExp> {
                             InkWell(
                               onTap: () async {
                                 String path =
-                                    'cschiappa.github.io/.well-known/assetlinks/post/:${widget.snap['postId']}/:${widget.snap['profileUid']}/:${profileDocs['username']}';
+                                    'cschiappa.github.io/post/${widget.snap['postId']}/${widget.snap['profileUid']}/${profileDocs['username']}';
                                 await Share.share(path,
                                     subject: 'Pets Social Link'
                                     //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,

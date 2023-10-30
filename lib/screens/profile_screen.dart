@@ -415,8 +415,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   vertical: 12,
                                                                   horizontal:
                                                                       16),
-                                                              child: const Text(
-                                                                  'Block User'),
+                                                              child: profile
+                                                                      .blockedUsers
+                                                                      .contains(
+                                                                          widget.snap[
+                                                                              'profileUid'])
+                                                                  ? const Text(
+                                                                      'Unblock Profile')
+                                                                  : const Text(
+                                                                      'Block Profile'),
                                                             ),
                                                           )
                                                         ],

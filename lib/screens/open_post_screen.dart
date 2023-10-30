@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/models/profile.dart';
+import 'package:pets_social/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -25,12 +28,27 @@ class OpenPost extends StatefulWidget {
 class _OpenPostState extends State<OpenPost> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   final itemController = ItemScrollController();
+  bool firstScroll = true;
 
   void scrollToPost(List posts) {
-    itemController.jumpTo(
-      index: posts.indexWhere((element) => element['postId'] == widget.postId),
-      alignment: 0,
-    );
+    if (firstScroll) {
+      itemController.jumpTo(
+        index:
+            posts.indexWhere((element) => element['postId'] == widget.postId),
+        alignment: 0,
+      );
+
+      firstScroll = false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<UserProvider>(context, listen: false).refreshProfile();
+    });
   }
 
   @override
@@ -51,13 +69,15 @@ class _OpenPostState extends State<OpenPost> {
             .orderBy('datePublished', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              Provider.of<UserProvider>(context).getProfile == null) {
             return const Center(
               child: CircularProgressIndicator(
                 color: pinkColor,
               ),
             );
           }
+
           // POST CARD
           WidgetsBinding.instance.addPostFrameCallback((_) {
             scrollToPost(snapshot.data!.docs);
