@@ -305,7 +305,8 @@ class FirestoreMethods {
             .update(
           {
             'blockedUsers': FieldValue.arrayUnion([blockedId]),
-            //'following': FieldValue.arrayRemove([blockedId]),
+            'following': FieldValue.arrayRemove([blockedId]),
+            'followers': FieldValue.arrayRemove([blockedId]),
           },
         );
         debugPrint('User blocked successfully');
