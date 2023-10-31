@@ -1,6 +1,8 @@
 import "dart:typed_data";
 
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_core/firebase_core.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:uuid/uuid.dart";
 
@@ -26,15 +28,19 @@ class StorageMethods {
     return downloadUrl;
   }
 
-  Future<void> uploadNotificationToStorage(String userUid, Map<String, dynamic> notificationData) async {
-  await Firebase.initializeApp();
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Future<void> uploadNotificationToStorage(
+      String userUid, Map<String, dynamic> notificationData) async {
+    await Firebase.initializeApp();
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  try {
-    await firestore.collection('notifications').doc(FirebaseAuth.instance.uid).add(notificationData);
-    print('Notification data saved to Firestore for profile: $userUid');
-  } catch (e) {
-    print('Error saving notification data: $e');
+    try {
+      await firestore
+          .collection('notifications')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(notificationData);
+      print('Notification data saved to Firestore for profile: $userUid');
+    } catch (e) {
+      print('Error saving notification data: $e');
+    }
   }
-}
 }

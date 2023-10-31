@@ -9,6 +9,7 @@ import 'package:googleapis_auth/auth_io.dart';
 
 import 'package:pets_social/main.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/resources/storage_methods.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
 
@@ -151,7 +152,7 @@ class FirebaseApi {
           body: json.encode(notificationData),
         );
 
-        uploadNotificationToStorage(userUid, notificationData);
+        StorageMethods().uploadNotificationToStorage(userUid, notificationData);
 
         if (response.statusCode == 200) {
           debugPrint('Notification sent: ${response.body}');
