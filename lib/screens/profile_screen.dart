@@ -300,12 +300,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             //BUTTON
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment:
+                                  userData['profileUid'] == profile!.profileUid
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.center,
                               children: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    profile!.profileUid == userId
+                                    profile.profileUid == userId
                                         ? FollowButton(
                                             text: 'Sign Out',
                                             backgroundColor:
@@ -368,74 +371,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                   ],
                                 ),
-                                IconButton(
-                                    onPressed: () {
-                                      userData['profileUid'] ==
-                                              profile.profileUid
-                                          ? _profileBottomSheet(context)
-                                          : showDialog(
-                                              context: context,
-                                              builder: ((context) => Padding(
-                                                    padding: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width >
-                                                            webScreenSize
-                                                        ? EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width /
-                                                                    3)
-                                                        : const EdgeInsets.all(
-                                                            0),
-                                                    child: Dialog(
-                                                      child: ListView(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                vertical: 16),
-                                                        shrinkWrap: true,
-                                                        children: [
-                                                          InkWell(
-                                                            onTap: () async {
-                                                              Navigator.pop(
-                                                                  context);
-                                                              FirestoreMethods()
-                                                                  .blockUser(
-                                                                      profile
-                                                                          .profileUid,
-                                                                      widget.snap[
-                                                                          'profileUid']);
-                                                            },
-                                                            child: Container(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical: 12,
-                                                                  horizontal:
-                                                                      16),
-                                                              child: profile
-                                                                      .blockedUsers
-                                                                      .contains(
-                                                                          widget.snap[
-                                                                              'profileUid'])
-                                                                  ? const Text(
-                                                                      'Unblock Profile')
-                                                                  : const Text(
-                                                                      'Block Profile'),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )),
-                                            );
-                                    },
-                                    icon: const Icon(
-                                      Icons.settings,
-                                      size: 20,
-                                    )),
+                                if (userData['profileUid'] ==
+                                    profile.profileUid)
+                                  IconButton(
+                                      onPressed: () {
+                                        _profileBottomSheet(context);
+                                      },
+                                      icon: const Icon(
+                                        Icons.settings,
+                                        size: 20,
+                                      ))
                               ],
                             ),
                           ],

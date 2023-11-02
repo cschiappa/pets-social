@@ -2,18 +2,21 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:googleapis_auth/auth_io.dart';
 
 import 'package:pets_social/main.dart';
+import 'package:pets_social/models/notification.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/resources/storage_methods.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
   debugPrint('Title: ${message.notification?.title}');
@@ -117,8 +120,8 @@ class FirebaseApi {
   }
 
 // SEND NOTIFICATION
-  Future<void> sendNotificationToUser(
-      String userUid, String title, String body) async {
+  Future<void> sendNotificationToUser(String userUid, String title, String body,
+      String postId, String receiverUid, String senderUid) async {
     const String url =
         'https://fcm.googleapis.com/v1/projects/pets-social-3d14e/messages:send';
 
@@ -135,6 +138,7 @@ class FirebaseApi {
     };
 
     try {
+      uploadNotificationToStorage(postId, body, receiverUid, senderUid);
       for (String userFCMToken in userFCMTokenList) {
         final Map<String, dynamic> notificationData = {
           "message": {
@@ -151,8 +155,6 @@ class FirebaseApi {
           headers: headers,
           body: json.encode(notificationData),
         );
-
-        StorageMethods().uploadNotificationToStorage(userUid, notificationData);
 
         if (response.statusCode == 200) {
           debugPrint('Notification sent: ${response.body}');
@@ -202,14 +204,71 @@ class FirebaseApi {
     if (querySnapshot.docs.isNotEmpty) {
       final actionUser = querySnapshot.docs[0].data()['username'];
 
-      await FirebaseApi().sendNotificationToUser(
-          user, 'Pets Social', '$actionUser $action your post.');
+      await FirebaseApi().sendNotificationToUser(user, 'Pets Social',
+          '$actionUser $action your post.', postId, profileUid, actionUser);
     }
   }
 
   Future<void> followNotificationMethod(
-      followedProfile, followingProfile) async {
-    await FirebaseApi().sendNotificationToUser(followedProfile, 'Pets Social',
-        '$followingProfile started following you.');
+      String followedProfile, String followingProfile) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final userProfile = await firestore
+        .collectionGroup('profiles')
+        .where('profileUid', isEqualTo: followedProfile)
+        .get();
+
+    if (userProfile.docs.isNotEmpty) {
+      // Assuming you want to get the ID of the parent of the first document found in the query results
+      final user = userProfile.docs[0].reference.parent.parent!.id;
+
+      await FirebaseApi().sendNotificationToUser(
+          user,
+          'Pets Social',
+          '$followingProfile started following you.',
+          followedProfile,
+          followingProfile,
+          "");
+
+      print('Parent Document ID: $user');
+    } else {
+      print('No matching documents found for the query.');
+    }
+  }
+
+  Future<void> uploadNotificationToStorage(
+      String postId, String body, String receiverUid, String senderUid) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    try {
+      // final collection =
+      //     await firestore.collection('notifications').doc(userUid).get();
+      // if (collection.exists) {
+      //   await firestore.collection('notifications').doc(userUid).update({
+      //     'notificationList': FieldValue.arrayUnion([notificationData])
+      //   });
+      // } else {
+      //   await firestore.collection('notifications').doc(userUid).set({
+      //     'notificationList': FieldValue.arrayUnion([notificationData])
+      //   });
+      // }
+
+      String notificationId = const Uuid().v1();
+
+      ModelNotification notification = ModelNotification(
+          postId: postId,
+          body: body,
+          receiver: receiverUid,
+          sender: senderUid,
+          datePublished: DateTime.now());
+
+      firestore
+          .collection('notifications')
+          .doc(notificationId)
+          .set(notification.toJson());
+
+      print('Notification added successfully!');
+    } catch (e) {
+      print('Error saving notification data: $e');
+    }
   }
 }
