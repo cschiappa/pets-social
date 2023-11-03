@@ -221,13 +221,23 @@ class FirebaseApi {
       // Assuming you want to get the ID of the parent of the first document found in the query results
       final user = userProfile.docs[0].reference.parent.parent!.id;
 
-      await FirebaseApi().sendNotificationToUser(
-          user,
-          'Pets Social',
-          '$followingProfile started following you.',
-          followedProfile,
-          followingProfile,
-          "");
+      //get profile that liked the post
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+          .collectionGroup('profiles')
+          .where('profileUid', isEqualTo: followedProfile)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final actionUser = querySnapshot.docs[0].data()['username'];
+
+        await FirebaseApi().sendNotificationToUser(
+            user,
+            'Pets Social',
+            '$actionUser started following you.',
+            followedProfile,
+            followingProfile,
+            "");
+      }
 
       print('Parent Document ID: $user');
     } else {
