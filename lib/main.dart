@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
         title: 'Pet Social',
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: mobileBackgroundColor,
+          highlightColor: Colors.white,
         ),
         navigatorKey: navigatorKey,
         home: BetterFeedback(

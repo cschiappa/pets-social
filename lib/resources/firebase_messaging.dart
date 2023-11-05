@@ -224,19 +224,20 @@ class FirebaseApi {
       //get profile that liked the post
       final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
           .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: followedProfile)
+          .where('profileUid', isEqualTo: followingProfile)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
         final actionUser = querySnapshot.docs[0].data()['username'];
 
         await FirebaseApi().sendNotificationToUser(
-            user,
-            'Pets Social',
-            '$actionUser started following you.',
-            followedProfile,
-            followingProfile,
-            "");
+          user,
+          'Pets Social',
+          '$actionUser started following you.',
+          "",
+          followedProfile,
+          followingProfile,
+        );
       }
 
       print('Parent Document ID: $user');
@@ -250,18 +251,6 @@ class FirebaseApi {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     try {
-      // final collection =
-      //     await firestore.collection('notifications').doc(userUid).get();
-      // if (collection.exists) {
-      //   await firestore.collection('notifications').doc(userUid).update({
-      //     'notificationList': FieldValue.arrayUnion([notificationData])
-      //   });
-      // } else {
-      //   await firestore.collection('notifications').doc(userUid).set({
-      //     'notificationList': FieldValue.arrayUnion([notificationData])
-      //   });
-      // }
-
       String notificationId = const Uuid().v1();
 
       ModelNotification notification = ModelNotification(

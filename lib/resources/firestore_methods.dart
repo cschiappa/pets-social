@@ -266,7 +266,7 @@ class FirestoreMethods {
           'following': FieldValue.arrayUnion([followId])
         });
 
-        FirebaseApi().followNotificationMethod(profileUid, followId);
+        FirebaseApi().followNotificationMethod(followId, profileUid);
       }
     } catch (e) {
       debugPrint(e.toString());

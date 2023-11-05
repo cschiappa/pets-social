@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/screens/open_post_screen.dart';
+import 'package:pets_social/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
@@ -17,6 +19,7 @@ class PrizesScreen extends StatefulWidget {
 }
 
 class _PrizesScreenState extends State<PrizesScreen> {
+  var notificationData = [];
   var userData = {};
   int postLen = 0;
   int likes = 0;
@@ -52,11 +55,18 @@ class _PrizesScreenState extends State<PrizesScreen> {
           .where('profileUid', isEqualTo: profile.profileUid)
           .get();
 
+      var notificationSnap = await FirebaseFirestore.instance
+          .collection('notifications')
+          .where('receiver', isEqualTo: profile.profileUid)
+          .get();
+
       postLen = postSnap.docs.length;
       userData = userSnap.docs.first.data();
       followers = userData['followers'].length;
       following = userData['following'].length;
       isFollowing = userData['followers'].contains(profile.profileUid);
+      notificationData =
+          notificationSnap.docs.map((doc) => doc.data()).toList();
 
       for (var post in postSnap.docs) {
         likes += post.data()['likes'].length as int;
@@ -161,16 +171,42 @@ class _PrizesScreenState extends State<PrizesScreen> {
                 const Divider(
                   color: Colors.white,
                 ),
-                Container(
-                    child: message != null
-                        ? Row(
-                            children: [
-                              //Text('${message.notification?.title}'),
-                              Text('${message.notification?.body}'),
-                              //Text('${message.data}'),
-                            ],
-                          )
-                        : const Text('No notifications')),
+                Expanded(
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    child: ListView.builder(
+                        itemCount: notificationData.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              notificationData[index]['postId'] == ""
+                                  ? Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                          profileUid: notificationData[index]
+                                              ['sender'],
+                                        ),
+                                      ),
+                                    )
+                                  : Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => OpenPost(
+                                            postId: notificationData[index]
+                                                ['postId'],
+                                            profileUid: notificationData[index]
+                                                ['sender'],
+                                            username: notificationData[index]
+                                                ['postId']),
+                                      ),
+                                    );
+                            },
+                            child: ListTile(
+                              leading: Text(notificationData[index]['body']),
+                            ),
+                          );
+                        }),
+                  ),
+                ),
               ],
             ),
           ),
