@@ -194,9 +194,8 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                             postId: notificationData[index]
                                                 ['postId'],
                                             profileUid: notificationData[index]
-                                                ['sender'],
-                                            username: notificationData[index]
-                                                ['postId']),
+                                                ['receiver'],
+                                            username: profile.username),
                                       ),
                                     );
                             },

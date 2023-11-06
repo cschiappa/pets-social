@@ -1,20 +1,14 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:googleapis_auth/auth_io.dart';
-
 import 'package:pets_social/main.dart';
 import 'package:pets_social/models/notification.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/resources/storage_methods.dart';
 import 'package:pets_social/screens/notifications_screen.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
@@ -170,6 +164,7 @@ class FirebaseApi {
     }
   }
 
+//OBTAIN AUTHENTICATED CLIENT
   Future<AuthClient> obtainAuthenticatedClient() async {
     final accountCredentials = ServiceAccountCredentials.fromJson(
       utf8.decode(
@@ -186,6 +181,7 @@ class FirebaseApi {
     return client;
   }
 
+//NOTIFICATION METHOD FOR POSTS
   Future<void> notificationMethod(
       String postId, String profileUid, String action) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -193,6 +189,12 @@ class FirebaseApi {
     final user =
         await _firestore.collection('posts').doc(postId).get().then((value) {
       return value.data()!['uid'];
+    });
+
+    //get profile that made the post
+    final receiverUid =
+        await _firestore.collection('posts').doc(postId).get().then((value) {
+      return value.data()!['profileUid'];
     });
 
     //get profile that liked the post
@@ -205,10 +207,11 @@ class FirebaseApi {
       final actionUser = querySnapshot.docs[0].data()['username'];
 
       await FirebaseApi().sendNotificationToUser(user, 'Pets Social',
-          '$actionUser $action your post.', postId, profileUid, actionUser);
+          '$actionUser $action your post.', postId, receiverUid, profileUid);
     }
   }
 
+//NOTIFICATION METHOD FOR FOLLOWING
   Future<void> followNotificationMethod(
       String followedProfile, String followingProfile) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -218,7 +221,6 @@ class FirebaseApi {
         .get();
 
     if (userProfile.docs.isNotEmpty) {
-      // Assuming you want to get the ID of the parent of the first document found in the query results
       final user = userProfile.docs[0].reference.parent.parent!.id;
 
       //get profile that liked the post
@@ -240,12 +242,13 @@ class FirebaseApi {
         );
       }
 
-      print('Parent Document ID: $user');
+      debugPrint('Parent Document ID: $user');
     } else {
-      print('No matching documents found for the query.');
+      debugPrint('No matching documents found for the query.');
     }
   }
 
+//UPLOAD NOTIFICATION TO STORAGE
   Future<void> uploadNotificationToStorage(
       String postId, String body, String receiverUid, String senderUid) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -265,9 +268,9 @@ class FirebaseApi {
           .doc(notificationId)
           .set(notification.toJson());
 
-      print('Notification added successfully!');
+      debugPrint('Notification added successfully!');
     } catch (e) {
-      print('Error saving notification data: $e');
+      debugPrint('Error saving notification data: $e');
     }
   }
 }
