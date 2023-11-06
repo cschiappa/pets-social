@@ -13,6 +13,7 @@ import 'package:pets_social/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:regex_router/regex_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'screens/notifications_screen.dart';
 
@@ -23,7 +24,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseApi().initNotifications();
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final bool? notification = prefs.getBool('notification');
+
+  if (notification == true) {
+    await FirebaseApi().initNotifications();
+  }
 
   runApp(const MyApp());
 }
@@ -43,7 +50,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Pet Social',
-        theme: ThemeData.dark().copyWith(
+        theme: ThemeData.dark(useMaterial3: true).copyWith(
           scaffoldBackgroundColor: mobileBackgroundColor,
           highlightColor: Colors.white,
         ),

@@ -200,7 +200,10 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                     );
                             },
                             child: ListTile(
-                              leading: Text(notificationData[index]['body']),
+                              leading: Text(
+                                notificationData[index]['body'],
+                                style: const TextStyle(fontSize: 15),
+                              ),
                             ),
                           );
                         }),
@@ -216,7 +219,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.all(20),
               width: double.infinity,
-              height: 120,
+              height: 130,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
                 gradient: const LinearGradient(
@@ -250,8 +253,10 @@ class _PrizesScreenState extends State<PrizesScreen> {
                     alignment: Alignment.topLeft,
                     child: Column(
                       children: [
-                        Text('$followers followers'),
-                        Text('$following following'),
+                        Text('$followers followers',
+                            style: const TextStyle(fontSize: 15)),
+                        Text('$following following',
+                            style: const TextStyle(fontSize: 15)),
                       ],
                     ),
                   )

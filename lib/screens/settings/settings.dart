@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/screens/settings/account_settings.dart';
 import 'package:pets_social/screens/settings/blocked_accounts.dart';
 import 'package:pets_social/screens/settings/feedback.dart';
+import 'package:pets_social/screens/settings/notification_settings.dart';
 import 'package:pets_social/utils/colors.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -36,9 +37,16 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          const ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Notifications'),
+          ListTile(
+            leading: const Icon(Icons.notifications),
+            title: const Text('Notifications'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const NotificationsSettings(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.person_off),
