@@ -113,6 +113,17 @@ class FirebaseApi {
     }
   }
 
+  Future<void> removeTokenFromDatabase(String token) async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'tokens': FieldValue.arrayRemove([token]),
+      });
+    }
+  }
+
 // SEND NOTIFICATION
   Future<void> sendNotificationToUser(String userUid, String title, String body,
       String postId, String receiverUid, String senderUid) async {
