@@ -167,7 +167,7 @@ class AuthMethods {
     UserProvider userProvider = Provider.of(context, listen: false);
     await _auth.signOut();
     await userProvider.disposeProfile();
-    await FirebaseApi.removeTokenFromDatabase();
+    //await FirebaseApi.removeTokenFromDatabase();
   }
 
   //Delete User

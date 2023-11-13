@@ -11,8 +11,30 @@ class NotificationsSettings extends StatefulWidget {
 }
 
 class _NotificationsSettingsState extends State<NotificationsSettings> {
-  bool light = true;
+  late bool light;
   final String notificationsPref = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getNotificationPreferences();
+  }
+
+  Future<void> getNotificationPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    light = prefs.getBool('notification') ?? true;
+    setState(() {
+      light = light;
+    });
+  }
+
+  Future<void> setNotificationPreferences(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      light = value;
+    });
+    await prefs.setBool('notification', value); // Save the preference
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +55,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 child: Switch(
                   value: light,
                   activeColor: pinkColor,
-                  onChanged: (bool value) async {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    setState(
-                      () {
-                        light = value;
-                      },
-                    );
-                    value == light
-                        ? await prefs.setBool('notification', true)
-                        : await prefs.setBool('notification', false);
+                  onChanged: (bool value) {
+                    setNotificationPreferences(value);
                   },
                 ),
               ),
