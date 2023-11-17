@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../features/app_router.dart';
 import '../../models/post.dart';
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
@@ -118,16 +120,26 @@ class _SavedPostsState extends State<SavedPosts> {
 
                     return GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => OpenPost(
-                              postId: post.postId,
-                              profileUid: post.profileUid,
-                              username: profileDocs == null
-                                  ? ""
-                                  : profileDocs['username'],
-                            ),
-                          ),
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (context) => OpenPost(
+                        //       postId: post.postId,
+                        //       profileUid: post.profileUid,
+                        //       username: profileDocs == null
+                        //           ? ""
+                        //           : profileDocs['username'],
+                        //     ),
+                        //   ),
+                        // );
+                        context.goNamed(
+                          AppRouter.openPostFromProfile.name,
+                          pathParameters: {
+                            'postId': post.postId,
+                            'profileUid': post.profileUid,
+                            'username': profileDocs == null
+                                ? ""
+                                : profileDocs['username'],
+                          },
                         );
                       },
                       child: mediaWidget,

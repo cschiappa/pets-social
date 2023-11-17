@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/screens/welcome_screens/main_welcome_screen.dart';
 import 'package:pets_social/utils/colors.dart';
@@ -39,15 +41,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (res == "success") {
       if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const ResponsiveLayout(
-            mobileScreenLayout: MobileScreenLayout(),
-            webScreenLayout: WebScreenLayout(),
-          ),
-        ),
-        (_) => false,
-      );
+      // Navigator.of(context).pushAndRemoveUntil(
+      //   MaterialPageRoute(
+      //     builder: (context) => const ResponsiveLayout(
+      //       mobileScreenLayout: MobileScreenLayout(),
+      //       webScreenLayout: WebScreenLayout(),
+      //     ),
+      //   ),
+      //   (_) => false,
+      // );
+      context.goNamed(AppRouter.feedScreen.name);
     } else {
       if (!mounted) return;
       showSnackBar(res, context);
@@ -58,11 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToSignup() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const WelcomePage(),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => const WelcomePage(),
+    //   ),
+    // );
+    context.goNamed(AppRouter.welcomePage.name);
   }
 
   @override
@@ -110,11 +114,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordPage(),
-                          ),
-                        );
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const ForgotPasswordPage(),
+                        //   ),
+                        // );
+                        context.goNamed(AppRouter.recoverPassword.name);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(

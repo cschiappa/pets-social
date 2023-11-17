@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/storage_methods.dart';
@@ -186,11 +187,13 @@ class AuthMethods {
             .doc(user.uid)
             .delete();
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
+        context.goNamed(AppRouter.login.name);
+
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => const LoginScreen(),
+        //   ),
+        // );
       } catch (e) {
         // Handle any errors that may occur during deletion
         debugPrint('Error deleting account: $e');

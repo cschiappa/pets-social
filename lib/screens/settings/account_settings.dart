@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pets_social/screens/settings/personal_details.dart';
 import 'package:pets_social/screens/settings/profile_settings.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
+
+import '../../features/app_router.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key});
@@ -44,22 +47,24 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             leading: const Icon(Icons.groups),
             title: const Text('Profiles'),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ProfileSettings(),
-                ),
-              );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => const ProfileSettings(),
+              //   ),
+              // );
+              context.goNamed(AppRouter.profileSettings.name);
             },
           ),
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('Personal Details'),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PersonalDetailsPage(),
-                ),
-              );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => const PersonalDetailsPage(),
+              //   ),
+              // );
+              context.goNamed(AppRouter.personalDetails.name);
             },
           ),
           ListTile(

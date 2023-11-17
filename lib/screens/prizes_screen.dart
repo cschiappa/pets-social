@@ -2,10 +2,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pets_social/screens/open_post_screen.dart';
 import 'package:pets_social/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../features/app_router.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../utils/global_variables.dart';
@@ -180,23 +182,30 @@ class _PrizesScreenState extends State<PrizesScreen> {
                           return GestureDetector(
                             onTap: () {
                               notificationData[index]['postId'] == ""
-                                  ? Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => ProfileScreen(
-                                          profileUid: notificationData[index]
-                                              ['sender'],
-                                        ),
-                                      ),
-                                    )
-                                  : Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => OpenPost(
-                                            postId: notificationData[index]
-                                                ['postId'],
-                                            profileUid: notificationData[index]
-                                                ['receiver'],
-                                            username: profile.username),
-                                      ),
+                                  // ? Navigator.of(context).push(
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => ProfileScreen(
+                                  //         profileUid: notificationData[index]
+                                  //             ['sender'],
+                                  //       ),
+                                  //     ),
+                                  //   )
+                                  ? context.goNamed(
+                                      AppRouter.profileFromFeed.name,
+                                      pathParameters: {
+                                          'profileUid': notificationData[index]
+                                              ['sender']
+                                        })
+                                  // :
+                                  : context.goNamed(
+                                      AppRouter.openPostFromFeed.name,
+                                      pathParameters: {
+                                        'postId': notificationData[index]
+                                            ['postId'],
+                                        'profileUid': notificationData[index]
+                                            ['receiver'],
+                                        'username': profile.username,
+                                      },
                                     );
                             },
                             child: ListTile(

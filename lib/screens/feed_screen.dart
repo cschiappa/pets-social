@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
@@ -11,6 +12,7 @@ import 'package:pets_social/screens/chat/chat_list_page.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';
+import '../features/app_router.dart';
 import '../providers/user_provider.dart';
 
 import '../utils/utils.dart';
@@ -165,9 +167,10 @@ class _FeedScreenState extends State<FeedScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ChatList(),
-                    ));
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //   builder: (context) => const ChatList(),
+                    // ));
+                    context.goNamed(AppRouter.chatList.name);
                   },
                   icon: const Icon(
                     Icons.forum,

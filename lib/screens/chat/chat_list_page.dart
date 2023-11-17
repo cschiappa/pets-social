@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/screens/chat/chat_page.dart';
 import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
@@ -74,16 +76,21 @@ class _ChatListState extends State<ChatList> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatPage(
-                          receiverUserEmail: profilesFiltered[index].email,
-                          receiverUserID: profilesFiltered[index].profileUid,
-                          receiverUsername: profilesFiltered[index].username,
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ChatPage(
+                    //       receiverUserEmail: profilesFiltered[index].email,
+                    //       receiverUserID: profilesFiltered[index].profileUid,
+                    //       receiverUsername: profilesFiltered[index].username,
+                    //     ),
+                    //   ),
+                    // );
+                    context.goNamed(AppRouter.chatPage.name, pathParameters: {
+                      'receiverUserEmail': profilesFiltered[index].email,
+                      'receiverUserId': profilesFiltered[index].profileUid,
+                      'receiverUsername': profilesFiltered[index].username,
+                    });
                   },
                   child: ListTile(
                     leading: CircleAvatar(
@@ -145,16 +152,21 @@ class _ChatListState extends State<ChatList> {
         title: Text(data['username']),
         onTap: () {
           //enter chat page when clicked
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatPage(
-                receiverUserEmail: data['email'],
-                receiverUserID: data['profileUid'],
-                receiverUsername: data['username'],
-              ),
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => ChatPage(
+          //       receiverUserEmail: data['email'],
+          //       receiverUserID: data['profileUid'],
+          //       receiverUsername: data['username'],
+          //     ),
+          //   ),
+          // );
+          context.goNamed(AppRouter.chatPage.name, pathParameters: {
+            'receiverUserEmail': data['email'],
+            'receiverUserId': data['profileUid'],
+            'receiverUsername': data['username'],
+          });
         },
       );
     } else {

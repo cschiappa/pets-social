@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../features/app_router.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../resources/firestore_methods.dart';
@@ -27,11 +29,17 @@ class _CommentCardState extends State<CommentCard> {
         GestureDetector(
           onTap: () {
             String profileUid = widget.snap['profileUid'];
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(profileUid: profileUid),
-                ));
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => ProfileScreen(profileUid: profileUid),
+            //     ));
+            context.goNamed(
+              AppRouter.profileFromFeed.name,
+              pathParameters: {
+                'profileUid': profileUid,
+              },
+            );
           },
           child: CircleAvatar(
             backgroundImage: NetworkImage(widget.snap['profilePic']),
@@ -51,12 +59,18 @@ class _CommentCardState extends State<CommentCard> {
                     GestureDetector(
                       onTap: () {
                         String profileUid = widget.snap['profileUid'];
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileScreen(profileUid: profileUid),
-                            ));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) =>
+                        //           ProfileScreen(profileUid: profileUid),
+                        //     ));
+                        context.goNamed(
+                          AppRouter.profileFromFeed.name,
+                          pathParameters: {
+                            'profileUid': profileUid,
+                          },
+                        );
                       },
                       child: RichText(
                         text: TextSpan(

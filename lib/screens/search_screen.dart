@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/screens/open_post_screen.dart';
 import 'package:pets_social/screens/profile_screen.dart';
@@ -94,13 +96,14 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(
-                            profileUid: profilesFiltered[index].profileUid,
-                          ),
-                        ));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => ProfileScreen(
+                    //         profileUid: profilesFiltered[index].profileUid,
+                    //       ),
+                    //     ));
+                    context.goNamed(AppRouter.profileFromFeed.name);
                   },
                   child: ListTile(
                     leading: CircleAvatar(
@@ -174,16 +177,26 @@ class _SearchScreenState extends State<SearchScreen> {
                               .docs[index]['profileUid'];
                           String postId =
                               (snapshot.data! as dynamic).docs[index]['postId'];
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => OpenPost(
-                                    postId: postId,
-                                    profileUid: profileUid,
-                                    username: profileDocs == null
-                                        ? ""
-                                        : profileDocs['username']),
-                              ));
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => OpenPost(
+                          //           postId: postId,
+                          //           profileUid: profileUid,
+                          //           username: profileDocs == null
+                          //               ? ""
+                          //               : profileDocs['username']),
+                          //     ));
+                          context.goNamed(
+                            AppRouter.openPostFromSearch.name,
+                            pathParameters: {
+                              'postId': postId,
+                              'profileUid': profileUid,
+                              'username': profileDocs == null
+                                  ? ""
+                                  : profileDocs['username'],
+                            },
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),

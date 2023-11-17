@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
@@ -190,20 +192,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     onTap: () {
                                       if (e == 'Saved Posts') {
                                         Navigator.pop(context);
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SavedPosts(),
-                                          ),
-                                        );
+                                        // Navigator.of(context).push(
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) =>
+                                        //         const SavedPosts(),
+                                        //   ),
+                                        // );
+                                        context
+                                            .goNamed(AppRouter.savedPosts.name);
                                       } else if (e == 'Settings') {
                                         Navigator.pop(context);
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SettingsPage(),
-                                          ),
-                                        );
+                                        // Navigator.of(context).push(
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) =>
+                                        //         const SettingsPage(),
+                                        //   ),
+                                        // );
+                                        context
+                                            .goNamed(AppRouter.settings.name);
                                       }
                                     },
                                     child: Container(
@@ -319,13 +325,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               await AuthMethods()
                                                   .signOut(context);
                                               if (!mounted) return;
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const LoginScreen(),
-                                                ),
-                                              );
+                                              // Navigator.of(context)
+                                              //     .pushReplacement(
+                                              //   MaterialPageRoute(
+                                              //     builder: (context) =>
+                                              //         const LoginScreen(),
+                                              //   ),
+                                              // );
+                                              context.goNamed(
+                                                  AppRouter.login.name);
                                             },
                                           )
                                         : isFollowing
@@ -439,15 +447,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               }
                               return GestureDetector(
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => OpenPost(
-                                        postId: snap['postId'],
-                                        profileUid: snap['profileUid'],
-                                        username: userData['username'],
-                                      ),
-                                    ),
-                                  );
+                                  // Navigator.of(context).push(
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => OpenPost(
+                                  //       postId: snap['postId'],
+                                  //       profileUid: snap['profileUid'],
+                                  //       username: userData['username'],
+                                  //     ),
+                                  //   ),
+                                  // );
+
+                                  snap['profileUid'] == profile.profileUid
+                                      ? context.goNamed(
+                                          //'/profilescreen/post/${snap['postId']}/${snap['profileUid']}/${userData["username"]}');
+                                          AppRouter.openPostFromProfile.name,
+                                          pathParameters: {
+                                            'postId': snap['postId'],
+                                            'profileUid': snap['profileUid'],
+                                            'username': userData['username'],
+                                          },
+                                        )
+                                      : context.goNamed(
+                                          //'/profilescreen/post/${snap['postId']}/${snap['profileUid']}/${userData["username"]}');
+                                          AppRouter.openPostFromFeed.name,
+                                          pathParameters: {
+                                            'postId': snap['postId'],
+                                            'profileUid': snap['profileUid'],
+                                            'username': userData['username'],
+                                          },
+                                        );
                                 },
                                 child: mediaWidget,
                                 // child: ClipRRect(
@@ -574,15 +602,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: () {
                             updateProfile();
                             Navigator.of(context).pop();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ResponsiveLayout(
-                                    webScreenLayout: WebScreenLayout(),
-                                    mobileScreenLayout:
-                                        MobileScreenLayout()), // Rebuild the ProfileScreen
-                              ),
-                            );
+                            // Navigator.pushReplacement(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const ResponsiveLayout(
+                            //         webScreenLayout: WebScreenLayout(),
+                            //         mobileScreenLayout:
+                            //             MobileScreenLayout()), // Rebuild the ProfileScreen
+                            //   ),
+                            // );
+                            context.goNamed(AppRouter.profileScreen.name);
                           },
                           child: Container(
                             width: double.infinity,

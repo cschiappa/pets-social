@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_video_player/cached_video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
@@ -17,6 +19,7 @@ import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import '../features/app_router.dart';
 import '../responsive/mobile_screen_layout.dart';
 import '../utils/global_variables.dart';
 import 'bone_animation.dart';
@@ -202,13 +205,23 @@ class _PostCardExpState extends State<PostCardExp> {
                       GestureDetector(
                         onTap: () {
                           String profileUid = widget.snap['profileUid'];
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileScreen(profileUid: profileUid),
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) =>
+                          //         ProfileScreen(profileUid: profileUid),
+                          //   ),
+                          // );
+                          profileUid == profile!.profileUid
+                              ? context.goNamed(
+                                  AppRouter.profileScreen.name,
+                                )
+                              : context.goNamed(
+                                  AppRouter.profileFromFeed.name,
+                                  pathParameters: {
+                                    'profileUid': profileUid,
+                                  },
+                                );
                         },
                         child: CircleAvatar(
                             radius: 15,
@@ -228,13 +241,23 @@ class _PostCardExpState extends State<PostCardExp> {
                               GestureDetector(
                                 onTap: () {
                                   String profileUid = widget.snap['profileUid'];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProfileScreen(profileUid: profileUid),
-                                    ),
-                                  );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) =>
+                                  //         ProfileScreen(profileUid: profileUid),
+                                  //   ),
+                                  // );
+                                  profileUid == profile!.profileUid
+                                      ? context.goNamed(
+                                          AppRouter.profileScreen.name,
+                                        )
+                                      : context.goNamed(
+                                          AppRouter.profileFromFeed.name,
+                                          pathParameters: {
+                                            'profileUid': profileUid,
+                                          },
+                                        );
                                 },
                                 child: Text(
                                   //widget.snap['username'],
@@ -260,13 +283,16 @@ class _PostCardExpState extends State<PostCardExp> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: InkWell(
-                                onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => CommentsScreen(
-                                      snap: widget.snap,
-                                    ),
-                                  ),
-                                ),
+                                // onTap: () => Navigator.of(context).push(
+                                //   MaterialPageRoute(
+                                //     builder: (context) => CommentsScreen(
+                                //       snap: widget.snap,
+                                //     ),
+                                //   ),
+                                // ),
+                                onTap: () => context.goNamed(
+                                    AppRouter.commentsFromFeed.name,
+                                    extra: '${widget.snap}'),
                                 child: Image.asset(
                                   'assets/comment.png',
                                   width: 24,
@@ -659,13 +685,16 @@ class _PostCardExpState extends State<PostCardExp> {
 
                   // SHOW NUMBER OF COMMENTS
                   InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CommentsScreen(
-                          snap: widget.snap,
-                        ),
-                      ),
-                    ),
+                    // onTap: () => Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => CommentsScreen(
+                    //       snap: widget.snap,
+                    //     ),
+                    //   ),
+                    // ),
+                    onTap: () => context.goNamed(
+                        AppRouter.commentsFromFeed.name,
+                        extra: '${widget.snap}'),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
@@ -733,13 +762,14 @@ class _PostCardExpState extends State<PostCardExp> {
                               showSnackBar(value, context);
                             } else {
                               Navigator.of(context).pop();
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MobileScreenLayout(), // Rebuild the ProfileScreen
-                                ),
-                              );
+                              // Navigator.pushReplacement(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) =>
+                              //         const MobileScreenLayout(), // Rebuild the ProfileScreen
+                              //   ),
+                              // );
+                              context.goNamed(AppRouter.feedScreen.name);
                             }
                           });
                         },

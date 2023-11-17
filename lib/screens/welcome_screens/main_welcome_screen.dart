@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pets_social/screens/initial_screens/signup_screen.dart';
 import 'package:pets_social/screens/welcome_screens/page_one_welcome.dart';
 import 'package:pets_social/screens/welcome_screens/page_three_welcome.dart';
 import 'package:pets_social/screens/welcome_screens/page_two_welcome.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../features/app_router.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -54,14 +57,15 @@ class _WelcomePageState extends State<WelcomePage> {
                 onLastPage
                     ? GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const SignupScreen();
-                              },
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) {
+                          //       return const SignupScreen();
+                          //     },
+                          //   ),
+                          // );
+                          context.goNamed(AppRouter.signup.name);
                         },
                         child: const Text('done'),
                       )

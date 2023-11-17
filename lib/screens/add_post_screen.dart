@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
@@ -56,13 +58,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
         if (!mounted) return;
         showSnackBar('Posted!', context);
         clearImage();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ResponsiveLayout(
-                webScreenLayout: WebScreenLayout(),
-                mobileScreenLayout: MobileScreenLayout()),
-          ),
-        );
+        context.goNamed(AppRouter.feedScreen.name);
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => const ResponsiveLayout(
+        //         webScreenLayout: WebScreenLayout(),
+        //         mobileScreenLayout: MobileScreenLayout()),
+        //   ),
+        // );
       } else {
         setState(() {
           _isLoading = false;
