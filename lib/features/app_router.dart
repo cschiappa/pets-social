@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
@@ -42,7 +44,7 @@ class AppRouter {
   static const Routes login = Routes(name: 'login', path: '/login');
   static const Routes signup = Routes(name: 'signup', path: '/signup');
   static const Routes recoverPassword =
-      Routes(name: 'recoverPassword', path: 'recover/password');
+      Routes(name: 'recoverPassword', path: '/recover/password');
 
   //Shell
   static const Routes feedScreen = Routes(name: 'feedScreen', path: '/feed');
@@ -58,8 +60,8 @@ class AppRouter {
   //FeedScreen Sub-Routes
   static const Routes profileFromFeed =
       Routes(name: 'profileFromFeed', path: 'profile/:profileUid');
-  static const Routes openPostFromFeed = Routes(
-      name: 'openPostFromFeed', path: 'postFeed/:postId/:profileUid/:username');
+  static const Routes openPostFromFeed =
+      Routes(name: 'openPostFromFeed', path: 'postFeed/:postId/:username');
   static const Routes commentsFromFeed = Routes(
       name: 'commentsFromFeed',
       path: 'post/:postId/:profileUid/:username/comments');
@@ -101,12 +103,34 @@ class AppRouter {
   static const Routes feedback = Routes(name: 'feedback', path: 'feedback');
 }
 
+FutureOr<String?> onRedirect(BuildContext context, GoRouterState state) {
+  final List<String> initialRoutes = [
+    AppRouter.login.path,
+    AppRouter.signup.path,
+    AppRouter.recoverPassword.path,
+    AppRouter.welcomePage.path
+  ];
+
+  final bool isInitialRoute = initialRoutes.contains(state.matchedLocation);
+
+  if (FirebaseAuth.instance.currentUser == null && !isInitialRoute) {
+    return AppRouter.login.path;
+  }
+
+  if (FirebaseAuth.instance.currentUser != null && isInitialRoute) {
+    return AppRouter.feedScreen.path;
+  }
+
+  return null;
+}
+
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: AppRouter.feedScreen.path,
+    initialLocation: AppRouter.login.path,
+    redirect: onRedirect,
     routes: <RouteBase>[
       //DEEPLINK OPEN POST
       GoRoute(
@@ -136,17 +160,16 @@ final GoRouter router = GoRouter(
       ),
       //SIGN UP SCREEN
       GoRoute(
-          name: AppRouter.signup.name,
-          path: AppRouter.signup.path,
-          builder: (context, state) => const SignupScreen(),
-          routes: <RouteBase>[
-            //FORGOT PASSWORD
-            GoRoute(
-              name: AppRouter.recoverPassword.name,
-              path: AppRouter.recoverPassword.path,
-              builder: (context, state) => const ForgotPasswordPage(),
-            ),
-          ]),
+        name: AppRouter.signup.name,
+        path: AppRouter.signup.path,
+        builder: (context, state) => const SignupScreen(),
+      ),
+      //RECOVER PASSWORD
+      GoRoute(
+        name: AppRouter.recoverPassword.name,
+        path: AppRouter.recoverPassword.path,
+        builder: (context, state) => const ForgotPasswordPage(),
+      ),
       //BOTTOM NAVIGATION BAR
       StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state,

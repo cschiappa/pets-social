@@ -60,15 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void navigateToSignup() {
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => const WelcomePage(),
-    //   ),
-    // );
-    context.goNamed(AppRouter.welcomePage.name);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       isPass: true,
                     ),
 
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         // Navigator.of(context).push(
                         //   MaterialPageRoute(
@@ -167,8 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: const Text("Don't have an account?"),
                         ),
-                        GestureDetector(
-                          onTap: navigateToSignup,
+                        InkWell(
+                          onTap: () =>
+                              context.goNamed(AppRouter.welcomePage.name),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8,
