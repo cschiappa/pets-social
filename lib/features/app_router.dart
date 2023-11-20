@@ -62,13 +62,12 @@ class AppRouter {
       Routes(name: 'profileFromFeed', path: 'profile/:profileUid');
   static const Routes openPostFromFeed =
       Routes(name: 'openPostFromFeed', path: 'postFeed/:postId/:username');
-  static const Routes commentsFromFeed = Routes(
-      name: 'commentsFromFeed',
-      path: 'post/:postId/:profileUid/:username/comments');
+  static const Routes commentsFromFeed =
+      Routes(name: 'commentsFromFeed', path: 'comments');
   static const Routes chatList = Routes(name: 'chatList', path: 'chatList');
   static const Routes chatPage = Routes(
       name: 'chatPage',
-      path: 'chatpage/:receiverUserEmail/:receiverUserID/:receiverUsername');
+      path: 'chatpage/:receiverUserEmail/:receiverUserId/:receiverUsername');
 
   //SearchScreen Sub-Routes
   static const Routes openPostFromSearch = Routes(
@@ -141,10 +140,10 @@ final GoRouter router = GoRouter(
                 username: state.pathParameters["username"]!,
               ),
           routes: <RouteBase>[
-            GoRoute(
-              path: 'commentsscreen',
-              builder: (context, state) => CommentsScreen(snap: state.extra),
-            )
+            // GoRoute(
+            //   path: 'commentsscreen',
+            //   builder: (context, state) => CommentsScreen(snap: state.extra),
+            // )
           ]),
       //WELCOME SCREEN
       GoRoute(
@@ -175,7 +174,8 @@ final GoRouter router = GoRouter(
           builder: (BuildContext context, GoRouterState state,
                   StatefulNavigationShell navigationShell) =>
               ResponsiveLayout(
-                webScreenLayout: const WebScreenLayout(),
+                webScreenLayout:
+                    WebScreenLayout(navigationShell: navigationShell),
                 mobileScreenLayout:
                     MobileScreenLayout(navigationShell: navigationShell),
               ),
@@ -230,7 +230,7 @@ final GoRouter router = GoRouter(
                                 receiverUserEmail:
                                     state.pathParameters["receiverUserEmail"]!,
                                 receiverUserID:
-                                    state.pathParameters["receiverUserID"]!,
+                                    state.pathParameters["receiverUserId"]!,
                                 receiverUsername:
                                     state.pathParameters["receiverUsername"]!,
                               ),
@@ -257,12 +257,12 @@ final GoRouter router = GoRouter(
                                 username: state.pathParameters["username"]!,
                               ),
                           routes: <RouteBase>[
-                            GoRoute(
-                              name: AppRouter.commentsFromSearch.name,
-                              path: AppRouter.commentsFromSearch.path,
-                              builder: (context, state) =>
-                                  CommentsScreen(snap: state.extra),
-                            )
+                            // GoRoute(
+                            //   name: AppRouter.commentsFromSearch.name,
+                            //   path: AppRouter.commentsFromSearch.path,
+                            //   builder: (context, state) =>
+                            //       CommentsScreen(snap: state.extra),
+                            // )
                           ]),
                     ]),
               ],
@@ -305,12 +305,12 @@ final GoRouter router = GoRouter(
                           username: state.pathParameters['username']!,
                         ),
                         routes: <RouteBase>[
-                          GoRoute(
-                            name: AppRouter.commentsFromProfile.name,
-                            path: AppRouter.commentsFromProfile.path,
-                            builder: (context, state) =>
-                                CommentsScreen(snap: state.extra),
-                          )
+                          // GoRoute(
+                          //   name: AppRouter.commentsFromProfile.name,
+                          //   path: AppRouter.commentsFromProfile.path,
+                          //   builder: (context, state) =>
+                          //       CommentsScreen(snap: state.extra),
+                          // )
                         ],
                       ),
                       //SAVED POSTS
