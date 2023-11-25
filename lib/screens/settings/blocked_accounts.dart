@@ -17,11 +17,12 @@ class BlockedAccountsPage extends StatefulWidget {
 class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: mobileBackgroundColor,
+      backgroundColor: theme.appBarTheme.backgroundColor,
       appBar: AppBar(
         title: const Text('Blocked Accounts'),
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.colorScheme.primary,
       ),
       body: _buildUserList(),
     );

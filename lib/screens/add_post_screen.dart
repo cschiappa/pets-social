@@ -196,6 +196,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
     final firebaseauth = FirebaseAuth.instance.currentUser!.uid;
 
     return _file == null
@@ -209,7 +210,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         : //CropImage(file: _file!, path: _filePath!);
         Scaffold(
             appBar: AppBar(
-              backgroundColor: mobileBackgroundColor,
+              backgroundColor: theme.appBarTheme.backgroundColor,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: clearImage,

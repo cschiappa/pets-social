@@ -13,11 +13,12 @@ class PersonalDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
     final DateFormat format = DateFormat("dd/MM/yyyy");
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: const Text('Personal Details'),
       ),
       body: ListView(

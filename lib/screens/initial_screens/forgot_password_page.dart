@@ -51,9 +51,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       body: Padding(
         padding: MediaQuery.of(context).size.width > webScreenSize
@@ -94,9 +96,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   color: pinkColor,
                 ),
                 child: _isLoading
-                    ? const Center(
+                    ? Center(
                         child: CircularProgressIndicator(
-                          color: primaryColor,
+                          color: theme.colorScheme.primary,
                         ),
                       )
                     : const Text('Send'),

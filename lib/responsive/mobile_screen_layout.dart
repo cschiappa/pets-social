@@ -12,6 +12,7 @@ class MobileScreenLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       // body: PageView(
       //   //if I want to remove slide to side, uncommment bellow
@@ -22,47 +23,42 @@ class MobileScreenLayout extends StatelessWidget {
       // ),
       body: navigationShell,
       bottomNavigationBar: CupertinoTabBar(
-        backgroundColor: mobileBackgroundColor,
-        items: const [
+        backgroundColor: Colors.black,
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(
+            icon: const Icon(
               Icons.home,
-              //color: _page == 0 ? pinkColor : secondaryColor,
             ),
             label: '',
-            backgroundColor: primaryColor,
+            backgroundColor: theme.colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(
+            icon: const Icon(
               Icons.search,
-              //color: _page == 1 ? pinkColor : secondaryColor,
             ),
             label: '',
-            backgroundColor: primaryColor,
+            backgroundColor: theme.colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(
+            icon: const Icon(
               Icons.add_circle,
-              //color: _page == 2 ? pinkColor : secondaryColor,
             ),
             label: '',
-            backgroundColor: primaryColor,
+            backgroundColor: theme.colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(
+            icon: const Icon(
               Icons.star,
-              //color: _page == 3 ? pinkColor : secondaryColor,
             ),
             label: '',
-            backgroundColor: primaryColor,
+            backgroundColor: theme.colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(
+            icon: const Icon(
               Icons.person,
-              //color: _page == 4 ? pinkColor : secondaryColor,
             ),
             label: '',
-            backgroundColor: primaryColor,
+            backgroundColor: theme.colorScheme.primary,
           ),
         ],
         currentIndex: navigationShell.currentIndex,

@@ -32,9 +32,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: const Row(
           children: [
             Text('Account Settings'),

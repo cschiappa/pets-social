@@ -45,9 +45,10 @@ class ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: Text(widget.receiverUsername),
       ),
       body: Column(

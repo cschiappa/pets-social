@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -82,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // svg image
                     Image.asset(
                       'assets/logo.png',
-                      color: primaryColor,
+                      color: theme.colorScheme.primary,
                       height: 64,
                     ),
                     const SizedBox(height: 64),
@@ -137,9 +138,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             color: pinkColor),
                         child: _isLoading
-                            ? const Center(
+                            ? Center(
                                 child: CircularProgressIndicator(
-                                  color: primaryColor,
+                                  color: theme.colorScheme.primary,
                                 ),
                               )
                             : const Text('Log in'),

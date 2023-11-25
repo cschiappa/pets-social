@@ -13,9 +13,10 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: const Text('Give Some Feedback'),
       ),
       body: Container(

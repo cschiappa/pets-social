@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
+import 'package:pets_social/providers/theme_provider.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
@@ -48,32 +49,39 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => UserProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        )
       ],
-      child: MaterialApp.router(
-        routerConfig: router,
-        debugShowCheckedModeBanner: false,
-        title: 'Pet Social',
-        theme: ThemeData.dark(useMaterial3: true).copyWith(
-          scaffoldBackgroundColor: mobileBackgroundColor,
-          highlightColor: Colors.white,
-        ),
-        // navigatorKey: navigatorKey,
-        // routes: {
-        //   NotificationScreen.route: (context) => const PrizesScreen(),
-        // },
-        // onGenerateRoute: (settings) {
-        //   final router = RegexRouter.create({
-        //     // Access "object" arguments from `NavigatorState.pushNamed`.
-        //     "post/:postId/:profileUid/:username": (context, args) => OpenPost(
-        //           postId: args["postId"]!,
-        //           profileUid: args["profileUid"]!,
-        //           username: args["username"]!,
-        //         ),
-        //   });
+      child: Builder(builder: (context) {
+        var themeData = Provider.of<ThemeProvider>(context).themeData;
+        return MaterialApp.router(
+          routerConfig: router,
+          debugShowCheckedModeBanner: false,
+          title: 'Pet Social',
+          theme: themeData,
+          // ThemeData.dark(useMaterial3: true).copyWith(
+          //   scaffoldBackgroundColor: mobileBackgroundColor,
+          //   highlightColor: Colors.white,
+          // ),
+          // navigatorKey: navigatorKey,
+          // routes: {
+          //   NotificationScreen.route: (context) => const PrizesScreen(),
+          // },
+          // onGenerateRoute: (settings) {
+          //   final router = RegexRouter.create({
+          //     // Access "object" arguments from `NavigatorState.pushNamed`.
+          //     "post/:postId/:profileUid/:username": (context, args) => OpenPost(
+          //           postId: args["postId"]!,
+          //           profileUid: args["profileUid"]!,
+          //           username: args["username"]!,
+          //         ),
+          //   });
 
-        //   return router.generateRoute(settings);
-        // },
-      ),
+          //   return router.generateRoute(settings);
+          // },
+        );
+      }),
     );
   }
 }

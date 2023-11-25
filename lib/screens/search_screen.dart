@@ -64,10 +64,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       //searchbar
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: TextFormField(
           controller: searchController,
           decoration: const InputDecoration(
@@ -103,7 +104,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     //         profileUid: profilesFiltered[index].profileUid,
                     //       ),
                     //     ));
-                    context.goNamed(AppRouter.profileFromFeed.name);
+                    context.goNamed(
+                      AppRouter.profileFromSearch.name,
+                      pathParameters: {
+                        'profileUid': profilesFiltered[index].profileUid,
+                      },
+                    );
                   },
                   child: ListTile(
                     leading: CircleAvatar(
@@ -187,7 +193,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           //               ? ""
                           //               : profileDocs['username']),
                           //     ));
-                          context.goNamed(
+                          context.pushNamed(
                             AppRouter.openPostFromSearch.name,
                             pathParameters: {
                               'postId': postId,

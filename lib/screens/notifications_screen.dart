@@ -9,9 +9,10 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = ModalRoute.of(context)!.settings.arguments as RemoteMessage;
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: const Text('Push Notifications'),
       ),
       body: Center(

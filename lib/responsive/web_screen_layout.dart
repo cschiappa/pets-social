@@ -11,14 +11,15 @@ class WebScreenLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: navigationShell,
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         centerTitle: false,
         title: Image.asset(
           'assets/logo.png',
-          color: primaryColor,
+          color: theme.colorScheme.primary,
           height: 32,
         ),
         actions: [
@@ -27,8 +28,8 @@ class WebScreenLayout extends StatelessWidget {
             icon: Icon(
               Icons.home,
               color: navigationShell.currentIndex == 0
-                  ? primaryColor
-                  : secondaryColor,
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.secondary,
             ),
           ),
           IconButton(
@@ -36,8 +37,8 @@ class WebScreenLayout extends StatelessWidget {
             icon: Icon(
               Icons.search,
               color: navigationShell.currentIndex == 1
-                  ? primaryColor
-                  : secondaryColor,
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.secondary,
             ),
           ),
           IconButton(
@@ -45,8 +46,8 @@ class WebScreenLayout extends StatelessWidget {
             icon: Icon(
               Icons.add_a_photo,
               color: navigationShell.currentIndex == 2
-                  ? primaryColor
-                  : secondaryColor,
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.secondary,
             ),
           ),
           IconButton(
@@ -54,8 +55,8 @@ class WebScreenLayout extends StatelessWidget {
             icon: Icon(
               Icons.star,
               color: navigationShell.currentIndex == 3
-                  ? primaryColor
-                  : secondaryColor,
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.secondary,
             ),
           ),
           IconButton(
@@ -63,8 +64,8 @@ class WebScreenLayout extends StatelessWidget {
             icon: Icon(
               Icons.person,
               color: navigationShell.currentIndex == 4
-                  ? primaryColor
-                  : secondaryColor,
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.secondary,
             ),
           ),
         ],

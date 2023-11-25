@@ -91,6 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -112,7 +113,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     padding: const EdgeInsets.only(top: 60.0),
                     child: Image.asset(
                       'assets/logo.png',
-                      color: primaryColor,
+                      color: theme.colorScheme.primary,
                       height: 56,
                     ),
                   ),
@@ -194,9 +195,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           color: pinkColor),
                       child: _isLoading
-                          ? const Center(
+                          ? Center(
                               child: CircularProgressIndicator(
-                                color: primaryColor,
+                                color: theme.colorScheme.primary,
                               ),
                             )
                           : const Text('Sign up'),

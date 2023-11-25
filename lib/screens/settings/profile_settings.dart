@@ -25,11 +25,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       backgroundColor: mobileBackgroundColor,
       appBar: AppBar(
         title: const Text('Profiles'),
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       body: _buildProfileList(),
     );

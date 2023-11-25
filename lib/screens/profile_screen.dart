@@ -161,6 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
 
     return isLoading
         ? const Center(
@@ -170,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )
         : Scaffold(
             appBar: AppBar(
-              backgroundColor: mobileBackgroundColor,
+              backgroundColor: theme.appBarTheme.backgroundColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -319,7 +320,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             text: 'Sign Out',
                                             backgroundColor:
                                                 mobileBackgroundColor,
-                                            textColor: primaryColor,
+                                            textColor:
+                                                theme.colorScheme.primary,
                                             borderColor: Colors.grey,
                                             function: () async {
                                               await AuthMethods()
@@ -527,6 +529,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _profileBottomSheet(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -624,9 +627,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 color: pinkColor),
                             child: _isLoading
-                                ? const Center(
+                                ? Center(
                                     child: CircularProgressIndicator(
-                                      color: primaryColor,
+                                      color: theme.colorScheme.primary,
                                     ),
                                   )
                                 : const Text('Update Profile'),

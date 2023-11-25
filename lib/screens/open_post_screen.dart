@@ -54,12 +54,13 @@ class _OpenPostState extends State<OpenPost> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: width > webScreenSize
           ? null
           : AppBar(
-              backgroundColor: mobileBackgroundColor,
+              backgroundColor: theme.appBarTheme.backgroundColor,
               centerTitle: false,
               title: Text('Post from ${widget.username}')),
       body: StreamBuilder(

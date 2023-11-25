@@ -111,6 +111,7 @@ class _PostCardExpState extends State<PostCardExp> {
   Widget build(BuildContext context) {
     final videoUri = Uri.parse(widget.snap['postUrl']);
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
 
     return SizedBox(
@@ -187,8 +188,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                 isLikeAnimating = false;
                               });
                             },
-                            child: const Icon(Icons.favorite,
-                                color: Colors.white, size: 120),
+                            child: Icon(Icons.favorite,
+                                color: theme.colorScheme.primary, size: 120),
                           ),
                         )
                       ],
@@ -197,7 +198,12 @@ class _PostCardExpState extends State<PostCardExp> {
                 ),
                 //POST HEADER
                 Container(
-                  color: const Color.fromARGB(100, 0, 0, 0),
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(100, 0, 0, 0),
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(20),
+                        topLeft: Radius.circular(20)),
+                  ),
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   child: Row(
@@ -264,8 +270,10 @@ class _PostCardExpState extends State<PostCardExp> {
                                   profileDocs == null
                                       ? ""
                                       : profileDocs['username'],
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                  ),
                                 ),
                               ),
                             ],
@@ -290,9 +298,27 @@ class _PostCardExpState extends State<PostCardExp> {
                                 //     ),
                                 //   ),
                                 // ),
-                                onTap: () => context.goNamed(
-                                    AppRouter.commentsFromFeed.name,
-                                    extra: '${widget.snap}'),
+                                onTap: () => //widget.snap['profileUid'] ==
+                                    //profile!.profileUid
+                                    // ? context.goNamed(
+                                    //     AppRouter.commentsFromProfile.name,
+                                    //     extra: widget.snap,
+                                    //     pathParameters: {
+                                    //       'postId': widget.snap['postId'],
+                                    //       'profileUid':
+                                    //           widget.snap['profileUid'],
+                                    //       'username': profileDocs['username'],
+                                    //     },
+                                    //   )
+                                    context.pushNamed(
+                                  AppRouter.commentsFromFeed.name,
+                                  extra: widget.snap,
+                                  pathParameters: {
+                                    'postId': widget.snap['postId'],
+                                    'profileUid': widget.snap['profileUid'],
+                                    'username': profileDocs['username'],
+                                  },
+                                ),
                                 child: Image.asset(
                                   'assets/comment.png',
                                   width: 24,
@@ -310,8 +336,9 @@ class _PostCardExpState extends State<PostCardExp> {
                                     //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
                                     );
                               },
-                              child: const Icon(
+                              child: Icon(
                                 Icons.share,
+                                color: theme.colorScheme.primary,
                               ),
                             ),
                             //BOOKMARK
@@ -344,6 +371,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                                 widget.snap['postId']))
                                         ? Icons.bookmark
                                         : Icons.bookmark_border,
+                                    color: theme.colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -380,7 +408,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                                 },
                                                 child: Container(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       vertical: 12,
                                                       horizontal: 16),
                                                   child: const Text(
@@ -442,7 +470,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                                     },
                                                     child: Container(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           vertical: 12,
                                                           horizontal: 16),
                                                       child:
@@ -461,7 +489,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                                     },
                                                     child: Container(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           vertical: 12,
                                                           horizontal: 16),
                                                       child: const Text(
@@ -475,7 +503,10 @@ class _PostCardExpState extends State<PostCardExp> {
                                   ),
                                 );
                               },
-                              child: const Icon(Icons.more_vert),
+                              child: Icon(
+                                Icons.more_vert,
+                                color: theme.colorScheme.primary,
+                              ),
                             ),
                           ],
                         ),
@@ -625,7 +656,7 @@ class _PostCardExpState extends State<PostCardExp> {
                     ),
                     child: RichText(
                       text: TextSpan(
-                          style: const TextStyle(color: primaryColor),
+                          style: TextStyle(color: theme.colorScheme.primary),
                           children: [
                             TextSpan(
                               text: profileDocs == null
@@ -692,15 +723,34 @@ class _PostCardExpState extends State<PostCardExp> {
                     //     ),
                     //   ),
                     // ),
-                    onTap: () => context.goNamed(
-                        AppRouter.commentsFromFeed.name,
-                        extra: '${widget.snap}'),
+                    onTap: () =>
+                        // widget.snap['profileUid'] == profile!.profileUid
+                        //     ? context.goNamed(
+                        //         AppRouter.commentsFromProfile.name,
+                        //         extra: widget.snap,
+                        //         pathParameters: {
+                        //           'postId': widget.snap['postId'],
+                        //           'profileUid': widget.snap['profileUid'],
+                        //           'username': profileDocs['username'],
+                        //         },
+                        //       )
+                        context.pushNamed(
+                      AppRouter.commentsFromFeed.name,
+                      extra: widget.snap,
+                      pathParameters: {
+                        'postId': widget.snap['postId'],
+                        'profileUid': widget.snap['profileUid'],
+                        'username': profileDocs['username'],
+                      },
+                    ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
                         'View all $commentLen comments',
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
                     ),
                   ),
@@ -709,7 +759,8 @@ class _PostCardExpState extends State<PostCardExp> {
                     child: Text(
                       DateFormat.yMMMd()
                           .format(widget.snap['datePublished'].toDate()),
-                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 12, color: theme.colorScheme.primary),
                     ),
                   ),
                 ],
@@ -722,6 +773,7 @@ class _PostCardExpState extends State<PostCardExp> {
   }
 
   void _profileBottomSheet(BuildContext context, StateSetter setState) {
+    final ThemeData theme = Theme.of(context);
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -784,9 +836,9 @@ class _PostCardExpState extends State<PostCardExp> {
                               ),
                               color: pinkColor),
                           child: _isLoading
-                              ? const Center(
+                              ? Center(
                                   child: CircularProgressIndicator(
-                                    color: primaryColor,
+                                    color: theme.colorScheme.primary,
                                   ),
                                 )
                               : const Text('Update Post'),

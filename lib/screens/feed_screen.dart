@@ -93,11 +93,12 @@ class _FeedScreenState extends State<FeedScreen> {
     final width = MediaQuery.of(context).size.width;
 
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: Drawer(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.colorScheme.background,
         width: 280,
         child: SafeArea(
           child: Column(
@@ -119,7 +120,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                   child: Image.asset(
                     'assets/logo.png',
-                    color: primaryColor,
+                    color: theme.colorScheme.primary,
                     scale: 6.5,
                     alignment: Alignment.topCenter,
                   ),
@@ -156,11 +157,11 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                 );
               }),
-              backgroundColor: mobileBackgroundColor,
+              backgroundColor: theme.appBarTheme.backgroundColor,
               centerTitle: true,
               title: Image.asset(
                 'assets/logo.png',
-                color: primaryColor,
+                color: theme.colorScheme.tertiary,
                 alignment: Alignment.topCenter,
                 scale: 6.5,
               ),
@@ -186,7 +187,7 @@ class _FeedScreenState extends State<FeedScreen> {
             showChildOpacityTransition: false,
             animSpeedFactor: 4,
             color: const Color.fromARGB(255, 48, 48, 48),
-            backgroundColor: Colors.black,
+            backgroundColor: theme.colorScheme.background,
             child: profile == null
                 ? const Center(
                     child: CircularProgressIndicator(),

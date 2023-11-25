@@ -46,10 +46,11 @@ class _SavedPostsState extends State<SavedPosts> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
