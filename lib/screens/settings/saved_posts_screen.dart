@@ -6,9 +6,7 @@ import '../../features/app_router.dart';
 import '../../models/post.dart';
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
-import '../../utils/colors.dart';
 import '../../utils/utils.dart';
-import '../open_post_screen.dart';
 
 class SavedPosts extends StatefulWidget {
   final snap;
@@ -69,9 +67,9 @@ class _SavedPostsState extends State<SavedPosts> {
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
+                  return Center(
                     child: CircularProgressIndicator(
-                      color: pinkColor,
+                      color: theme.colorScheme.secondary,
                     ),
                   );
                 }

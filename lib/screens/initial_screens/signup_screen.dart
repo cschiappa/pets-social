@@ -4,15 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/resources/auth_methods.dart';
-import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/utils/utils.dart';
 import '../../features/app_router.dart';
-import '../../responsive/mobile_screen_layout.dart';
-import '../../responsive/responsive_layout_screen.dart';
-import '../../responsive/web_screen_layout.dart';
+
 import '../../utils/global_variables.dart';
 import '../../widgets/text_field_input.dart';
-import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -189,11 +185,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       width: double.infinity,
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: const ShapeDecoration(
-                          shape: RoundedRectangleBorder(
+                      decoration: ShapeDecoration(
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(4)),
                           ),
-                          color: pinkColor),
+                          color: theme.colorScheme.secondary),
                       child: _isLoading
                           ? Center(
                               child: CircularProgressIndicator(

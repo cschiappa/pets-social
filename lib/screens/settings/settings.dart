@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/providers/theme_provider.dart';
-import 'package:pets_social/screens/settings/account_settings.dart';
-import 'package:pets_social/screens/settings/blocked_accounts.dart';
-import 'package:pets_social/screens/settings/feedback.dart';
-import 'package:pets_social/screens/settings/notification_settings.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {

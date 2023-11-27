@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/user_provider.dart';

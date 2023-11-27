@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
@@ -45,9 +44,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                color: pinkColor,
+                color: theme.colorScheme.secondary,
               ),
             );
           }
@@ -105,10 +104,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     vertical: 8,
                     horizontal: 8,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Post',
                     style: TextStyle(
-                      color: pinkColor,
+                      color: theme.colorScheme.secondary,
                     ),
                   ),
                 ),

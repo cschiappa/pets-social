@@ -7,7 +7,6 @@ import '../features/app_router.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
 import '../resources/firestore_methods.dart';
-import '../screens/profile_screen.dart';
 import 'like_animation.dart';
 
 class CommentCard extends StatefulWidget {

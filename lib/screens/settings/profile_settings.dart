@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/utils/colors.dart';
 
 import '../../resources/auth_methods.dart';
 import '../../resources/firestore_methods.dart';
@@ -27,7 +26,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: mobileBackgroundColor,
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
         title: const Text('Profiles'),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -38,6 +37,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
   //build a list of user's profiles
   Widget _buildProfileList() {
+    final ThemeData theme = Theme.of(context);
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -50,8 +50,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LinearProgressIndicator(
-            color: pinkColor,
+          return LinearProgressIndicator(
+            color: theme.colorScheme.secondary,
           );
         }
 

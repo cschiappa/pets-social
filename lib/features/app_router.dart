@@ -80,6 +80,13 @@ class AppRouter {
       name: 'commentsFromSearch',
       path: 'post/:postId/:profileUid/:username/comments');
 
+  //PrizesScreen Sub-Routes
+  static const Routes profileFromPrizes =
+      Routes(name: 'profileFromPrizes', path: 'profile/:profileUid');
+  static const Routes openPostFromPrizes = Routes(
+      name: 'openPostFromPrizes',
+      path: 'postSearch/:postId/:profileUid/:username');
+
   //ProfileScreen Sub-Routes
   static const Routes openPostFromProfile = Routes(
       name: 'openPostFromProfile',
@@ -127,28 +134,23 @@ FutureOr<String?> onRedirect(BuildContext context, GoRouterState state) {
   return null;
 }
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
+final GlobalKey<NavigatorState> rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final GoRouter router = GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: AppRouter.login.path,
     redirect: onRedirect,
     routes: <RouteBase>[
       //DEEPLINK OPEN POST
       GoRoute(
-          path: '/post/:postId/:profileUid/:username',
-          builder: (context, state) => OpenPost(
-                postId: state.pathParameters["postId"]!,
-                profileUid: state.pathParameters["profileUid"]!,
-                username: state.pathParameters["username"]!,
-              ),
-          routes: <RouteBase>[
-            // GoRoute(
-            //   path: 'commentsscreen',
-            //   builder: (context, state) => CommentsScreen(snap: state.extra),
-            // )
-          ]),
+        path: '/post/:postId/:profileUid/:username',
+        builder: (context, state) => OpenPost(
+          postId: state.pathParameters["postId"]!,
+          profileUid: state.pathParameters["profileUid"]!,
+          username: state.pathParameters["username"]!,
+        ),
+      ),
       //WELCOME SCREEN
       GoRoute(
         name: AppRouter.welcomePage.name,
@@ -285,10 +287,29 @@ final GoRouter router = GoRouter(
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  name: AppRouter.prizesScreen.name,
-                  path: AppRouter.prizesScreen.path,
-                  builder: (context, state) => const PrizesScreen(),
-                ),
+                    name: AppRouter.prizesScreen.name,
+                    path: AppRouter.prizesScreen.path,
+                    builder: (context, state) => const PrizesScreen(),
+                    routes: <RouteBase>[
+                      //NAVIGATE TO PROFILE
+                      GoRoute(
+                        name: AppRouter.profileFromPrizes.name,
+                        path: AppRouter.profileFromPrizes.path,
+                        builder: (context, state) => ProfileScreen(
+                          profileUid: state.pathParameters["profileUid"]!,
+                        ),
+                      ),
+                      //OPEN POST
+                      GoRoute(
+                        name: AppRouter.openPostFromPrizes.name,
+                        path: AppRouter.openPostFromPrizes.path,
+                        builder: (context, state) => OpenPost(
+                          postId: state.pathParameters["postId"]!,
+                          profileUid: state.pathParameters["profileUid"]!,
+                          username: state.pathParameters["username"]!,
+                        ),
+                      ),
+                    ]),
               ],
             ),
             //PROFILE SCREEN

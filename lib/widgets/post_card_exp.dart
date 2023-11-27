@@ -2,16 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_video_player/cached_video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/screens/comments_screen.dart';
-import 'package:pets_social/screens/profile_screen.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
 import 'package:pets_social/widgets/save_post_animation.dart';
@@ -20,7 +17,6 @@ import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../features/app_router.dart';
-import '../responsive/mobile_screen_layout.dart';
 import '../utils/global_variables.dart';
 import 'bone_animation.dart';
 import 'fish_animation.dart';
@@ -534,8 +530,9 @@ class _PostCardExpState extends State<PostCardExp> {
                             onTap: () {
                               _controller.previousPage();
                             },
-                            child: const Icon(
+                            child: Icon(
                               Icons.arrow_left,
+                              color: theme.colorScheme.primary,
                             ),
                           ),
                           Expanded(
@@ -631,9 +628,8 @@ class _PostCardExpState extends State<PostCardExp> {
                             onTap: () {
                               _controller.nextPage();
                             },
-                            child: const Icon(
-                              Icons.arrow_right,
-                            ),
+                            child: Icon(Icons.arrow_right,
+                                color: theme.colorScheme.primary),
                           ),
                         ],
                       ),
@@ -829,12 +825,12 @@ class _PostCardExpState extends State<PostCardExp> {
                           width: double.infinity,
                           alignment: Alignment.center,
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
+                          decoration: ShapeDecoration(
+                              shape: const RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(4)),
                               ),
-                              color: pinkColor),
+                              color: theme.colorScheme.secondary),
                           child: _isLoading
                               ? Center(
                                   child: CircularProgressIndicator(

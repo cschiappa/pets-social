@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pets_social/screens/settings/personal_details.dart';
-import 'package:pets_social/screens/settings/profile_settings.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 

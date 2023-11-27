@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pets_social/utils/global_variables.dart';
-import '../utils/colors.dart';
 
 class WebScreenLayout extends StatelessWidget {
   const WebScreenLayout({required this.navigationShell, Key? key})
@@ -12,6 +10,7 @@ class WebScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    const Color grey = Colors.grey;
     return Scaffold(
       body: navigationShell,
       appBar: AppBar(
@@ -29,7 +28,7 @@ class WebScreenLayout extends StatelessWidget {
               Icons.home,
               color: navigationShell.currentIndex == 0
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.secondary,
+                  : grey,
             ),
           ),
           IconButton(
@@ -38,7 +37,7 @@ class WebScreenLayout extends StatelessWidget {
               Icons.search,
               color: navigationShell.currentIndex == 1
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.secondary,
+                  : grey,
             ),
           ),
           IconButton(
@@ -47,7 +46,7 @@ class WebScreenLayout extends StatelessWidget {
               Icons.add_a_photo,
               color: navigationShell.currentIndex == 2
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.secondary,
+                  : grey,
             ),
           ),
           IconButton(
@@ -56,7 +55,7 @@ class WebScreenLayout extends StatelessWidget {
               Icons.star,
               color: navigationShell.currentIndex == 3
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.secondary,
+                  : grey,
             ),
           ),
           IconButton(
@@ -65,7 +64,7 @@ class WebScreenLayout extends StatelessWidget {
               Icons.person,
               color: navigationShell.currentIndex == 4
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.secondary,
+                  : grey,
             ),
           ),
         ],

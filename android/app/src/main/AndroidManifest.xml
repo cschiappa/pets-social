@@ -2,7 +2,8 @@
    <application
         android:label="pets_social"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        >
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,6 +33,7 @@
                 <data android:scheme="https" />
                 <data android:host="cschiappa.github.io" />
             </intent-filter>
+            
         </activity>
             <meta-data
         android:name="com.google.firebase.messaging.default_notification_channel_id"

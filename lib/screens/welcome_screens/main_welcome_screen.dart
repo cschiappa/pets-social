@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pets_social/screens/initial_screens/signup_screen.dart';
 import 'package:pets_social/screens/welcome_screens/page_one_welcome.dart';
 import 'package:pets_social/screens/welcome_screens/page_three_welcome.dart';
 import 'package:pets_social/screens/welcome_screens/page_two_welcome.dart';

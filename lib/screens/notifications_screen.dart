@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/utils/colors.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});

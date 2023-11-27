@@ -7,10 +7,7 @@ import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/responsive/mobile_screen_layout.dart';
-import 'package:pets_social/responsive/responsive_layout_screen.dart';
-import 'package:pets_social/responsive/web_screen_layout.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:pets_social/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -223,9 +220,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         profile!.profileUid,
                         profile.username,
                         profile.photoUrl ?? ""),
-                    child: const Text('Post',
+                    child: Text('Post',
                         style: TextStyle(
-                          color: pinkColor,
+                          color: theme.colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         )))
@@ -233,8 +230,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
             body: Column(children: [
               _isLoading
-                  ? const LinearProgressIndicator(
-                      color: pinkColor,
+                  ? LinearProgressIndicator(
+                      color: theme.colorScheme.secondary,
                     )
                   : const Padding(
                       padding: EdgeInsets.only(top: 0),

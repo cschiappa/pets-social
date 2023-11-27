@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:pets_social/models/profile.dart';
 
@@ -31,7 +30,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
   //build a list of blocked users
   Widget _buildUserList() {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-
+    final ThemeData theme = Theme.of(context);
     return profile!.blockedUsers.isNotEmpty
         ? StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -44,8 +43,8 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LinearProgressIndicator(
-                  color: pinkColor,
+                return LinearProgressIndicator(
+                  color: theme.colorScheme.secondary,
                 );
               }
 

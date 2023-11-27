@@ -8,8 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/screens/chat/chat_list_page.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';
 import '../features/app_router.dart';
@@ -203,9 +202,9 @@ class _FeedScreenState extends State<FeedScreen> {
                         AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
                             snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
+                        return Center(
                           child: CircularProgressIndicator(
-                            color: pinkColor,
+                            color: theme.colorScheme.secondary,
                           ),
                         );
                       }
@@ -251,6 +250,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   //build list of profiles for drawer
   Widget _buildProfileList() {
+    final ThemeData theme = Theme.of(context);
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -263,8 +263,9 @@ class _FeedScreenState extends State<FeedScreen> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: pinkColor),
+          return Center(
+            child:
+                CircularProgressIndicator(color: theme.colorScheme.secondary),
           );
         }
 
@@ -279,6 +280,7 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Widget _buildProfileListItem(DocumentSnapshot document) {
+    final ThemeData theme = Theme.of(context);
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     return ListTile(
@@ -296,7 +298,7 @@ class _FeedScreenState extends State<FeedScreen> {
               .getProfile
               ?.profileUid ==
           data['profileUid'],
-      selectedTileColor: pinkColor,
+      selectedTileColor: theme.colorScheme.secondary,
       selectedColor: Colors.white,
       onTap: () {
         setState(() {
@@ -309,6 +311,7 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   void _profileBottomSheet(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -384,16 +387,16 @@ class _FeedScreenState extends State<FeedScreen> {
                               width: double.infinity,
                               alignment: Alignment.center,
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: const ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
+                              decoration: ShapeDecoration(
+                                  shape: const RoundedRectangleBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
                                   ),
-                                  color: pinkColor),
+                                  color: theme.colorScheme.secondary),
                               child: _isLoading
-                                  ? const Center(
+                                  ? Center(
                                       child: CircularProgressIndicator(
-                                        color: pinkColor,
+                                        color: theme.colorScheme.secondary,
                                       ),
                                     )
                                   : const Text('Create Profile'),

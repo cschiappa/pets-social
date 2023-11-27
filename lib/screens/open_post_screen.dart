@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-import '../utils/colors.dart';
 import '../utils/global_variables.dart';
 import '../widgets/post_card_exp.dart';
 
@@ -72,9 +70,9 @@ class _OpenPostState extends State<OpenPost> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||
               Provider.of<UserProvider>(context).getProfile == null) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                color: pinkColor,
+                color: theme.colorScheme.secondary,
               ),
             );
           }

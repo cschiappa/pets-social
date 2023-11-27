@@ -1,19 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:pets_social/responsive/mobile_screen_layout.dart';
-import 'package:pets_social/responsive/responsive_layout_screen.dart';
-import 'package:pets_social/responsive/web_screen_layout.dart';
-import 'package:pets_social/screens/initial_screens/login_screen.dart';
-import 'package:pets_social/screens/settings/saved_posts_screen.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:pets_social/utils/utils.dart';
 import 'package:provider/provider.dart';
 import '../models/profile.dart';
@@ -21,8 +15,6 @@ import '../providers/user_provider.dart';
 import '../utils/global_variables.dart';
 import '../widgets/follow_button.dart';
 import '../widgets/text_field_input.dart';
-import 'open_post_screen.dart';
-import 'package:pets_social/screens/settings/settings.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? profileUid;
@@ -164,9 +156,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final ThemeData theme = Theme.of(context);
 
     return isLoading
-        ? const Center(
+        ? Center(
             child: CircularProgressIndicator(
-              color: pinkColor,
+              color: theme.colorScheme.secondary,
             ),
           )
         : Scaffold(
@@ -319,9 +311,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ? FollowButton(
                                             text: 'Sign Out',
                                             backgroundColor:
-                                                mobileBackgroundColor,
+                                                theme.colorScheme.background,
                                             textColor:
-                                                theme.colorScheme.primary,
+                                                theme.colorScheme.tertiary,
                                             borderColor: Colors.grey,
                                             function: () async {
                                               await AuthMethods()
@@ -359,12 +351,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             : FollowButton(
                                                 text: 'Follow',
                                                 backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        242, 102, 139, 1),
+                                                    theme.colorScheme.secondary,
                                                 textColor: Colors.white,
                                                 borderColor:
-                                                    const Color.fromRGBO(
-                                                        242, 102, 139, 1),
+                                                    theme.colorScheme.secondary,
                                                 function: () async {
                                                   await FirestoreMethods()
                                                       .followUser(
@@ -406,9 +396,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Center(
+                            return Center(
                               child: CircularProgressIndicator(
-                                color: pinkColor,
+                                color: theme.colorScheme.secondary,
                               ),
                             );
                           }
@@ -620,12 +610,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: double.infinity,
                             alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
+                            decoration: ShapeDecoration(
+                                shape: const RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4)),
                                 ),
-                                color: pinkColor),
+                                color: theme.colorScheme.secondary),
                             child: _isLoading
                                 ? Center(
                                     child: CircularProgressIndicator(

@@ -4,9 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/screens/open_post_screen.dart';
-import 'package:pets_social/screens/profile_screen.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import '../models/post.dart';
 import '../utils/global_variables.dart';
 import '../utils/utils.dart';
@@ -71,10 +69,22 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: theme.appBarTheme.backgroundColor,
         title: TextFormField(
           controller: searchController,
-          decoration: const InputDecoration(
-            labelText: 'Search for user',
-            labelStyle: TextStyle(color: pinkColor),
-          ),
+          decoration: InputDecoration(
+              labelText: 'Search for user',
+              labelStyle: TextStyle(color: theme.colorScheme.secondary),
+              suffixIcon: isShowUsers
+                  ? GestureDetector(
+                      child: const Icon(Icons.search_off),
+                      onTap: () {
+                        setState(
+                          () {
+                            searchController.clear();
+                            isShowUsers = false;
+                          },
+                        );
+                      },
+                    )
+                  : const Icon(Icons.search)),
           onChanged: (value) {
             setState(
               () {
@@ -132,9 +142,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     .get(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return const Center(
+                    return Center(
                         child: CircularProgressIndicator(
-                      color: pinkColor,
+                      color: theme.colorScheme.secondary,
                     ));
                   }
 
@@ -171,9 +181,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       }
 
                       if (!snapshot.hasData) {
-                        return const Center(
+                        return Center(
                             child: CircularProgressIndicator(
-                          color: pinkColor,
+                          color: theme.colorScheme.secondary,
                         ));
                       }
 

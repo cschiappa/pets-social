@@ -1,7 +1,5 @@
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/utils/colors.dart';
-import 'package:feedback/src/better_feedback.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -30,14 +28,14 @@ class _FeedbackState extends State<FeedbackScreen> {
                   'Once you press the feedback button, please navigate to the page that is giving you any problem. You can use the drawing pen to specify the exact spot.',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               const Text(
                   "If you don't have a specific page you want to talk about, you can just write down whatever you want to share with us. Thank you!",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               TextButton(
@@ -50,11 +48,11 @@ class _FeedbackState extends State<FeedbackScreen> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
+                  decoration: ShapeDecoration(
+                      shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
                       ),
-                      color: pinkColor),
+                      color: theme.colorScheme.secondary),
                   child: const Text(
                     'Send Feedback',
                     style: TextStyle(

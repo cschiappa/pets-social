@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/resources/auth_methods.dart';
-import 'package:pets_social/screens/welcome_screens/main_welcome_screen.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
-import '../../responsive/mobile_screen_layout.dart';
-import '../../responsive/responsive_layout_screen.dart';
-import '../../responsive/web_screen_layout.dart';
 import '../../utils/global_variables.dart';
-import 'forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -105,14 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
 
                     InkWell(
-                      onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const ForgotPasswordPage(),
-                        //   ),
-                        // );
-                        context.goNamed(AppRouter.recoverPassword.name);
-                      },
+                      onTap: () =>
+                          context.pushNamed(AppRouter.recoverPassword.name),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 15,
@@ -131,12 +120,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: const ShapeDecoration(
-                            shape: RoundedRectangleBorder(
+                        decoration: ShapeDecoration(
+                            shape: const RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(4)),
                             ),
-                            color: pinkColor),
+                            color: theme.colorScheme.secondary),
                         child: _isLoading
                             ? Center(
                                 child: CircularProgressIndicator(

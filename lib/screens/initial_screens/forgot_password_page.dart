@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/utils/colors.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
 import '../../utils/global_variables.dart';
@@ -84,16 +83,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             InkWell(
               onTap: () {
                 passwordLinkToEmail();
+                _emailController.clear();
               },
               child: Container(
                 width: double.infinity,
                 alignment: Alignment.center,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: const ShapeDecoration(
-                  shape: RoundedRectangleBorder(
+                decoration: ShapeDecoration(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                   ),
-                  color: pinkColor,
+                  color: theme.colorScheme.secondary,
                 ),
                 child: _isLoading
                     ? Center(

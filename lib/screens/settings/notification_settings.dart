@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../utils/colors.dart';
 
 class NotificationsSettings extends StatefulWidget {
   const NotificationsSettings({super.key});
@@ -22,9 +21,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
 
   Future<void> getNotificationPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    light = prefs.getBool('notification') ?? true;
     setState(() {
-      light = light;
+      light = prefs.getBool('notification') ?? true;
     });
   }
 
@@ -33,7 +31,13 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     setState(() {
       light = value;
     });
-    await prefs.setBool('notification', value); // Save the preference
+    await prefs.setBool('notification', value);
+    //Verify the value of notification
+    if (value == true) {
+      FirebaseApi().initNotifications();
+    } else {
+      FirebaseApi().removeTokenFromDatabase();
+    }
   }
 
   @override
@@ -42,20 +46,20 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.appBarTheme.backgroundColor,
-        title: Text('Notifications Settings'),
+        title: const Text('Notifications Settings'),
       ),
       body: ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.notifications_off),
-            title: Text('Disable Notifications'),
+            leading: const Icon(Icons.notifications),
+            title: const Text('Allow Notifications'),
             trailing: SizedBox(
               height: 35,
               child: FittedBox(
                 fit: BoxFit.fill,
                 child: Switch(
                   value: light,
-                  activeColor: pinkColor,
+                  activeColor: theme.colorScheme.secondary,
                   onChanged: (bool value) {
                     setNotificationPreferences(value);
                   },

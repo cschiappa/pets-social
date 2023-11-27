@@ -7,7 +7,6 @@ import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/storage_methods.dart';
-import 'package:pets_social/screens/initial_screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -169,6 +168,7 @@ class AuthMethods {
     await _auth.signOut();
     await userProvider.disposeProfile();
     //await FirebaseApi.removeTokenFromDatabase();
+    FirebaseApi().removeTokenFromDatabase();
   }
 
   //Delete User

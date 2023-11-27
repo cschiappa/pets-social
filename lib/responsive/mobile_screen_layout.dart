@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pets_social/utils/colors.dart';
-import 'package:pets_social/utils/global_variables.dart';
 
 class MobileScreenLayout extends StatelessWidget {
   const MobileScreenLayout({required this.navigationShell, Key? key})

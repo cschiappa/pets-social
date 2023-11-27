@@ -1,12 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pets_social/screens/open_post_screen.dart';
-import 'package:pets_social/screens/profile_screen.dart';
-import 'package:provider/provider.dart';
 
+import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../features/app_router.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
@@ -60,6 +58,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
       var notificationSnap = await FirebaseFirestore.instance
           .collection('notifications')
           .where('receiver', isEqualTo: profile.profileUid)
+          .orderBy('datePublished', descending: true)
           .get();
 
       postLen = postSnap.docs.length;
@@ -89,8 +88,9 @@ class _PrizesScreenState extends State<PrizesScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-    final message =
-        ModalRoute.of(context)!.settings.arguments as RemoteMessage?;
+    final ThemeData theme = Theme.of(context);
+    final ScrollController scrollController = ScrollController();
+
     return Scaffold(
         body: SingleChildScrollView(
       padding: MediaQuery.of(context).size.width > webScreenSize
@@ -175,10 +175,14 @@ class _PrizesScreenState extends State<PrizesScreen> {
                 ),
                 Expanded(
                   child: Scrollbar(
+                    controller: scrollController,
                     thumbVisibility: true,
                     child: ListView.builder(
+                        controller: scrollController,
                         itemCount: notificationData.length,
                         itemBuilder: (context, index) {
+                          final DateTime timeAgo =
+                              notificationData[index]['datePublished'].toDate();
                           return GestureDetector(
                             onTap: () {
                               notificationData[index]['postId'] == ""
@@ -191,14 +195,14 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                   //     ),
                                   //   )
                                   ? context.goNamed(
-                                      AppRouter.profileFromFeed.name,
+                                      AppRouter.profileFromPrizes.name,
                                       pathParameters: {
                                           'profileUid': notificationData[index]
                                               ['sender']
                                         })
                                   // :
                                   : context.goNamed(
-                                      AppRouter.openPostFromFeed.name,
+                                      AppRouter.openPostFromPrizes.name,
                                       pathParameters: {
                                         'postId': notificationData[index]
                                             ['postId'],
@@ -213,6 +217,8 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                 notificationData[index]['body'],
                                 style: const TextStyle(fontSize: 15),
                               ),
+                              trailing:
+                                  Text(timeago.format(timeAgo).toString()),
                             ),
                           );
                         }),
@@ -323,9 +329,8 @@ class _PrizesScreenState extends State<PrizesScreen> {
                             onTap: () {
                               _controller.previousPage();
                             },
-                            child: const Icon(
-                              Icons.arrow_left,
-                            ),
+                            child: Icon(Icons.arrow_left,
+                                color: theme.colorScheme.primary),
                           ),
                           Expanded(
                             child: CarouselSlider(
@@ -393,9 +398,8 @@ class _PrizesScreenState extends State<PrizesScreen> {
                             onTap: () {
                               _controller.nextPage();
                             },
-                            child: const Icon(
-                              Icons.arrow_right,
-                            ),
+                            child: Icon(Icons.arrow_right,
+                                color: theme.colorScheme.primary),
                           ),
                         ],
                       ),

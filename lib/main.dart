@@ -1,24 +1,14 @@
-import 'package:feedback/feedback.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/providers/theme_provider.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firebase_messaging.dart';
-import 'package:pets_social/responsive/mobile_screen_layout.dart';
-import 'package:pets_social/responsive/responsive_layout_screen.dart';
-import 'package:pets_social/responsive/web_screen_layout.dart';
-import 'package:pets_social/screens/initial_screens/login_screen.dart';
-import 'package:pets_social/screens/open_post_screen.dart';
-import 'package:pets_social/screens/prizes_screen.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:regex_router/regex_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
-import 'screens/notifications_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 

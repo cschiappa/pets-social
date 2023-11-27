@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
-import '../../utils/colors.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverUserEmail;
@@ -72,6 +71,7 @@ class ChatPageState extends State<ChatPage> {
   Widget _buildMessageList() {
     final ModelProfile? profile =
         Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ThemeData theme = Theme.of(context);
 
     return StreamBuilder(
       stream: _chatService.getMessages(
@@ -82,8 +82,9 @@ class ChatPageState extends State<ChatPage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: pinkColor),
+          return Center(
+            child:
+                CircularProgressIndicator(color: theme.colorScheme.secondary),
           );
         }
 

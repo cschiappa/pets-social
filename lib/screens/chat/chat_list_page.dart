@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/screens/chat/chat_page.dart';
-import 'package:pets_social/utils/colors.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../models/profile.dart';
@@ -53,9 +52,9 @@ class _ChatListState extends State<ChatList> {
         backgroundColor: theme.appBarTheme.backgroundColor,
         title: TextFormField(
           controller: searchController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Search for user',
-            labelStyle: TextStyle(color: pinkColor),
+            labelStyle: TextStyle(color: theme.colorScheme.secondary),
           ),
           onChanged: (value) {
             setState(
@@ -112,6 +111,7 @@ class _ChatListState extends State<ChatList> {
   //build a list of profiles
   Widget _buildUserList() {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ThemeData theme = Theme.of(context);
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -124,8 +124,8 @@ class _ChatListState extends State<ChatList> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LinearProgressIndicator(
-            color: pinkColor,
+          return LinearProgressIndicator(
+            color: theme.colorScheme.secondary,
           );
         }
 

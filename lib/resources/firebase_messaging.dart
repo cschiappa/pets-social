@@ -5,9 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:pets_social/main.dart';
+import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/notification.dart';
-import 'package:pets_social/screens/notifications_screen.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
@@ -32,10 +31,11 @@ class FirebaseApi {
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
 
-    navigatorKey.currentState?.pushNamed(
-      NotificationScreen.route,
-      arguments: message,
-    );
+    // navigatorKey.currentState?.pushNamed(
+    //   AppRouter.prizesScreen.name,
+    //   arguments: message,
+    // );
+    router.pushNamed(AppRouter.prizesScreen.name, extra: message);
   }
 
   Future initLocalNotifications() async {
@@ -113,7 +113,9 @@ class FirebaseApi {
     }
   }
 
-  Future<void> removeTokenFromDatabase(String token) async {
+  Future<void> removeTokenFromDatabase() async {
+    final token = await _firebaseMessaging.getToken();
+
     if (FirebaseAuth.instance.currentUser != null) {
       await FirebaseFirestore.instance
           .collection('users')
@@ -195,21 +197,21 @@ class FirebaseApi {
 //NOTIFICATION METHOD FOR POSTS
   Future<void> notificationMethod(
       String postId, String profileUid, String action) async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
     //get user that made the post
     final user =
-        await _firestore.collection('posts').doc(postId).get().then((value) {
+        await firestore.collection('posts').doc(postId).get().then((value) {
       return value.data()!['uid'];
     });
 
     //get profile that made the post
     final receiverUid =
-        await _firestore.collection('posts').doc(postId).get().then((value) {
+        await firestore.collection('posts').doc(postId).get().then((value) {
       return value.data()!['profileUid'];
     });
 
     //get profile that liked the post
-    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
         .collectionGroup('profiles')
         .where('profileUid', isEqualTo: profileUid)
         .get();
