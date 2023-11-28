@@ -796,7 +796,7 @@ class _PostCardExpState extends State<PostCardExp> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFieldInput(
-                        hintText: 'Change description',
+                        labelText: 'Change description',
                         textInputType: TextInputType.text,
                         textEditingController: _descriptionController,
                       ),

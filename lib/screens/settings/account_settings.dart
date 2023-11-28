@@ -86,7 +86,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         TextFieldInput(
                             textEditingController: _currentPasswordController,
                             isPass: passEnable,
-                            hintText: 'Current password',
+                            labelText: 'Current password',
                             textInputType: TextInputType.text),
                         //Enter new password
                         const Padding(
@@ -96,7 +96,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         TextFieldInput(
                             textEditingController: _passwordController,
                             isPass: passEnable,
-                            hintText: 'New password',
+                            labelText: 'New password',
                             textInputType: TextInputType.text),
                         //Repeat Password
                         const Padding(
@@ -106,7 +106,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         TextFieldInput(
                           textEditingController: _newPasswordController,
                           isPass: passEnable,
-                          hintText: 'Repeat new password',
+                          labelText: 'Repeat new password',
                           textInputType: TextInputType.text,
                         ),
                       ],
@@ -204,7 +204,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                   children: [
                                     //text field unput for password
                                     TextFieldInput(
-                                      hintText: 'Enter your password',
+                                      labelText: 'Enter your password',
                                       textInputType: TextInputType.text,
                                       textEditingController:
                                           _passwordController,

@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 64),
                     // text field input for email
                     TextFieldInput(
-                      hintText: 'Email',
+                      labelText: 'Email',
                       textInputType: TextInputType.emailAddress,
                       textEditingController: _emailController,
                     ),
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     //text field unput for password
                     TextFieldInput(
-                      hintText: 'Password',
+                      labelText: 'Password',
                       textInputType: TextInputType.text,
                       textEditingController: _passwordController,
                       isPass: true,

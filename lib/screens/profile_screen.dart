@@ -9,6 +9,7 @@ import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 
 import 'package:pets_social/utils/utils.dart';
+import 'package:pets_social/widgets/bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
@@ -518,122 +519,101 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _profileBottomSheet(BuildContext context) {
+  _profileBottomSheet(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    showModalBottomSheet(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return CustomBottomSheet.show(
       context: context,
-      isScrollControlled: true,
-      builder: ((context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Padding(
-            padding: MediaQuery.of(context).size.width > webScreenSize
-                ? EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width / 3)
-                : EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: SizedBox(
-              child: GestureDetector(
-                onTap: () {
-                  // Close the keyboard when tapping outside the text fields
-                  FocusScope.of(context).unfocus();
-                },
-                child: SafeArea(
-                  child: Container(
-                    padding: const EdgeInsets.all(50),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Stack(
-                          children: [
-                            _image != null
-                                ? CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: MemoryImage(_image!),
-                                  )
-                                : const CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: NetworkImage(
-                                      'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
-                                    )),
-                            Positioned(
-                              top: 40,
-                              left: 40,
-                              child: IconButton(
-                                iconSize: 20,
-                                onPressed: () => selectImage(context, setState),
-                                icon: const Icon(
-                                  Icons.add_a_photo,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextFieldInput(
-                          hintText: 'Enter your username',
-                          textInputType: TextInputType.text,
-                          textEditingController: _usernameController,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        TextFieldInput(
-                          hintText: 'Enter your bio',
-                          textInputType: TextInputType.text,
-                          textEditingController: _bioController,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            updateProfile();
-                            Navigator.of(context).pop();
-                            // Navigator.pushReplacement(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const ResponsiveLayout(
-                            //         webScreenLayout: WebScreenLayout(),
-                            //         mobileScreenLayout:
-                            //             MobileScreenLayout()), // Rebuild the ProfileScreen
-                            //   ),
-                            // );
-                            context.goNamed(AppRouter.profileScreen.name);
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: ShapeDecoration(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4)),
-                                ),
-                                color: theme.colorScheme.secondary),
-                            child: _isLoading
-                                ? Center(
-                                    child: CircularProgressIndicator(
-                                      color: theme.colorScheme.primary,
-                                    ),
-                                  )
-                                : const Text('Update Profile'),
+      listWidget: [
+        StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: const EdgeInsets.all(50),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    children: [
+                      _image != null
+                          ? CircleAvatar(
+                              radius: 40,
+                              backgroundImage: MemoryImage(_image!),
+                            )
+                          : const CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(
+                                'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+                              )),
+                      Positioned(
+                        top: 40,
+                        left: 40,
+                        child: IconButton(
+                          iconSize: 20,
+                          onPressed: () => selectImage(context, setState),
+                          icon: const Icon(
+                            Icons.add_a_photo,
                           ),
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFieldInput(
+                    labelText: 'Enter your username',
+                    textInputType: TextInputType.text,
+                    textEditingController: _usernameController,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFieldInput(
+                    labelText: 'Enter your bio',
+                    textInputType: TextInputType.text,
+                    textEditingController: _bioController,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      updateProfile();
+                      Navigator.of(context).pop();
+                      // Navigator.pushReplacement(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const ResponsiveLayout(
+                      //         webScreenLayout: WebScreenLayout(),
+                      //         mobileScreenLayout:
+                      //             MobileScreenLayout()), // Rebuild the ProfileScreen
+                      //   ),
+                      // );
+                      context.goNamed(AppRouter.profileScreen.name);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: ShapeDecoration(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                          ),
+                          color: theme.colorScheme.secondary),
+                      child: _isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                color: theme.colorScheme.primary,
+                              ),
+                            )
+                          : const Text('Update Profile'),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          );
-        });
-      }),
+            );
+          },
+        ),
+      ],
     );
   }
 }

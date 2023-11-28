@@ -133,7 +133,7 @@ class ChatPageState extends State<ChatPage> {
           Expanded(
             child: TextFieldInput(
                 textEditingController: _messageController,
-                hintText: 'Enter message',
+                labelText: 'Enter message',
                 textInputType: TextInputType.text),
           ),
 

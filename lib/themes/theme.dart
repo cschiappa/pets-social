@@ -20,19 +20,19 @@ ThemeData lightMode = ThemeData(
 );
 
 ThemeData darkMode = ThemeData(
-  useMaterial3: true,
-  brightness: Brightness.dark,
-  colorScheme: const ColorScheme.dark(
-    background: Colors.black,
-    primary: Colors.white,
-    secondary: Color.fromRGBO(242, 102, 139, 1),
-    tertiary: Colors.white,
-  ),
-  scaffoldBackgroundColor: Colors.black,
-  highlightColor: Colors.white,
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.black,
-    iconTheme: IconThemeData(color: Colors.white),
-    scrolledUnderElevation: 0.0,
-  ),
-);
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: const ColorScheme.dark(
+      background: Colors.black,
+      primary: Colors.white,
+      secondary: Color.fromRGBO(242, 102, 139, 1),
+      tertiary: Colors.white,
+    ),
+    scaffoldBackgroundColor: Colors.black,
+    highlightColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.black,
+      iconTheme: IconThemeData(color: Colors.white),
+      scrolledUnderElevation: 0.0,
+    ),
+    bottomSheetTheme: const BottomSheetThemeData());

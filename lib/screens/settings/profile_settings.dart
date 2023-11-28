@@ -110,7 +110,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     children: [
                                       //text field unput for password
                                       TextFieldInput(
-                                        hintText: 'Enter your password',
+                                        labelText: 'Enter your password',
                                         textInputType: TextInputType.text,
                                         textEditingController:
                                             _passwordController,

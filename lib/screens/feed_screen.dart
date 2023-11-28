@@ -10,6 +10,7 @@ import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 
 import 'package:pets_social/utils/global_variables.dart';
+import 'package:pets_social/widgets/bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../features/app_router.dart';
 import '../providers/user_provider.dart';
@@ -286,8 +287,9 @@ class _FeedScreenState extends State<FeedScreen> {
     return ListTile(
       leading: Container(
         decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2)),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 2),
+        ),
         child: CircleAvatar(
           radius: 20,
           backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
@@ -299,7 +301,6 @@ class _FeedScreenState extends State<FeedScreen> {
               ?.profileUid ==
           data['profileUid'],
       selectedTileColor: theme.colorScheme.secondary,
-      selectedColor: Colors.white,
       onTap: () {
         setState(() {
           Provider.of<UserProvider>(context, listen: false)
@@ -312,106 +313,83 @@ class _FeedScreenState extends State<FeedScreen> {
 
   void _profileBottomSheet(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    showModalBottomSheet(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      context: context,
-      isScrollControlled: true,
-      builder: ((context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: SizedBox(
-                child: GestureDetector(
-                  onTap: () {
-                    // Close the keyboard when tapping outside the text fields
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: SafeArea(
-                    child: Container(
-                      padding: const EdgeInsets.all(50),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Stack(
-                            children: [
-                              _image != null
-                                  ? CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage: MemoryImage(_image!),
-                                    )
-                                  : const CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage: NetworkImage(
-                                        'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
-                                      )),
-                              Positioned(
-                                top: 40,
-                                left: 40,
-                                child: IconButton(
-                                  iconSize: 20,
-                                  onPressed: () =>
-                                      selectImage(context, setState),
-                                  icon: const Icon(
-                                    Icons.add_a_photo,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFieldInput(
-                            hintText: 'Enter your username',
-                            textInputType: TextInputType.text,
-                            textEditingController: _usernameController,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFieldInput(
-                            hintText: 'Enter your bio',
-                            textInputType: TextInputType.text,
-                            textEditingController: _bioController,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          InkWell(
-                            onTap: () => createProfile(),
-                            child: Container(
-                              width: double.infinity,
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: ShapeDecoration(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(4)),
-                                  ),
-                                  color: theme.colorScheme.secondary),
-                              child: _isLoading
-                                  ? Center(
-                                      child: CircularProgressIndicator(
-                                        color: theme.colorScheme.secondary,
-                                      ),
-                                    )
-                                  : const Text('Create Profile'),
-                            ),
-                          ),
-                        ],
+    return CustomBottomSheet.show(context: context, listWidget: [
+      StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: const EdgeInsets.all(50),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  children: [
+                    _image != null
+                        ? CircleAvatar(
+                            radius: 40,
+                            backgroundImage: MemoryImage(_image!),
+                          )
+                        : const CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                              'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg',
+                            )),
+                    Positioned(
+                      top: 40,
+                      left: 40,
+                      child: IconButton(
+                        iconSize: 20,
+                        onPressed: () => selectImage(context, setState),
+                        icon: const Icon(
+                          Icons.add_a_photo,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFieldInput(
+                  labelText: 'Enter your username',
+                  textInputType: TextInputType.text,
+                  textEditingController: _usernameController,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFieldInput(
+                  labelText: 'Enter your bio',
+                  textInputType: TextInputType.text,
+                  textEditingController: _bioController,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () => createProfile(),
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: ShapeDecoration(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        color: theme.colorScheme.secondary),
+                    child: _isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          )
+                        : const Text('Create Profile'),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      }),
-    );
+              ],
+            ),
+          );
+        },
+      ),
+    ]);
   }
 }

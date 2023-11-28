@@ -1,34 +1,43 @@
 import 'package:flutter/material.dart';
 
-class TextFieldInput extends StatelessWidget {
+class TextFieldInput extends StatefulWidget {
   final TextEditingController textEditingController;
   final bool isPass;
-  final String hintText;
+  final String labelText;
+
   final TextInputType textInputType;
   const TextFieldInput(
       {Key? key,
       required this.textEditingController,
       this.isPass = false,
-      required this.hintText,
+      required this.labelText,
       required this.textInputType})
       : super(key: key);
 
   @override
+  State<TextFieldInput> createState() => _TextFieldInputState();
+}
+
+class _TextFieldInputState extends State<TextFieldInput> {
+  @override
   Widget build(BuildContext context) {
-    final inputBorder =
-        OutlineInputBorder(borderSide: Divider.createBorderSide(context));
-    return TextField(
-      controller: textEditingController,
+    final ThemeData theme = Theme.of(context);
+
+    return TextFormField(
+      onTapOutside: (event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      controller: widget.textEditingController,
       decoration: InputDecoration(
-        hintText: hintText,
-        border: inputBorder,
-        focusedBorder: inputBorder,
-        enabledBorder: inputBorder,
-        filled: true,
+        labelText: widget.labelText,
+        border: const OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: theme.colorScheme.secondary),
+        ),
         contentPadding: const EdgeInsets.all(10),
       ),
-      keyboardType: textInputType,
-      obscureText: isPass,
+      keyboardType: widget.textInputType,
+      obscureText: widget.isPass,
     );
   }
 }

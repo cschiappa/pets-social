@@ -72,7 +72,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             //email textfield
             TextFieldInput(
                 textEditingController: _emailController,
-                hintText: 'Email',
+                labelText: 'Email',
                 textInputType: TextInputType.emailAddress),
 
             const SizedBox(

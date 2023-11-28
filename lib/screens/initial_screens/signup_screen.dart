@@ -144,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   //text field input for username
                   TextFieldInput(
-                    hintText: 'Enter your username',
+                    labelText: 'Enter your username',
                     textInputType: TextInputType.text,
                     textEditingController: _usernameController,
                   ),
@@ -153,7 +153,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   // text field input for email
                   TextFieldInput(
-                    hintText: 'Enter your email',
+                    labelText: 'Enter your email',
                     textInputType: TextInputType.emailAddress,
                     textEditingController: _emailController,
                   ),
@@ -162,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   //text field unput for password
                   TextFieldInput(
-                    hintText: 'Enter your password',
+                    labelText: 'Enter your password',
                     textInputType: TextInputType.text,
                     textEditingController: _passwordController,
                     isPass: true,
@@ -171,7 +171,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 24,
                   ),
                   TextFieldInput(
-                    hintText: 'Enter your bio',
+                    labelText: 'Enter your bio',
                     textInputType: TextInputType.text,
                     textEditingController: _bioController,
                   ),
