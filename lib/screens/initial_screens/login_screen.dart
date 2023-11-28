@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/resources/auth_methods.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SafeArea(
           child: Container(
-            padding: MediaQuery.of(context).size.width > webScreenSize
+            padding: ResponsiveLayout.isWeb(context)
                 ? EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width / 3)
                 : const EdgeInsets.symmetric(horizontal: 32),

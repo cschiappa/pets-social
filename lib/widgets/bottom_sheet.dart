@@ -10,9 +10,12 @@ class CustomBottomSheet {
       showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          children: listWidget,
+        return Padding(
+          padding: const EdgeInsets.all(30),
+          child: ListView(
+            shrinkWrap: true,
+            children: listWidget,
+          ),
         );
       },
     );

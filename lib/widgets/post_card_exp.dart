@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/like_animation.dart';
@@ -378,8 +379,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => Padding(
-                                    padding: MediaQuery.of(context).size.width >
-                                            webScreenSize
+                                    padding: ResponsiveLayout.isWeb(context)
                                         ? EdgeInsets.symmetric(
                                             horizontal: MediaQuery.of(context)
                                                     .size
@@ -567,8 +567,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                                   profile!.profileUid))
                                           ? 'assets/fish.png'
                                           : 'assets/fish_border.png',
-                                      width: 100,
-                                      height: 100,
+                                      //width: 100,
+                                      //height: 100,
                                     ),
                                   ),
                                 ),
@@ -591,8 +591,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                                   profile!.profileUid))
                                           ? 'assets/like.png'
                                           : 'assets/like_border.png',
-                                      width: 100,
-                                      height: 100,
+                                      //width: 100,
+                                      //height: 100,
                                     ),
                                   ),
                                 ),
@@ -615,8 +615,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                                   profile!.profileUid))
                                           ? 'assets/bone.png'
                                           : 'assets/bone_border.png',
-                                      width: 100,
-                                      height: 100,
+                                      //width: 100,
+                                      //height: 100,
                                     ),
                                   ),
                                 ),
@@ -778,7 +778,7 @@ class _PostCardExpState extends State<PostCardExp> {
       isScrollControlled: true,
       builder: ((context) {
         return Padding(
-          padding: MediaQuery.of(context).size.width > webScreenSize
+          padding: ResponsiveLayout.isWeb(context)
               ? EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width / 3)
               : EdgeInsets.only(

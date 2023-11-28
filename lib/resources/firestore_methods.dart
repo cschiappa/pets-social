@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/models/feedback.dart';
 import 'package:pets_social/resources/firebase_messaging.dart';
 import 'package:pets_social/resources/storage_methods.dart';
 
@@ -460,6 +461,32 @@ class FirestoreMethods {
       } else {
         res = 'Description must be 2000 characters or less.';
       }
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
+  }
+
+  //Feedback Collection
+  Future<String> uploadFeedback(
+    String summary,
+    String description,
+  ) async {
+    String res = "An error occurred";
+
+    try {
+      String feedbackId = const Uuid().v1();
+
+      ModelFeedback feedback = ModelFeedback(
+        summary: summary,
+        description: description,
+        datePublished: DateTime.now(),
+      );
+
+      _firestore.collection('feedback').doc(feedbackId).set(
+            feedback.toJson(),
+          );
+      res = "success";
     } catch (e) {
       res = e.toString();
     }

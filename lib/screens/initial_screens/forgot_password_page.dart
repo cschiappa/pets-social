@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
 import '../../utils/global_variables.dart';
@@ -57,7 +58,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       body: Padding(
-        padding: MediaQuery.of(context).size.width > webScreenSize
+        padding: ResponsiveLayout.isWeb(context)
             ? EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width / 3)
             : const EdgeInsets.symmetric(horizontal: 32),

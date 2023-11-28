@@ -19,7 +19,6 @@ import 'package:pets_social/screens/profile_screen.dart';
 import 'package:pets_social/screens/search_screen.dart';
 import 'package:pets_social/screens/settings/account_settings.dart';
 import 'package:pets_social/screens/settings/blocked_accounts.dart';
-import 'package:pets_social/screens/settings/feedback.dart';
 import 'package:pets_social/screens/settings/notification_settings.dart';
 import 'package:pets_social/screens/settings/personal_details.dart';
 import 'package:pets_social/screens/settings/profile_settings.dart';
@@ -37,7 +36,6 @@ class Routes {
 class AppRouter {
   //Initial
   static const Routes initial = Routes(name: '/', path: '/');
-
   //Root
   static const Routes welcomePage =
       Routes(name: 'welcomePage', path: '/welcome');
@@ -184,10 +182,8 @@ final GoRouter router = GoRouter(
           builder: (BuildContext context, GoRouterState state,
                   StatefulNavigationShell navigationShell) =>
               ResponsiveLayout(
-                webScreenLayout:
-                    WebScreenLayout(navigationShell: navigationShell),
-                mobileScreenLayout:
-                    MobileScreenLayout(navigationShell: navigationShell),
+                web: WebScreenLayout(navigationShell: navigationShell),
+                mobile: MobileScreenLayout(navigationShell: navigationShell),
               ),
           branches: <StatefulShellBranch>[
             //FEED SCREEN
@@ -391,21 +387,6 @@ final GoRouter router = GoRouter(
                               builder: (context, state) =>
                                   const BlockedAccountsPage(),
                             ),
-                            //REPORT A PROBLEM
-                            GoRoute(
-                                name: AppRouter.reportProblem.name,
-                                path: AppRouter.reportProblem.path,
-                                builder: (context, state) =>
-                                    const FeedbackScreen(),
-                                routes: <RouteBase>[
-                                  //FEEDBACK
-                                  GoRoute(
-                                    name: AppRouter.feedback.name,
-                                    path: AppRouter.feedback.path,
-                                    builder: (context, state) =>
-                                        const FeedbackScreen(),
-                                  )
-                                ]),
                           ])
                     ]),
               ],

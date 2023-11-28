@@ -255,9 +255,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         },
                       ),
                       TextButton(
-                        child: const Text(
+                        child: Text(
                           'Cancel',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(
+                              fontSize: 16, color: theme.colorScheme.tertiary),
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();

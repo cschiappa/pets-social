@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 ThemeData lightMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
-  colorScheme: const ColorScheme.light(
+  colorScheme: ColorScheme.light(
     background: Colors.white,
     primary: Colors.white,
-    secondary: Color.fromRGBO(242, 102, 139, 1),
+    secondary: Colors.pink.shade300,
     tertiary: Colors.black,
   ),
   scaffoldBackgroundColor: Colors.white,
@@ -17,22 +17,29 @@ ThemeData lightMode = ThemeData(
     scrolledUnderElevation: 0.0,
   ),
   dividerColor: Colors.black,
+  snackBarTheme: const SnackBarThemeData(
+    behavior: SnackBarBehavior.floating,
+  ),
 );
 
 ThemeData darkMode = ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.dark,
-    colorScheme: const ColorScheme.dark(
-      background: Colors.black,
-      primary: Colors.white,
-      secondary: Color.fromRGBO(242, 102, 139, 1),
-      tertiary: Colors.white,
-    ),
-    scaffoldBackgroundColor: Colors.black,
-    highlightColor: Colors.white,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
-      iconTheme: IconThemeData(color: Colors.white),
-      scrolledUnderElevation: 0.0,
-    ),
-    bottomSheetTheme: const BottomSheetThemeData());
+  useMaterial3: true,
+  brightness: Brightness.dark,
+  colorScheme: ColorScheme.dark(
+    background: Colors.black,
+    primary: Colors.white,
+    secondary: Colors.pink.shade300,
+    tertiary: Colors.white,
+  ),
+  scaffoldBackgroundColor: Colors.black,
+  highlightColor: Colors.white,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.black,
+    iconTheme: IconThemeData(color: Colors.white),
+    scrolledUnderElevation: 0.0,
+  ),
+  snackBarTheme: const SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Color.fromRGBO(28, 28, 28, 1),
+      contentTextStyle: TextStyle(color: Colors.white)),
+);

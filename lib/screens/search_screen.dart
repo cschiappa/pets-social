@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import '../models/post.dart';
 import '../utils/global_variables.dart';
@@ -132,7 +133,7 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             )
           : Container(
-              padding: MediaQuery.of(context).size.width > webScreenSize
+              padding: ResponsiveLayout.isWeb(context)
                   ? const EdgeInsets.symmetric(horizontal: 200)
                   : const EdgeInsets.symmetric(horizontal: 0),
               child: FutureBuilder(
@@ -231,8 +232,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       );
                     },
-                    gridDelegate: MediaQuery.of(context).size.width >
-                            webScreenSize
+                    gridDelegate: ResponsiveLayout.isWeb(context)
                         ? const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 6)
                         : const SliverSimpleGridDelegateWithFixedCrossAxisCount(

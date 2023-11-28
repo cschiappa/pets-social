@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -93,7 +94,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
 
     return Scaffold(
         body: SingleChildScrollView(
-      padding: MediaQuery.of(context).size.width > webScreenSize
+      padding: ResponsiveLayout.isWeb(context)
           ? EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width / 3)
           : const EdgeInsets.symmetric(horizontal: 0),
@@ -314,9 +315,6 @@ class _PrizesScreenState extends State<PrizesScreen> {
                   ),
                   SingleChildScrollView(
                     child: Container(
-                      // height: MediaQuery.of(context).size.width > webScreenSize
-                      //     ? 150
-                      //     : 0,
                       padding: const EdgeInsets.all(2.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),

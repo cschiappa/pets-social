@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -55,7 +56,7 @@ class _OpenPostState extends State<OpenPost> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      appBar: width > webScreenSize
+      appBar: ResponsiveLayout.isWeb(context)
           ? null
           : AppBar(
               backgroundColor: theme.appBarTheme.backgroundColor,
@@ -89,8 +90,8 @@ class _OpenPostState extends State<OpenPost> {
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) => Container(
               margin: EdgeInsets.symmetric(
-                horizontal: width > webScreenSize ? width * 0.3 : 0,
-                vertical: width > webScreenSize ? 15 : 0,
+                horizontal: ResponsiveLayout.isWeb(context) ? width * 0.3 : 0,
+                vertical: ResponsiveLayout.isWeb(context) ? 15 : 0,
               ),
               child: PostCardExp(
                 snap: snapshot.data!.docs[index].data(),

@@ -7,6 +7,7 @@ import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import 'package:pets_social/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -76,14 +77,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   _selectImage(BuildContext context) async {
-    final bool isWeb = MediaQuery.of(context).size.width < webScreenSize;
     return showDialog(
         context: context,
         builder: (context) {
           return SimpleDialog(
             title: const Text('Create a Post'),
             children: [
-              if (isWeb)
+              if (ResponsiveLayout.isMobile(context))
                 SimpleDialogOption(
                   padding: const EdgeInsets.all(20),
                   child: const Text('Take a Photo'),
@@ -104,7 +104,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     });
                   },
                 ),
-              if (isWeb)
+              if (ResponsiveLayout.isMobile(context))
                 SimpleDialogOption(
                   padding: const EdgeInsets.all(20),
                   child: const Text('Take a Video'),

@@ -21,7 +21,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
       backgroundColor: theme.appBarTheme.backgroundColor,
       appBar: AppBar(
         title: const Text('Blocked Accounts'),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: theme.colorScheme.background,
       ),
       body: _buildUserList(),
     );
