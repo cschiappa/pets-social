@@ -58,6 +58,9 @@ class AppRouter {
       Routes(name: 'profileScreen', path: '/profile');
 
   //FeedScreen Sub-Routes
+  static const Routes openPostFromDeeplink = Routes(
+      name: 'openPostFromDeeplink',
+      path: '/post/:postId/:profileUid/:username');
   static const Routes profileFromFeed =
       Routes(name: 'profileFromFeed', path: 'profile/:profileUid');
   static const Routes openPostFromFeed =
@@ -144,7 +147,8 @@ final GoRouter router = GoRouter(
     routes: <RouteBase>[
       //DEEPLINK OPEN POST
       GoRoute(
-        path: '/post/:postId/:profileUid/:username',
+        name: AppRouter.openPostFromDeeplink.name,
+        path: AppRouter.openPostFromDeeplink.path,
         builder: (context, state) => OpenPost(
           postId: state.pathParameters["postId"]!,
           profileUid: state.pathParameters["profileUid"]!,
