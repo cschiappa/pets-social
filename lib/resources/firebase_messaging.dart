@@ -38,6 +38,7 @@ class FirebaseApi {
     router.pushNamed(AppRouter.prizesScreen.name, extra: message);
   }
 
+  //LOCAL NOTIFICATION
   Future initLocalNotifications() async {
     //const iOS = IOSInitializationSettings();
     const android = AndroidInitializationSettings('@drawable/ic_launcher');
@@ -56,6 +57,7 @@ class FirebaseApi {
     await platform?.createNotificationChannel(_androidChannel);
   }
 
+  //PUSH NOTIFICATION
   Future initPushNotifications() async {
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
@@ -88,6 +90,7 @@ class FirebaseApi {
     });
   }
 
+  //INITNOTIFICATIONS GROUP
   Future<void> initNotifications() async {
     await _firebaseMessaging.requestPermission();
     final fCMToken = await _firebaseMessaging.getToken();
@@ -102,6 +105,7 @@ class FirebaseApi {
     FirebaseMessaging.instance.onTokenRefresh.listen(saveTokenToDatabase);
   }
 
+  //SAVE TOKEN TO DATABASE
   Future<void> saveTokenToDatabase(String token) async {
     if (FirebaseAuth.instance.currentUser != null) {
       await FirebaseFirestore.instance
@@ -113,6 +117,7 @@ class FirebaseApi {
     }
   }
 
+  //REMOVE TOKEN FROM DATABASE
   Future<void> removeTokenFromDatabase() async {
     final token = await _firebaseMessaging.getToken();
 

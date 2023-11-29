@@ -9,6 +9,7 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
+import 'package:pets_social/screens/profile_screen.dart';
 
 import 'package:pets_social/utils/global_variables.dart';
 import 'package:pets_social/widgets/bottom_sheet.dart';
@@ -155,6 +156,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   },
                   icon: const Icon(
                     Icons.groups,
+                    size: 30,
                   ),
                 );
               }),
@@ -174,9 +176,14 @@ class _FeedScreenState extends State<FeedScreen> {
                     // ));
                     context.goNamed(AppRouter.chatList.name);
                   },
-                  icon: const Icon(
-                    Icons.forum,
-                    size: 20,
+                  icon: Badge.count(
+                    textColor: Colors.white,
+                    backgroundColor: theme.colorScheme.secondary,
+                    count: 3,
+                    child: const Icon(
+                      Icons.forum,
+                      size: 25,
+                    ),
                   ),
                 ),
               ],

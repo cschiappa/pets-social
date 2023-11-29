@@ -151,7 +151,7 @@ class AuthMethods {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
 
-        //FirebaseApi().initNotifications();
+        FirebaseApi().initNotifications();
         res = "success";
       } else {
         res = "Please enter a valid email and password.";
@@ -165,10 +165,11 @@ class AuthMethods {
   //Sign Out
   Future<void> signOut(context) async {
     UserProvider userProvider = Provider.of(context, listen: false);
-    await _auth.signOut();
+    await FirebaseApi()
+        .removeTokenFromDatabase()
+        .then((value) => _auth.signOut());
     await userProvider.disposeProfile();
     //await FirebaseApi.removeTokenFromDatabase();
-    FirebaseApi().removeTokenFromDatabase();
   }
 
   //Delete User

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/models/profile.dart';
+import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/responsive/mobile_screen_layout.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/responsive/web_screen_layout.dart';
@@ -25,6 +27,7 @@ import 'package:pets_social/screens/settings/profile_settings.dart';
 import 'package:pets_social/screens/settings/saved_posts_screen.dart';
 import 'package:pets_social/screens/settings/settings.dart';
 import 'package:pets_social/screens/welcome_screens/main_welcome_screen.dart';
+import 'package:provider/provider.dart';
 
 class Routes {
   final String name;
@@ -318,7 +321,9 @@ final GoRouter router = GoRouter(
                 GoRoute(
                     name: AppRouter.profileScreen.name,
                     path: AppRouter.profileScreen.path,
-                    builder: (context, state) => const ProfileScreen(),
+                    builder: (context, state) {
+                      return ProfileScreen();
+                    },
                     routes: <RouteBase>[
                       //OPEN POST
                       GoRoute(

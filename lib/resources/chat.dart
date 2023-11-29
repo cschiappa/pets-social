@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pets_social/models/chatRoom.dart';
 import 'package:pets_social/models/message.dart';
 import 'package:provider/provider.dart';
 
@@ -8,9 +8,7 @@ import '../models/profile.dart';
 import '../providers/user_provider.dart';
 
 class ChatService extends ChangeNotifier {
-  //get instance of auth and firestore
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   //SEND MESSAGE
   Future<String> sendMessage(String receiverUid, String receiverUsername,
@@ -19,31 +17,58 @@ class ChatService extends ChangeNotifier {
         Provider.of<UserProvider>(context, listen: false).getProfile;
     String res = "An error occurred";
     try {
-      final currentProfileEmail = _firebaseAuth.currentUser!.email.toString();
-
       final Timestamp timestamp = Timestamp.now();
 
-      //create a new message
+      ModelChatRoom chatRoom = ModelChatRoom(
+          users: [profile!.profileUid, receiverUid], lastMessage: null);
+
       ModelMessage newMessage = ModelMessage(
-        senderUid: profile!.profileUid,
-        senderEmail: currentProfileEmail,
+        senderUid: profile.profileUid,
         receiverUid: receiverUid,
         timestamp: timestamp,
         message: message,
         senderUsername: profile.username,
         receiverUsername: receiverUsername,
+        read: false,
       );
 
-      //construct chat room id from current user id and receiver id and sort
+      //CHAT ROOM ID
       List<String> ids = [profile.profileUid, receiverUid];
       ids.sort();
-      String chatRoomId = ids.join("_"); //combine ids into a single string
+      String chatRoomId = ids.join("_"); //COMBINE IDS
 
-      await _fireStore
+      //CREATE COLLECTION
+      final batch = firestore.batch();
+      var chatRoomCollection = firestore.collection('chats').doc(chatRoomId);
+      batch.set(chatRoomCollection, chatRoom.toJson());
+
+      var messageCollection = firestore
           .collection('chats')
           .doc(chatRoomId)
           .collection('messages')
-          .add(newMessage.toJson());
+          .doc();
+
+      batch.set(messageCollection, newMessage.toJson());
+
+      await batch.commit();
+
+      //GET LAST MESSAGE
+      final lastMessageQuery = await firestore
+          .collection('chats')
+          .doc(chatRoomId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      //SAVE USERS AND LAST MESSAGE TO CHAT ROOM ID
+      if (lastMessageQuery.docs.isNotEmpty) {
+        final lastMessage = lastMessageQuery.docs.first.data();
+        await firestore.collection('chats').doc(chatRoomId).update(
+          {
+            "lastMessage": lastMessage,
+          },
+        );
+      }
 
       res = "success";
     } catch (e) {
@@ -58,7 +83,7 @@ class ChatService extends ChangeNotifier {
     ids.sort();
     String chatRoomId = ids.join("_");
 
-    return _fireStore
+    return firestore
         .collection('chats')
         .doc(chatRoomId)
         .collection('messages')

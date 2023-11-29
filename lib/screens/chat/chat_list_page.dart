@@ -142,7 +142,7 @@ class _ChatListState extends State<ChatList> {
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-
+    final ThemeData theme = Theme.of(context);
     //display all users except current user
     if (profile!.profileUid != data['profileUid']) {
       return ListTile(
@@ -151,6 +151,11 @@ class _ChatListState extends State<ChatList> {
           backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
         ),
         title: Text(data['username']),
+        trailing: Icon(
+          Icons.mark_chat_unread,
+          size: 20,
+          color: theme.colorScheme.secondary,
+        ),
         onTap: () {
           //enter chat page when clicked
           // Navigator.push(

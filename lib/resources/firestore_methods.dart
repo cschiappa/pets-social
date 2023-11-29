@@ -14,7 +14,7 @@ class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  //upload post
+  //UPLOAD POST
   Future<String> uploadPost(
     String uid,
     String? description,
@@ -467,7 +467,7 @@ class FirestoreMethods {
     return res;
   }
 
-  //Feedback Collection
+  //UPLOAD FEEDBACK
   Future<String> uploadFeedback(
     String summary,
     String description,
