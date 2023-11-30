@@ -5,7 +5,7 @@ import 'package:pets_social/resources/chat.dart';
 import 'package:pets_social/widgets/chat_bubble.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:provider/provider.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
 
@@ -97,16 +97,48 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
+  Future<void> messageRead(Map<String, dynamic> data, String profile) async {
+    if (!data['read'] && data['receiverUid'] == profile) {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('chats')
+          .where('users', arrayContains: data['receiverUid'])
+          .where('users', arrayContains: data['senderUid'])
+          .get();
+
+      print(querySnapshot);
+
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        if (doc['lastMessage'] != null) {
+          await doc.reference.update({
+            'lastMessage': {
+              ...doc['lastMessage'],
+              'read': true,
+            },
+          });
+        }
+      }
+    }
+  }
+
   //build message item
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     final ModelProfile? profile =
         Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ThemeData theme = Theme.of(context);
+
+    messageRead(data, profile!.profileUid);
 
     //align messages to right or left
-    var alignment = (data['senderUid'] == profile!.profileUid)
+    var alignment = (data['senderUid'] == profile.profileUid)
         ? Alignment.centerRight
         : Alignment.centerLeft;
+
+    var color = (data['senderUid'] == profile.profileUid)
+        ? theme.colorScheme.secondary
+        : Colors.grey.shade700;
+
+    final DateTime timeAgo = data['timestamp'].toDate();
 
     return Container(
       alignment: alignment,
@@ -117,7 +149,14 @@ class ChatPageState extends State<ChatPage> {
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: [
-              ChatBubble(message: data['message']),
+              ChatBubble(
+                message: data['message'],
+                color: color,
+              ),
+              Text(
+                timeago.format(timeAgo).toString(),
+                style: const TextStyle(fontSize: 10, color: Colors.white),
+              ),
             ]),
       ),
     );
@@ -141,7 +180,7 @@ class ChatPageState extends State<ChatPage> {
           IconButton(
               onPressed: sendMessage,
               icon: const Icon(
-                Icons.arrow_upward,
+                Icons.reply,
                 size: 40,
               ))
         ],

@@ -141,6 +141,8 @@ FutureOr<String?> onRedirect(BuildContext context, GoRouterState state) {
 final GlobalKey<NavigatorState> rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRouter.login.path,
@@ -188,7 +190,7 @@ final GoRouter router = GoRouter(
                 web: WebScreenLayout(navigationShell: navigationShell),
                 mobile: MobileScreenLayout(navigationShell: navigationShell),
               ),
-          branches: <StatefulShellBranch>[
+          branches: [
             //FEED SCREEN
             StatefulShellBranch(
               routes: <RouteBase>[

@@ -1,13 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/models/profile.dart';
+import 'package:pets_social/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
-class MobileScreenLayout extends StatelessWidget {
+class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({required this.navigationShell, Key? key})
       : super(key: key ?? const ValueKey<String>('MobileScreenLayout'));
 
   final StatefulNavigationShell navigationShell;
 
+  @override
+  State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
+}
+
+class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -19,7 +27,7 @@ class MobileScreenLayout extends StatelessWidget {
       //   onPageChanged: onPageChanged,
       //   children: homeScreenItems,
       // ),
-      body: navigationShell,
+      body: widget.navigationShell,
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: Colors.black,
         items: [
@@ -59,16 +67,16 @@ class MobileScreenLayout extends StatelessWidget {
             backgroundColor: theme.colorScheme.primary,
           ),
         ],
-        currentIndex: navigationShell.currentIndex,
+        currentIndex: widget.navigationShell.currentIndex,
         onTap: (int index) => _onTap(context, index),
       ),
     );
   }
 
   void _onTap(BuildContext context, int index) {
-    navigationShell.goBranch(
+    widget.navigationShell.goBranch(
       index,
-      initialLocation: index == navigationShell.currentIndex,
+      initialLocation: index == widget.navigationShell.currentIndex,
     );
   }
 }
