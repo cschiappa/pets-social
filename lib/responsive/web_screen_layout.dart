@@ -5,7 +5,7 @@ class WebScreenLayout extends StatelessWidget {
   const WebScreenLayout({required this.navigationShell, Key? key})
       : super(key: key);
 
-  final StatefulNavigationShell navigationShell;
+  final navigationShell;
 
   @override
   Widget build(BuildContext context) {

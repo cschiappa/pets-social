@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/features/extensions.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,7 @@ class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({required this.navigationShell, Key? key})
       : super(key: key ?? const ValueKey<String>('MobileScreenLayout'));
 
-  final StatefulNavigationShell navigationShell;
+  final Widget navigationShell;
 
   @override
   State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
@@ -29,6 +30,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       // ),
       body: widget.navigationShell,
       bottomNavigationBar: CupertinoTabBar(
+        currentIndex: _selectedIndex(context),
+        onTap: onTap,
         backgroundColor: Colors.black,
         items: [
           BottomNavigationBarItem(
@@ -67,16 +70,45 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             backgroundColor: theme.colorScheme.primary,
           ),
         ],
-        currentIndex: widget.navigationShell.currentIndex,
-        onTap: (int index) => _onTap(context, index),
       ),
     );
   }
 
-  void _onTap(BuildContext context, int index) {
-    widget.navigationShell.goBranch(
-      index,
-      initialLocation: index == widget.navigationShell.currentIndex,
-    );
+  int _selectedIndex(BuildContext context) {
+    final GoRouter route = GoRouter.of(context);
+    final String location = route.location();
+    if (location.startsWith('/feed')) {
+      return 0;
+    }
+    if (location.startsWith('/search')) {
+      return 1;
+    }
+    if (location.startsWith('/addpost')) {
+      return 2;
+    }
+    if (location.startsWith('/prizes')) {
+      return 3;
+    }
+    if (location.startsWith('/profile')) {
+      return 4;
+    }
+    return 0;
+  }
+
+  void onTap(int value) {
+    switch (value) {
+      case 0:
+        return context.go('/feed');
+      case 1:
+        return context.go('/search');
+      case 2:
+        return context.go('/addpost');
+      case 3:
+        return context.go('/prizes');
+      case 4:
+        return context.go('/profile');
+      default:
+        return context.go('/feed');
+    }
   }
 }

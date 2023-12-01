@@ -183,220 +183,200 @@ final GoRouter router = GoRouter(
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       //BOTTOM NAVIGATION BAR
-      StatefulShellRoute.indexedStack(
-          builder: (BuildContext context, GoRouterState state,
-                  StatefulNavigationShell navigationShell) =>
-              ResponsiveLayout(
-                web: WebScreenLayout(navigationShell: navigationShell),
-                mobile: MobileScreenLayout(navigationShell: navigationShell),
-              ),
-          branches: [
-            //FEED SCREEN
-            StatefulShellBranch(
+      ShellRoute(
+        builder: (context, state, navigationShell) => ResponsiveLayout(
+          web: WebScreenLayout(navigationShell: navigationShell),
+          mobile: MobileScreenLayout(navigationShell: navigationShell),
+        ),
+        routes: [
+          //FEED SCREEN
+          GoRoute(
+              name: AppRouter.feedScreen.name,
+              path: AppRouter.feedScreen.path,
+              builder: (context, state) => const FeedScreen(),
               routes: <RouteBase>[
+                //COMMENTS
                 GoRoute(
-                    name: AppRouter.feedScreen.name,
-                    path: AppRouter.feedScreen.path,
-                    builder: (context, state) => const FeedScreen(),
+                  name: AppRouter.commentsFromFeed.name,
+                  path: AppRouter.commentsFromFeed.path,
+                  builder: (context, state) =>
+                      CommentsScreen(snap: state.extra),
+                ),
+                //NAVIGATE TO PROFILE
+                GoRoute(
+                  name: AppRouter.profileFromFeed.name,
+                  path: AppRouter.profileFromFeed.path,
+                  builder: (context, state) => ProfileScreen(
+                    profileUid: state.pathParameters["profileUid"]!,
+                  ),
+                  routes: <RouteBase>[
+                    //OPEN POST
+                    GoRoute(
+                      name: AppRouter.openPostFromFeed.name,
+                      path: AppRouter.openPostFromFeed.path,
+                      builder: (context, state) => OpenPost(
+                        postId: state.pathParameters["postId"]!,
+                        profileUid: state.pathParameters["profileUid"]!,
+                        username: state.pathParameters["username"]!,
+                      ),
+                    )
+                  ],
+                ),
+                //CHAT LIST
+                GoRoute(
+                    name: AppRouter.chatList.name,
+                    path: AppRouter.chatList.path,
+                    builder: (context, state) => const ChatList(),
                     routes: <RouteBase>[
-                      //COMMENTS
+                      //CHAT PAGE
                       GoRoute(
-                        name: AppRouter.commentsFromFeed.name,
-                        path: AppRouter.commentsFromFeed.path,
-                        builder: (context, state) =>
-                            CommentsScreen(snap: state.extra),
-                      ),
-                      //NAVIGATE TO PROFILE
-                      GoRoute(
-                        name: AppRouter.profileFromFeed.name,
-                        path: AppRouter.profileFromFeed.path,
-                        builder: (context, state) => ProfileScreen(
-                          profileUid: state.pathParameters["profileUid"]!,
+                        name: AppRouter.chatPage.name,
+                        path: AppRouter.chatPage.path,
+                        builder: (context, state) => ChatPage(
+                          receiverUserEmail:
+                              state.pathParameters["receiverUserEmail"]!,
+                          receiverUserID:
+                              state.pathParameters["receiverUserId"]!,
+                          receiverUsername:
+                              state.pathParameters["receiverUsername"]!,
                         ),
-                        routes: <RouteBase>[
-                          //OPEN POST
-                          GoRoute(
-                            name: AppRouter.openPostFromFeed.name,
-                            path: AppRouter.openPostFromFeed.path,
-                            builder: (context, state) => OpenPost(
-                              postId: state.pathParameters["postId"]!,
-                              profileUid: state.pathParameters["profileUid"]!,
-                              username: state.pathParameters["username"]!,
-                            ),
-                          )
-                        ],
                       ),
-                      //CHAT LIST
+                    ]),
+              ]),
+          //SEARCH SCREEN
+          GoRoute(
+              name: AppRouter.searchScreen.name,
+              path: AppRouter.searchScreen.path,
+              builder: (context, state) => const SearchScreen(),
+              routes: <RouteBase>[
+                //NAVIGATE TO PROFILE
+                GoRoute(
+                  name: AppRouter.profileFromSearch.name,
+                  path: AppRouter.profileFromSearch.path,
+                  builder: (context, state) => ProfileScreen(
+                    profileUid: state.pathParameters["profileUid"]!,
+                  ),
+                ),
+                //OPEN POST
+                GoRoute(
+                  name: AppRouter.openPostFromSearch.name,
+                  path: AppRouter.openPostFromSearch.path,
+                  builder: (context, state) => OpenPost(
+                    postId: state.pathParameters["postId"]!,
+                    profileUid: state.pathParameters["profileUid"]!,
+                    username: state.pathParameters["username"]!,
+                  ),
+                ),
+              ])
+          //ADD POST SCREEN
+          ,
+          GoRoute(
+            name: AppRouter.addpostScreen.name,
+            path: AppRouter.addpostScreen.path,
+            builder: (context, state) => const AddPostScreen(),
+          ),
+          //PRIZES SCREEN
+          GoRoute(
+              name: AppRouter.prizesScreen.name,
+              path: AppRouter.prizesScreen.path,
+              builder: (context, state) => const PrizesScreen(),
+              routes: <RouteBase>[
+                //NAVIGATE TO PROFILE
+                GoRoute(
+                  name: AppRouter.profileFromPrizes.name,
+                  path: AppRouter.profileFromPrizes.path,
+                  builder: (context, state) => ProfileScreen(
+                    profileUid: state.pathParameters["profileUid"]!,
+                  ),
+                ),
+                //OPEN POST
+                GoRoute(
+                  name: AppRouter.openPostFromPrizes.name,
+                  path: AppRouter.openPostFromPrizes.path,
+                  builder: (context, state) => OpenPost(
+                    postId: state.pathParameters["postId"]!,
+                    profileUid: state.pathParameters["profileUid"]!,
+                    username: state.pathParameters["username"]!,
+                  ),
+                ),
+              ])
+          //PROFILE SCREEN
+          ,
+          GoRoute(
+              name: AppRouter.profileScreen.name,
+              path: AppRouter.profileScreen.path,
+              builder: (context, state) {
+                return const ProfileScreen();
+              },
+              routes: <RouteBase>[
+                //OPEN POST
+                GoRoute(
+                  name: AppRouter.openPostFromProfile.name,
+                  path: AppRouter.openPostFromProfile.path,
+                  builder: (context, state) => OpenPost(
+                    postId: state.pathParameters['postId']!,
+                    profileUid: state.pathParameters['profileUid']!,
+                    username: state.pathParameters['username']!,
+                  ),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      name: AppRouter.commentsFromProfile.name,
+                      path: AppRouter.commentsFromProfile.path,
+                      builder: (context, state) =>
+                          CommentsScreen(snap: state.extra),
+                    )
+                  ],
+                ),
+                //SAVED POSTS
+                GoRoute(
+                  name: AppRouter.savedPosts.name,
+                  path: AppRouter.savedPosts.path,
+                  builder: (context, state) => SavedPosts(snap: state.extra),
+                ),
+                //SETTINGS
+                GoRoute(
+                    name: AppRouter.settings.name,
+                    path: AppRouter.settings.path,
+                    builder: (context, state) => const SettingsPage(),
+                    routes: <RouteBase>[
+                      //ACCOUNT SETTINGS
                       GoRoute(
-                          name: AppRouter.chatList.name,
-                          path: AppRouter.chatList.path,
-                          builder: (context, state) => const ChatList(),
+                          name: AppRouter.accountSettings.name,
+                          path: AppRouter.accountSettings.path,
+                          builder: (context, state) =>
+                              const AccountSettingsPage(),
                           routes: <RouteBase>[
-                            //CHAT PAGE
+                            //PROFILE SETTINGS
                             GoRoute(
-                              name: AppRouter.chatPage.name,
-                              path: AppRouter.chatPage.path,
-                              builder: (context, state) => ChatPage(
-                                receiverUserEmail:
-                                    state.pathParameters["receiverUserEmail"]!,
-                                receiverUserID:
-                                    state.pathParameters["receiverUserId"]!,
-                                receiverUsername:
-                                    state.pathParameters["receiverUsername"]!,
-                              ),
+                              name: AppRouter.profileSettings.name,
+                              path: AppRouter.profileSettings.path,
+                              builder: (context, state) =>
+                                  const ProfileSettings(),
+                            ),
+                            //PERSONAL DETAILS
+                            GoRoute(
+                              name: AppRouter.personalDetails.name,
+                              path: AppRouter.personalDetails.path,
+                              builder: (context, state) =>
+                                  const PersonalDetailsPage(),
                             ),
                           ]),
-                    ]),
-              ],
-            ),
-            //SEARCH SCREEN
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                    name: AppRouter.searchScreen.name,
-                    path: AppRouter.searchScreen.path,
-                    builder: (context, state) => const SearchScreen(),
-                    routes: <RouteBase>[
-                      //NAVIGATE TO PROFILE
+                      //NOTIFICATIONS
                       GoRoute(
-                        name: AppRouter.profileFromSearch.name,
-                        path: AppRouter.profileFromSearch.path,
-                        builder: (context, state) => ProfileScreen(
-                          profileUid: state.pathParameters["profileUid"]!,
-                        ),
-                      ),
-                      //OPEN POST
-                      GoRoute(
-                        name: AppRouter.openPostFromSearch.name,
-                        path: AppRouter.openPostFromSearch.path,
-                        builder: (context, state) => OpenPost(
-                          postId: state.pathParameters["postId"]!,
-                          profileUid: state.pathParameters["profileUid"]!,
-                          username: state.pathParameters["username"]!,
-                        ),
-                      ),
-                    ]),
-              ],
-            ),
-            //ADD POST SCREEN
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  name: AppRouter.addpostScreen.name,
-                  path: AppRouter.addpostScreen.path,
-                  builder: (context, state) => const AddPostScreen(),
-                ),
-              ],
-            ),
-            //PRIZES SCREEN
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                    name: AppRouter.prizesScreen.name,
-                    path: AppRouter.prizesScreen.path,
-                    builder: (context, state) => const PrizesScreen(),
-                    routes: <RouteBase>[
-                      //NAVIGATE TO PROFILE
-                      GoRoute(
-                        name: AppRouter.profileFromPrizes.name,
-                        path: AppRouter.profileFromPrizes.path,
-                        builder: (context, state) => ProfileScreen(
-                          profileUid: state.pathParameters["profileUid"]!,
-                        ),
-                      ),
-                      //OPEN POST
-                      GoRoute(
-                        name: AppRouter.openPostFromPrizes.name,
-                        path: AppRouter.openPostFromPrizes.path,
-                        builder: (context, state) => OpenPost(
-                          postId: state.pathParameters["postId"]!,
-                          profileUid: state.pathParameters["profileUid"]!,
-                          username: state.pathParameters["username"]!,
-                        ),
-                      ),
-                    ]),
-              ],
-            ),
-            //PROFILE SCREEN
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                    name: AppRouter.profileScreen.name,
-                    path: AppRouter.profileScreen.path,
-                    builder: (context, state) {
-                      return ProfileScreen();
-                    },
-                    routes: <RouteBase>[
-                      //OPEN POST
-                      GoRoute(
-                        name: AppRouter.openPostFromProfile.name,
-                        path: AppRouter.openPostFromProfile.path,
-                        builder: (context, state) => OpenPost(
-                          postId: state.pathParameters['postId']!,
-                          profileUid: state.pathParameters['profileUid']!,
-                          username: state.pathParameters['username']!,
-                        ),
-                        routes: <RouteBase>[
-                          GoRoute(
-                            name: AppRouter.commentsFromProfile.name,
-                            path: AppRouter.commentsFromProfile.path,
-                            builder: (context, state) =>
-                                CommentsScreen(snap: state.extra),
-                          )
-                        ],
-                      ),
-                      //SAVED POSTS
-                      GoRoute(
-                        name: AppRouter.savedPosts.name,
-                        path: AppRouter.savedPosts.path,
+                        name: AppRouter.notifications.name,
+                        path: AppRouter.notifications.path,
                         builder: (context, state) =>
-                            SavedPosts(snap: state.extra),
+                            const NotificationsSettings(),
                       ),
-                      //SETTINGS
+                      //BLOCKED ACCOUNTS
                       GoRoute(
-                          name: AppRouter.settings.name,
-                          path: AppRouter.settings.path,
-                          builder: (context, state) => const SettingsPage(),
-                          routes: <RouteBase>[
-                            //ACCOUNT SETTINGS
-                            GoRoute(
-                                name: AppRouter.accountSettings.name,
-                                path: AppRouter.accountSettings.path,
-                                builder: (context, state) =>
-                                    const AccountSettingsPage(),
-                                routes: <RouteBase>[
-                                  //PROFILE SETTINGS
-                                  GoRoute(
-                                    name: AppRouter.profileSettings.name,
-                                    path: AppRouter.profileSettings.path,
-                                    builder: (context, state) =>
-                                        const ProfileSettings(),
-                                  ),
-                                  //PERSONAL DETAILS
-                                  GoRoute(
-                                    name: AppRouter.personalDetails.name,
-                                    path: AppRouter.personalDetails.path,
-                                    builder: (context, state) =>
-                                        const PersonalDetailsPage(),
-                                  ),
-                                ]),
-                            //NOTIFICATIONS
-                            GoRoute(
-                              name: AppRouter.notifications.name,
-                              path: AppRouter.notifications.path,
-                              builder: (context, state) =>
-                                  const NotificationsSettings(),
-                            ),
-                            //BLOCKED ACCOUNTS
-                            GoRoute(
-                              name: AppRouter.blockedAccounts.name,
-                              path: AppRouter.blockedAccounts.path,
-                              builder: (context, state) =>
-                                  const BlockedAccountsPage(),
-                            ),
-                          ])
-                    ]),
-              ],
-            ),
-          ])
+                        name: AppRouter.blockedAccounts.name,
+                        path: AppRouter.blockedAccounts.path,
+                        builder: (context, state) =>
+                            const BlockedAccountsPage(),
+                      ),
+                    ])
+              ])
+        ],
+      )
     ]);
