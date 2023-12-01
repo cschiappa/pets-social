@@ -3,13 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../features/app_router.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
-import '../utils/global_variables.dart';
 import '../utils/utils.dart';
 
 class PrizesScreen extends StatefulWidget {
