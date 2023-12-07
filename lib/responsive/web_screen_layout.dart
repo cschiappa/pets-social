@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class WebScreenLayout extends StatelessWidget {
-  const WebScreenLayout({required this.navigationShell, Key? key})
-      : super(key: key);
+  const WebScreenLayout({required this.navigationShell, Key? key}) : super(key: key);
 
   final navigationShell;
 
@@ -26,45 +24,35 @@ class WebScreenLayout extends StatelessWidget {
             onPressed: () => _onTap(context, 0),
             icon: Icon(
               Icons.home,
-              color: navigationShell.currentIndex == 0
-                  ? theme.colorScheme.primary
-                  : grey,
+              color: navigationShell.currentIndex == 0 ? theme.colorScheme.primary : grey,
             ),
           ),
           IconButton(
             onPressed: () => _onTap(context, 1),
             icon: Icon(
               Icons.search,
-              color: navigationShell.currentIndex == 1
-                  ? theme.colorScheme.primary
-                  : grey,
+              color: navigationShell.currentIndex == 1 ? theme.colorScheme.primary : grey,
             ),
           ),
           IconButton(
             onPressed: () => _onTap(context, 2),
             icon: Icon(
               Icons.add_a_photo,
-              color: navigationShell.currentIndex == 2
-                  ? theme.colorScheme.primary
-                  : grey,
+              color: navigationShell.currentIndex == 2 ? theme.colorScheme.primary : grey,
             ),
           ),
           IconButton(
             onPressed: () => _onTap(context, 3),
             icon: Icon(
               Icons.star,
-              color: navigationShell.currentIndex == 3
-                  ? theme.colorScheme.primary
-                  : grey,
+              color: navigationShell.currentIndex == 3 ? theme.colorScheme.primary : grey,
             ),
           ),
           IconButton(
             onPressed: () => _onTap(context, 4),
             icon: Icon(
               Icons.person,
-              color: navigationShell.currentIndex == 4
-                  ? theme.colorScheme.primary
-                  : grey,
+              color: navigationShell.currentIndex == 4 ? theme.colorScheme.primary : grey,
             ),
           ),
         ],

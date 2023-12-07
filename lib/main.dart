@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/providers/theme_provider.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firebase_notifications.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +29,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -50,26 +47,6 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Pet Social',
           theme: themeData,
-          // ThemeData.dark(useMaterial3: true).copyWith(
-          //   scaffoldBackgroundColor: mobileBackgroundColor,
-          //   highlightColor: Colors.white,
-          // ),
-          // navigatorKey: navigatorKey,
-          // routes: {
-          //   NotificationScreen.route: (context) => const PrizesScreen(),
-          // },
-          // onGenerateRoute: (settings) {
-          //   final router = RegexRouter.create({
-          //     // Access "object" arguments from `NavigatorState.pushNamed`.
-          //     "post/:postId/:profileUid/:username": (context, args) => OpenPost(
-          //           postId: args["postId"]!,
-          //           profileUid: args["profileUid"]!,
-          //           username: args["username"]!,
-          //         ),
-          //   });
-
-          //   return router.generateRoute(settings);
-          // },
         );
       }),
     );

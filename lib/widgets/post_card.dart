@@ -56,6 +56,7 @@ class _PostCardExpState extends State<PostCardExp> {
     super.dispose();
   }
 
+  //GET DATA
   getData() async {
     try {
       profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();
@@ -68,6 +69,7 @@ class _PostCardExpState extends State<PostCardExp> {
     }
   }
 
+  //EDIT POST
   Future<String> updatePost(StateSetter setState) async {
     setState(() {
       _isLoading = true;
@@ -84,6 +86,7 @@ class _PostCardExpState extends State<PostCardExp> {
     return res;
   }
 
+  //GET COMMENTS
   void getComments() async {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance.collection('posts').doc(widget.snap['postId']).collection('comments').get();
@@ -117,12 +120,11 @@ class _PostCardExpState extends State<PostCardExp> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // HEADER SECTION
             Stack(
               alignment: AlignmentDirectional.topEnd,
               children: [
+                //DOUBLE TAP FOR LIKE
                 GestureDetector(
-                  //double tap for like
                   onDoubleTap: () async {
                     await FirestoreMethods().likePost(widget.snap['postId'], profile!.profileUid, widget.snap['likes']);
                     setState(() {
@@ -190,10 +192,10 @@ class _PostCardExpState extends State<PostCardExp> {
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   child: Row(
                     children: [
+                      //AVATAR
                       GestureDetector(
                         onTap: () {
                           String profileUid = widget.snap['profileUid'];
-
                           profileUid == profile!.profileUid
                               ? context.goNamed(
                                   AppRouter.profileScreen.name,
@@ -213,6 +215,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                   )
                                 : null),
                       ),
+                      //USERNAME
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8),
@@ -248,6 +251,7 @@ class _PostCardExpState extends State<PostCardExp> {
                           ),
                         ),
                       ),
+                      //ICONS
                       Expanded(
                           child: Align(
                         alignment: Alignment.bottomRight,
@@ -398,7 +402,7 @@ class _PostCardExpState extends State<PostCardExp> {
                     ],
                   ),
                 ),
-                //LIKE, FISH, BONE SECTION
+                //CAROUSEL
                 Positioned(
                   bottom: 8,
                   left: 0,
@@ -414,7 +418,6 @@ class _PostCardExpState extends State<PostCardExp> {
                 )
               ],
             ),
-
             //DESCRIPTION AND COMMENTS
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -422,7 +425,6 @@ class _PostCardExpState extends State<PostCardExp> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    // width: double.infinity,
                     padding: const EdgeInsets.only(
                       top: 8,
                     ),
@@ -474,6 +476,7 @@ class _PostCardExpState extends State<PostCardExp> {
     );
   }
 
+  //EDIT POST BOTTOM SHEET
   void _profileBottomSheet(BuildContext context, StateSetter setState) {
     final ThemeData theme = Theme.of(context);
     showModalBottomSheet(

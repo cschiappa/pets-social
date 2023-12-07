@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/models/chatRoom.dart';
-
 import 'package:provider/provider.dart';
-
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
 

@@ -18,8 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  String? _emailError;
-  String? _passwordError;
 
   @override
   void dispose() {
@@ -31,8 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void loginUser() async {
     setState(() {
       _isLoading = true;
-      _emailError = null;
-      _passwordError = null;
     });
     String res = await AuthMethods().loginUser(email: _emailController.text, password: _passwordController.text);
 

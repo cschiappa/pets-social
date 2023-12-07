@@ -2,13 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/extensions.dart';
-import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:provider/provider.dart';
 
 class MobileScreenLayout extends StatefulWidget {
-  const MobileScreenLayout({required this.navigationShell, Key? key})
-      : super(key: key ?? const ValueKey<String>('MobileScreenLayout'));
+  const MobileScreenLayout({required this.navigationShell, Key? key}) : super(key: key ?? const ValueKey<String>('MobileScreenLayout'));
 
   final Widget navigationShell;
 
@@ -21,13 +17,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      // body: PageView(
-      //   //if I want to remove slide to side, uncommment bellow
-      //   physics: const NeverScrollableScrollPhysics(),
-      //   controller: pageController,
-      //   onPageChanged: onPageChanged,
-      //   children: homeScreenItems,
-      // ),
       body: widget.navigationShell,
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: _selectedIndex(context),
@@ -74,6 +63,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     );
   }
 
+  //SELECTED INDEX
   int _selectedIndex(BuildContext context) {
     final GoRouter route = GoRouter.of(context);
     final String location = route.location();
@@ -95,6 +85,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     return 0;
   }
 
+  //ON TAP FUNCTION
   void onTap(int value) {
     switch (value) {
       case 0:
