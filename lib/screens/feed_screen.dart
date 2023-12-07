@@ -13,7 +13,6 @@ import 'package:pets_social/widgets/bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../features/app_router.dart';
 import '../providers/user_provider.dart';
-
 import '../utils/utils.dart';
 import '../widgets/post_card.dart';
 import '../widgets/text_field_input.dart';

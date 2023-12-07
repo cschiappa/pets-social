@@ -16,18 +16,21 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _controller =
-        CachedVideoPlayerController.network(widget.videoUrl.toString())
-          ..initialize().then((_) {
-            setState(() {
-              _controller.play();
-              _isPlaying = true;
-            });
-          });
+    _initializeVideoController();
+  }
 
+  //INITIALIZE VIDEO CONTROLLER
+  void _initializeVideoController() async {
+    _controller = CachedVideoPlayerController.network(widget.videoUrl.toString());
+    await _controller.initialize();
+    setState(() {
+      _controller.play();
+      _isPlaying = true;
+    });
     _controller.setLooping(true);
   }
 
+  //TOGGLE PLAY/PAUSE
   void _togglePlayPause() {
     if (_isPlaying) {
       _controller.pause();
@@ -45,10 +48,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       SizedBox.expand(
         child: FittedBox(
           fit: BoxFit.fitWidth,
-          child: SizedBox(
-              height: _controller.value.size.height,
-              width: _controller.value.size.width,
-              child: CachedVideoPlayer(_controller)),
+          child: SizedBox(height: _controller.value.size.height, width: _controller.value.size.width, child: CachedVideoPlayer(_controller)),
         ),
       ),
       Positioned(
