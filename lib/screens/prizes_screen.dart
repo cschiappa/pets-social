@@ -36,6 +36,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
     getData();
   }
 
+  //GET DATA
   getData() async {
     final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
@@ -86,6 +87,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
           const SizedBox(
             height: 50,
           ),
+          //HEADER
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -124,6 +126,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
           const SizedBox(
             height: 20,
           ),
+          //NOTIFICATIONS
           Container(
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.all(20),
@@ -193,6 +196,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
           const SizedBox(
             height: 20,
           ),
+          //STATS
           Container(
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.all(20),
@@ -240,6 +244,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
           const SizedBox(
             height: 20,
           ),
+          //PRIZES
           Container(
               padding: const EdgeInsets.all(20),
               width: double.infinity,

@@ -1,21 +1,17 @@
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../models/profile.dart';
 import '../providers/user_provider.dart';
-import '../utils/global_variables.dart';
 import '../widgets/follow_button.dart';
 import '../widgets/text_field_input.dart';
 
@@ -44,6 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Uint8List? _image;
   bool _isLoading = false;
 
+  //SELECT IMAGE
   void selectImage(context, setState) async {
     Uint8List im;
     (im, _, _, _) = await pickImage(ImageSource.gallery);
@@ -52,6 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  //FIELD VALUES
   void fieldsValues() {
     final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     _usernameController = TextEditingController(text: profile!.username);
@@ -78,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  //GET DATA
   getData() async {
     final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
@@ -110,6 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  //RESET FIELDS FUNCTION
   void resetFields() {
     _usernameController.text = _usernameController.text;
     _bioController.text = _bioController.text;
@@ -118,6 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  //EDIT PROFILE FUNCTION
   void updateProfile() async {
     final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
@@ -363,7 +364,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                               Widget mediaWidget;
                               final String contentType = getContentTypeFromUrl(snap['fileType']);
-
+                              //return video
                               if (contentType == 'video') {
                                 mediaWidget = ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
@@ -373,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 );
                               } else {
-                                // If it's not a video, return an image.
+                                // return image
                                 mediaWidget = ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
                                   child: Image(
@@ -386,7 +387,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onTap: () {
                                   snap['profileUid'] == profile.profileUid
                                       ? context.goNamed(
-                                          //'/profilescreen/post/${snap['postId']}/${snap['profileUid']}/${userData["username"]}');
                                           AppRouter.openPostFromProfile.name,
                                           pathParameters: {
                                             'postId': snap['postId'],
@@ -395,7 +395,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           },
                                         )
                                       : context.goNamed(
-                                          //'/profilescreen/post/${snap['postId']}/${snap['profileUid']}/${userData["username"]}');
                                           AppRouter.openPostFromFeed.name,
                                           pathParameters: {
                                             'postId': snap['postId'],
@@ -405,13 +404,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         );
                                 },
                                 child: mediaWidget,
-                                // child: ClipRRect(
-                                //   borderRadius: BorderRadius.circular(10.0),
-                                //   child: Image(
-                                //     image: NetworkImage(snap['postUrl']),
-                                //     fit: BoxFit.cover,
-                                //   ),
-                                // ),
                               );
                             },
                           );
@@ -453,6 +445,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  //EDIT PROFILE BOTTOM SHEET
   _profileBottomSheet(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return CustomBottomSheet.show(

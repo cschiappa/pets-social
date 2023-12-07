@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:provider/provider.dart';
-
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
-import '../utils/global_variables.dart';
 import '../widgets/post_card.dart';
 
 class OpenPost extends StatefulWidget {
@@ -29,6 +26,7 @@ class _OpenPostState extends State<OpenPost> {
   final itemController = ItemScrollController();
   bool firstScroll = true;
 
+  //SCROLL
   void scrollToPost(List posts) {
     if (firstScroll) {
       itemController.jumpTo(

@@ -8,11 +8,8 @@ import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-
 import 'package:pets_social/utils/utils.dart';
 import 'package:provider/provider.dart';
-
-import '../utils/global_variables.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -191,8 +188,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
               onPressed: () => _selectImage(context),
             ),
           )
-        : //CropImage(file: _file!, path: _filePath!);
-        Scaffold(
+        : Scaffold(
             appBar: AppBar(
               backgroundColor: theme.appBarTheme.backgroundColor,
               leading: IconButton(

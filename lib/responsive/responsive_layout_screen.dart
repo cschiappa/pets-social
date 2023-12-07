@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/utils/global_variables.dart';
 import 'package:provider/provider.dart';
 
 class ResponsiveLayout extends StatefulWidget {
   final Widget mobile;
   final Widget web;
-  static bool isMobile(BuildContext context) =>
-      MediaQuery.of(context).size.width < 600;
+  static bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 600;
   // static bool isTablet(BuildContext context) =>
   //     MediaQuery.of(context).size.width < 1100 &&
   //     MediaQuery.of(context).size.width >= 850;
-  static bool isWeb(BuildContext context) =>
-      MediaQuery.of(context).size.width >= 600;
+  static bool isWeb(BuildContext context) => MediaQuery.of(context).size.width >= 600;
   const ResponsiveLayout({
     Key? key,
     required this.web,

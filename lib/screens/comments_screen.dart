@@ -36,12 +36,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         centerTitle: false,
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('posts')
-            .doc(widget.snap['postId'])
-            .collection('comments')
-            .orderBy('datePublished', descending: true)
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('posts').doc(widget.snap['postId']).collection('comments').orderBy('datePublished', descending: true).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -51,10 +46,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
             );
           }
 
-          return ListView.builder(
-              itemCount: (snapshot.data! as dynamic).docs.length,
-              itemBuilder: (context, index) => CommentCard(
-                  snap: (snapshot.data! as dynamic).docs[index].data()));
+          return ListView.builder(itemCount: (snapshot.data! as dynamic).docs.length, itemBuilder: (context, index) => CommentCard(snap: (snapshot.data! as dynamic).docs[index].data()));
         },
       ),
       bottomNavigationBar: SafeArea(
@@ -67,10 +59,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: (profile != null && profile.photoUrl != null)
-                    ? NetworkImage(profile.photoUrl!)
-                    : const AssetImage('assets/default_pic')
-                        as ImageProvider<Object>,
+                backgroundImage: (profile != null && profile.photoUrl != null) ? NetworkImage(profile.photoUrl!) : const AssetImage('assets/default_pic') as ImageProvider<Object>,
                 radius: 18,
               ),
               Expanded(
@@ -87,14 +76,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               ),
               InkWell(
                 onTap: () async {
-                  await FirestoreMethods().postComment(
-                      widget.snap['postId'],
-                      _commentController.text,
-                      profile.profileUid,
-                      profile.username,
-                      profile.photoUrl ?? "",
-                      widget.snap['likes']);
-                  //clear comment box after sending
+                  await FirestoreMethods().postComment(widget.snap['postId'], _commentController.text, profile.profileUid, profile.username, profile.photoUrl ?? "", widget.snap['likes']);
                   setState(() {
                     _commentController.text = "";
                   });

@@ -9,7 +9,6 @@ import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/carousel_slider.dart';
 import 'package:pets_social/widgets/like_animation.dart';
@@ -19,9 +18,6 @@ import 'package:pets_social/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../features/app_router.dart';
-import '../utils/global_variables.dart';
-import 'bone_animation.dart';
-import 'fish_animation.dart';
 
 class PostCardExp extends StatefulWidget {
   final snap;

@@ -5,9 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-
 import '../models/post.dart';
-import '../utils/global_variables.dart';
 import '../utils/utils.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -45,6 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
     getData();
   }
 
+  //GET DATA
   getData() async {
     try {
       profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();
@@ -61,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      //searchbar
+      //SEARCHBAR
       appBar: AppBar(
         backgroundColor: theme.appBarTheme.backgroundColor,
         title: TextFormField(
@@ -93,8 +92,8 @@ class _SearchScreenState extends State<SearchScreen> {
           },
         ),
       ),
-      //searching for someone
       body: isShowUsers
+          //SEARCHING FOR PROFILES
           ? ListView.builder(
               itemCount: profilesFiltered.length,
               itemBuilder: (context, index) {
@@ -116,6 +115,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 );
               },
             )
+          //POST GRID
           : Container(
               padding: ResponsiveLayout.isWeb(context) ? const EdgeInsets.symmetric(horizontal: 200) : const EdgeInsets.symmetric(horizontal: 0),
               child: FutureBuilder(
@@ -128,7 +128,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     ));
                   }
 
-                  //search post grid
                   return MasonryGridView.builder(
                     itemCount: (snapshot.data! as dynamic).docs.length,
                     itemBuilder: (context, index) {
@@ -136,7 +135,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                       Widget mediaWidget;
                       final String contentType = getContentTypeFromUrl(post.fileType);
-
+                      //return video
                       if (contentType == 'video') {
                         mediaWidget = ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
@@ -145,8 +144,8 @@ class _SearchScreenState extends State<SearchScreen> {
                             fit: BoxFit.cover,
                           ),
                         );
+                        //return image
                       } else if (contentType == 'image') {
-                        // If it's not a video, return an image.
                         mediaWidget = ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image(

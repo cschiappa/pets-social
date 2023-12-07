@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,8 +6,6 @@ import 'package:pets_social/resources/auth_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/utils/utils.dart';
 import '../../features/app_router.dart';
-
-import '../../utils/global_variables.dart';
 import '../../widgets/text_field_input.dart';
 
 class SignupScreen extends StatefulWidget {

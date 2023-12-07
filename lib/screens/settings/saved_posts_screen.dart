@@ -84,7 +84,7 @@ class _SavedPostsState extends State<SavedPosts> {
 
                     Widget mediaWidget;
                     final String contentType = getContentTypeFromUrl(post.fileType);
-
+                    //return video
                     if (contentType == 'video') {
                       mediaWidget = ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
@@ -93,8 +93,8 @@ class _SavedPostsState extends State<SavedPosts> {
                           fit: BoxFit.cover,
                         ),
                       );
+                      //return image
                     } else if (contentType == 'image') {
-                      // If it's not a video, return an image.
                       mediaWidget = ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image(

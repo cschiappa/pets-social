@@ -12,14 +12,7 @@ class PrizesCarouselSlider extends StatefulWidget {
   final String profileUid;
   final String postId;
   final CarouselController controller;
-  const PrizesCarouselSlider(
-      {super.key,
-      required this.likes,
-      required this.fish,
-      required this.bones,
-      required this.profileUid,
-      required this.postId,
-      required this.controller});
+  const PrizesCarouselSlider({super.key, required this.likes, required this.fish, required this.bones, required this.profileUid, required this.postId, required this.controller});
 
   @override
   State<PrizesCarouselSlider> createState() => _PrizesCarouselSliderState();
@@ -64,61 +57,40 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                 items: [
                   // FISH
                   FishAnimation(
-                    isAnimating: widget.fish != null &&
-                        widget.fish.contains(widget.profileUid),
+                    isAnimating: widget.fish.contains(widget.profileUid),
                     smallLike: true,
                     child: InkWell(
                       onTap: () async {
-                        await FirestoreMethods().giveFishToPost(
-                            widget.postId, widget.profileUid, widget.fish);
+                        await FirestoreMethods().giveFishToPost(widget.postId, widget.profileUid, widget.fish);
                       },
                       child: Image.asset(
-                        (widget.fish != null &&
-                                widget.fish.contains(widget.profileUid))
-                            ? 'assets/fish.png'
-                            : 'assets/fish_border.png',
-                        //width: 100,
-                        //height: 100,
+                        (widget.fish.contains(widget.profileUid)) ? 'assets/fish.png' : 'assets/fish_border.png',
                       ),
                     ),
                   ),
                   //LIKES
                   LikeAnimation(
-                    isAnimating: widget.likes != null &&
-                        widget.likes.contains(widget.profileUid),
+                    isAnimating: widget.likes.contains(widget.profileUid),
                     smallLike: true,
                     child: InkWell(
                       onTap: () async {
-                        await FirestoreMethods().likePost(
-                            widget.postId, widget.profileUid, widget.likes);
+                        await FirestoreMethods().likePost(widget.postId, widget.profileUid, widget.likes);
                       },
                       child: Image.asset(
-                        (widget.likes != null &&
-                                widget.likes.contains(widget.profileUid))
-                            ? 'assets/like.png'
-                            : 'assets/like_border.png',
-                        //width: 100,
-                        //height: 100,
+                        (widget.likes.contains(widget.profileUid)) ? 'assets/like.png' : 'assets/like_border.png',
                       ),
                     ),
                   ),
                   //BONES
                   BoneAnimation(
-                    isAnimating: widget.bones != null &&
-                        widget.bones.contains(widget.profileUid),
+                    isAnimating: widget.bones.contains(widget.profileUid),
                     smallLike: true,
                     child: InkWell(
                       onTap: () async {
-                        await FirestoreMethods().giveBoneToPost(
-                            widget.postId, widget.profileUid, widget.bones);
+                        await FirestoreMethods().giveBoneToPost(widget.postId, widget.profileUid, widget.bones);
                       },
                       child: Image.asset(
-                        (widget.bones != null &&
-                                widget.bones.contains(widget.profileUid))
-                            ? 'assets/bone.png'
-                            : 'assets/bone_border.png',
-                        //width: 100,
-                        //height: 100,
+                        (widget.bones.contains(widget.profileUid)) ? 'assets/bone.png' : 'assets/bone_border.png',
                       ),
                     ),
                   ),

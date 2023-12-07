@@ -9,9 +9,6 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-import 'package:pets_social/screens/profile_screen.dart';
-
-import 'package:pets_social/utils/global_variables.dart';
 import 'package:pets_social/widgets/bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../features/app_router.dart';
@@ -50,6 +47,7 @@ class _FeedScreenState extends State<FeedScreen> {
     });
   }
 
+  //SELECT IMAGE
   void selectImage(context, setState) async {
     Uint8List im;
     (im, _, _, _) = await pickImage(ImageSource.gallery);
@@ -58,11 +56,13 @@ class _FeedScreenState extends State<FeedScreen> {
     });
   }
 
+  //REFRESH PROFILE
   Future<void> _handleRefresh() async {
     await Provider.of<UserProvider>(context, listen: false).refreshProfile();
     return await Future.delayed(const Duration(milliseconds: 500));
   }
 
+  //CREATE NEW PROFILE
   void createProfile() async {
     setState(() {
       _isLoading = true;
@@ -243,7 +243,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  //build list of profiles for drawer
+  //PROFILE LIST FOR DRAWER
   Widget _buildProfileList() {
     final ThemeData theme = Theme.of(context);
     return StreamBuilder<QuerySnapshot>(
@@ -267,6 +267,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
+  //PROFILE LIST ITEM FOR DRAWER
   Widget _buildProfileListItem(DocumentSnapshot document) {
     final ThemeData theme = Theme.of(context);
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -294,6 +295,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
+  //CREATE PROFILE BOTTOM SHEET
   void _profileBottomSheet(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return CustomBottomSheet.show(context: context, listWidget: [
