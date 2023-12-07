@@ -6,14 +6,8 @@ class ThemeProvider with ChangeNotifier {
 
   ThemeData get themeData => _themeData;
 
-  // set themeData(ThemeData themeData) {
-  //   _themeData = themeData;
-  //   notifyListeners();
-  // }
-
   void toggleTheme() {
-    _themeData =
-        _themeData.brightness == Brightness.dark ? lightMode : darkMode;
+    _themeData = _themeData.brightness == Brightness.dark ? lightMode : darkMode;
     notifyListeners();
   }
 }

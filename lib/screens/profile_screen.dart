@@ -53,8 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void fieldsValues() {
-    final ModelProfile? profile =
-        Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     _usernameController = TextEditingController(text: profile!.username);
     _bioController = TextEditingController(text: profile.bio);
   }
@@ -62,8 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final ModelProfile? profile =
-        Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
 
     //verifies if profile belongs to current profile or another profile
     userId = widget.profileUid ?? profile!.profileUid;
@@ -81,22 +79,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   getData() async {
-    final ModelProfile? profile =
-        Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
       isLoading = true;
     });
     try {
-      var userSnap = await FirebaseFirestore.instance
-          .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: userId)
-          .get();
+      var userSnap = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: userId).get();
 
       //GET POST LENGTH
-      var postSnap = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('profileUid', isEqualTo: userId)
-          .get();
+      var postSnap = await FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: userId).get();
 
       postLen = postSnap.docs.length;
       userData = userSnap.docs.first.data();
@@ -128,8 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateProfile() async {
-    final ModelProfile? profile =
-        Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
       _isLoading = true;
     });
@@ -188,29 +178,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     onTap: () {
                                       if (e == 'Saved Posts') {
                                         Navigator.pop(context);
-                                        // Navigator.of(context).push(
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         const SavedPosts(),
-                                        //   ),
-                                        // );
-                                        context
-                                            .goNamed(AppRouter.savedPosts.name);
+
+                                        context.goNamed(AppRouter.savedPosts.name);
                                       } else if (e == 'Settings') {
                                         Navigator.pop(context);
-                                        // Navigator.of(context).push(
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         const SettingsPage(),
-                                        //   ),
-                                        // );
-                                        context
-                                            .goNamed(AppRouter.settings.name);
+
+                                        context.goNamed(AppRouter.settings.name);
                                       }
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 16),
+                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                       child: Text(e),
                                     ),
                                   ),
@@ -227,10 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               centerTitle: false,
             ),
             body: Container(
-              padding: ResponsiveLayout.isWeb(context)
-                  ? EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width / 3)
-                  : const EdgeInsets.symmetric(horizontal: 0),
+              padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 0),
               child: Stack(
                 children: [
                   Container(
@@ -277,8 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: const EdgeInsets.only(top: 10),
                               child: Text(
                                 userData['username'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                             //DESCRIPTION
@@ -301,10 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             //BUTTON
                             Row(
-                              mainAxisAlignment:
-                                  userData['profileUid'] == profile!.profileUid
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.center,
+                              mainAxisAlignment: userData['profileUid'] == profile!.profileUid ? MainAxisAlignment.end : MainAxisAlignment.center,
                               children: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -312,24 +282,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     profile.profileUid == userId
                                         ? FollowButton(
                                             text: 'Sign Out',
-                                            backgroundColor:
-                                                theme.colorScheme.background,
-                                            textColor:
-                                                theme.colorScheme.tertiary,
+                                            backgroundColor: theme.colorScheme.background,
+                                            textColor: theme.colorScheme.tertiary,
                                             borderColor: Colors.grey,
                                             function: () async {
-                                              await AuthMethods()
-                                                  .signOut(context);
+                                              await AuthMethods().signOut(context);
                                               if (!mounted) return;
-                                              // Navigator.of(context)
-                                              //     .pushReplacement(
-                                              //   MaterialPageRoute(
-                                              //     builder: (context) =>
-                                              //         const LoginScreen(),
-                                              //   ),
-                                              // );
-                                              context.goNamed(
-                                                  AppRouter.login.name);
+
+                                              context.goNamed(AppRouter.login.name);
                                             },
                                           )
                                         : isFollowing
@@ -339,8 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 textColor: Colors.black,
                                                 borderColor: Colors.grey,
                                                 function: () async {
-                                                  await FirestoreMethods()
-                                                      .followUser(
+                                                  await FirestoreMethods().followUser(
                                                     profile.profileUid,
                                                     userData['profileUid'],
                                                   );
@@ -352,14 +311,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               )
                                             : FollowButton(
                                                 text: 'Follow',
-                                                backgroundColor:
-                                                    theme.colorScheme.secondary,
+                                                backgroundColor: theme.colorScheme.secondary,
                                                 textColor: Colors.white,
-                                                borderColor:
-                                                    theme.colorScheme.secondary,
+                                                borderColor: theme.colorScheme.secondary,
                                                 function: () async {
-                                                  await FirestoreMethods()
-                                                      .followUser(
+                                                  await FirestoreMethods().followUser(
                                                     profile.profileUid,
                                                     userData['profileUid'],
                                                   );
@@ -373,8 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                   ],
                                 ),
-                                if (userData['profileUid'] ==
-                                    profile.profileUid)
+                                if (userData['profileUid'] == profile.profileUid)
                                   IconButton(
                                       onPressed: () {
                                         _profileBottomSheet(context);
@@ -390,14 +345,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const Divider(),
                       FutureBuilder(
-                        future: FirebaseFirestore.instance
-                            .collection('posts')
-                            .where('profileUid', isEqualTo: userId)
-                            .orderBy('datePublished', descending: true)
-                            .get(),
+                        future: FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: userId).orderBy('datePublished', descending: true).get(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return Center(
                               child: CircularProgressIndicator(
                                 color: theme.colorScheme.secondary,
@@ -407,19 +357,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           return GridView.builder(
                             shrinkWrap: true,
                             itemCount: (snapshot.data! as dynamic).docs.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 5,
-                                    mainAxisSpacing: 1.5,
-                                    childAspectRatio: 1),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
                             itemBuilder: (context, index) {
-                              DocumentSnapshot snap =
-                                  (snapshot.data! as dynamic).docs[index];
+                              DocumentSnapshot snap = (snapshot.data! as dynamic).docs[index];
 
                               Widget mediaWidget;
-                              final String contentType =
-                                  getContentTypeFromUrl(snap['fileType']);
+                              final String contentType = getContentTypeFromUrl(snap['fileType']);
 
                               if (contentType == 'video') {
                                 mediaWidget = ClipRRect(
@@ -441,16 +384,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               }
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigator.of(context).push(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => OpenPost(
-                                  //       postId: snap['postId'],
-                                  //       profileUid: snap['profileUid'],
-                                  //       username: userData['username'],
-                                  //     ),
-                                  //   ),
-                                  // );
-
                                   snap['profileUid'] == profile.profileUid
                                       ? context.goNamed(
                                           //'/profilescreen/post/${snap['postId']}/${snap['profileUid']}/${userData["username"]}');
@@ -578,15 +511,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     updateProfile();
                     Navigator.of(context).pop();
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const ResponsiveLayout(
-                    //         webScreenLayout: WebScreenLayout(),
-                    //         mobileScreenLayout:
-                    //             MobileScreenLayout()), // Rebuild the ProfileScreen
-                    //   ),
-                    // );
+
                     context.goNamed(AppRouter.profileScreen.name);
                   },
                   child: Container(

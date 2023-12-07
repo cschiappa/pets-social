@@ -16,10 +16,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final TextEditingController _problemSummaryController =
-      TextEditingController();
-  final TextEditingController _problemDetailsController =
-      TextEditingController();
+  final TextEditingController _problemSummaryController = TextEditingController();
+  final TextEditingController _problemDetailsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +37,6 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.person),
             title: const Text('Account Settings'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const AccountSettingsPage(),
-              //   ),
-              // );
               context.goNamed(AppRouter.accountSettings.name);
             },
           ),
@@ -51,19 +44,12 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.dark_mode),
             title: const Text('Dark Mode'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const BlockedAccountsPage(),
-              //   ),
-              // );
               context.goNamed(AppRouter.blockedAccounts.name);
             },
             trailing: Switch(
-              value: Provider.of<ThemeProvider>(context).themeData.brightness ==
-                  Brightness.dark,
+              value: Provider.of<ThemeProvider>(context).themeData.brightness == Brightness.dark,
               onChanged: (value) {
-                Provider.of<ThemeProvider>(context, listen: false)
-                    .toggleTheme();
+                Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
               },
             ),
           ),
@@ -71,11 +57,6 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.notifications),
             title: const Text('Notifications'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const NotificationsSettings(),
-              //   ),
-              // );
               context.goNamed(AppRouter.notifications.name);
             },
           ),
@@ -83,11 +64,6 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.person_off),
             title: const Text('Blocked Accounts'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const BlockedAccountsPage(),
-              //   ),
-              // );
               context.goNamed(AppRouter.blockedAccounts.name);
             },
           ),
@@ -95,8 +71,6 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.report_problem),
             title: const Text('Report a Problem'),
             onTap: () {
-              // Navigator.of(context).pushReplacement(MaterialPageRoute(
-              //     builder: (context) => const FeedbackScreen()));
               _profileBottomSheet(context);
             },
           )
@@ -152,10 +126,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 width: 20,
               ),
               FilledButton.tonal(
-                onPressed: () => FirestoreMethods()
-                    .uploadFeedback(_problemSummaryController.text,
-                        _problemDetailsController.text)
-                    .then(
+                onPressed: () => FirestoreMethods().uploadFeedback(_problemSummaryController.text, _problemDetailsController.text).then(
                   (value) {
                     context.pop();
                     ScaffoldMessenger.of(context).showSnackBar(

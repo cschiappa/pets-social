@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//LIGHT MODE
 ThemeData lightMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
@@ -22,6 +23,7 @@ ThemeData lightMode = ThemeData(
   ),
 );
 
+//DARK MODE
 ThemeData darkMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
@@ -38,8 +40,5 @@ ThemeData darkMode = ThemeData(
     iconTheme: IconThemeData(color: Colors.white),
     scrolledUnderElevation: 0.0,
   ),
-  snackBarTheme: const SnackBarThemeData(
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Color.fromRGBO(28, 28, 28, 1),
-      contentTextStyle: TextStyle(color: Colors.white)),
+  snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating, backgroundColor: Color.fromRGBO(28, 28, 28, 1), contentTextStyle: TextStyle(color: Colors.white)),
 );

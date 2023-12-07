@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/providers/theme_provider.dart';
 import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/resources/firebase_messaging.dart';
+import 'package:pets_social/resources/firebase_notifications.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';

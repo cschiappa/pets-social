@@ -19,7 +19,6 @@ class ModelMessage {
     required this.read,
   });
 
-  //convert to a map
   Map<String, dynamic> toJson() => {
         'senderUid': senderUid,
         'receiverUid': receiverUid,

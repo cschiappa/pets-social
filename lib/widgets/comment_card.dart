@@ -28,11 +28,7 @@ class _CommentCardState extends State<CommentCard> {
         GestureDetector(
           onTap: () {
             String profileUid = widget.snap['profileUid'];
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => ProfileScreen(profileUid: profileUid),
-            //     ));
+
             context.goNamed(
               AppRouter.profileFromFeed.name,
               pathParameters: {
@@ -58,12 +54,7 @@ class _CommentCardState extends State<CommentCard> {
                     GestureDetector(
                       onTap: () {
                         String profileUid = widget.snap['profileUid'];
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) =>
-                        //           ProfileScreen(profileUid: profileUid),
-                        //     ));
+
                         context.goNamed(
                           AppRouter.profileFromFeed.name,
                           pathParameters: {
@@ -72,10 +63,7 @@ class _CommentCardState extends State<CommentCard> {
                         );
                       },
                       child: RichText(
-                        text: TextSpan(
-                            text: widget.snap['name'],
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                        text: TextSpan(text: widget.snap['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                     RichText(
@@ -88,10 +76,8 @@ class _CommentCardState extends State<CommentCard> {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    DateFormat.yMMMd()
-                        .format(widget.snap['datePublished'].toDate()),
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w400),
+                    DateFormat.yMMMd().format(widget.snap['datePublished'].toDate()),
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                   ),
                 )
               ],
@@ -99,22 +85,14 @@ class _CommentCardState extends State<CommentCard> {
           ),
         ),
         LikeAnimation(
-          isAnimating: widget.snap['likes'] != null &&
-              widget.snap['likes'].contains(profile!.profileUid),
+          isAnimating: widget.snap['likes'] != null && widget.snap['likes'].contains(profile!.profileUid),
           smallLike: true,
           child: InkWell(
             onTap: () async {
-              await FirestoreMethods().likeComment(
-                  widget.snap['postId'],
-                  widget.snap['commentId'],
-                  profile!.profileUid,
-                  widget.snap['likes']);
+              await FirestoreMethods().likeComment(widget.snap['postId'], widget.snap['commentId'], profile!.profileUid, widget.snap['likes']);
             },
             child: Image.asset(
-              (widget.snap['likes'] != null &&
-                      widget.snap['likes'].contains(profile!.profileUid))
-                  ? 'assets/like.png'
-                  : 'assets/like_border.png',
+              (widget.snap['likes'] != null && widget.snap['likes'].contains(profile!.profileUid)) ? 'assets/like.png' : 'assets/like_border.png',
               width: 14,
               height: 14,
             ),

@@ -64,25 +64,12 @@ class _SignupScreenState extends State<SignupScreen> {
       showSnackBar(res, context);
     } else {
       if (!mounted) return;
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(
-      //     builder: (context) => const ResponsiveLayout(
-      //       mobileScreenLayout: MobileScreenLayout(),
-      //       webScreenLayout: WebScreenLayout(),
-      //     ),
-      //   ),
-      //   (_) => false,
-      // );
+
       context.goNamed(AppRouter.feedScreen.name);
     }
   }
 
   void navigateToLogin() {
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => const LoginScreen(),
-    //   ),
-    // );
     context.goNamed(AppRouter.login.name);
   }
 
@@ -94,10 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SafeArea(
           child: Container(
-            padding: ResponsiveLayout.isWeb(context)
-                ? EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width / 3)
-                : const EdgeInsets.symmetric(horizontal: 32),
+            padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 32),
             width: double.infinity,
             child: SingleChildScrollView(
               child: Column(

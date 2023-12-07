@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  String? _emailError;
+  String? _passwordError;
 
   @override
   void dispose() {
@@ -31,21 +33,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void loginUser() async {
     setState(() {
       _isLoading = true;
+      _emailError = null;
+      _passwordError = null;
     });
-    String res = await AuthMethods().loginUser(
-        email: _emailController.text, password: _passwordController.text);
+    String res = await AuthMethods().loginUser(email: _emailController.text, password: _passwordController.text);
 
     if (res == "success") {
       if (!mounted) return;
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(
-      //     builder: (context) => const ResponsiveLayout(
-      //       mobileScreenLayout: MobileScreenLayout(),
-      //       webScreenLayout: WebScreenLayout(),
-      //     ),
-      //   ),
-      //   (_) => false,
-      // );
+
       context.goNamed(AppRouter.feedScreen.name);
     } else {
       if (!mounted) return;
@@ -64,10 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: SafeArea(
           child: Container(
-            padding: ResponsiveLayout.isWeb(context)
-                ? EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width / 3)
-                : const EdgeInsets.symmetric(horizontal: 32),
+            padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 32),
             width: double.infinity,
             child: Center(
               child: SingleChildScrollView(
@@ -101,8 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
 
                     InkWell(
-                      onTap: () =>
-                          context.pushNamed(AppRouter.recoverPassword.name),
+                      onTap: () => context.pushNamed(AppRouter.recoverPassword.name),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 15,
@@ -123,8 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: ShapeDecoration(
                             shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
                             ),
                             color: theme.colorScheme.secondary),
                         child: _isLoading
@@ -150,8 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text("Don't have an account?"),
                         ),
                         InkWell(
-                          onTap: () =>
-                              context.goNamed(AppRouter.welcomePage.name),
+                          onTap: () => context.goNamed(AppRouter.welcomePage.name),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8,

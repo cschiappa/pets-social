@@ -62,10 +62,7 @@ class _PostCardExpState extends State<PostCardExp> {
 
   getData() async {
     try {
-      profileData = await FirebaseFirestore.instance
-          .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: widget.snap['profileUid'])
-          .get();
+      profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();
 
       setState(() {
         profileDocs = profileData.docs.first.data();
@@ -93,11 +90,7 @@ class _PostCardExpState extends State<PostCardExp> {
 
   void getComments() async {
     try {
-      QuerySnapshot snap = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.snap['postId'])
-          .collection('comments')
-          .get();
+      QuerySnapshot snap = await FirebaseFirestore.instance.collection('posts').doc(widget.snap['postId']).collection('comments').get();
 
       commentLen = snap.docs.length;
     } catch (e) {
@@ -135,8 +128,7 @@ class _PostCardExpState extends State<PostCardExp> {
                 GestureDetector(
                   //double tap for like
                   onDoubleTap: () async {
-                    await FirestoreMethods().likePost(widget.snap['postId'],
-                        profile!.profileUid, widget.snap['likes']);
+                    await FirestoreMethods().likePost(widget.snap['postId'], profile!.profileUid, widget.snap['likes']);
                     setState(() {
                       isLikeAnimating = true;
                     });
@@ -186,8 +178,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                 isLikeAnimating = false;
                               });
                             },
-                            child: Icon(Icons.favorite,
-                                color: theme.colorScheme.primary, size: 120),
+                            child: Icon(Icons.favorite, color: theme.colorScheme.primary, size: 120),
                           ),
                         )
                       ],
@@ -198,24 +189,15 @@ class _PostCardExpState extends State<PostCardExp> {
                 Container(
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(100, 0, 0, 0),
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20)),
+                    borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   child: Row(
                     children: [
                       GestureDetector(
                         onTap: () {
                           String profileUid = widget.snap['profileUid'];
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) =>
-                          //         ProfileScreen(profileUid: profileUid),
-                          //   ),
-                          // );
+
                           profileUid == profile!.profileUid
                               ? context.goNamed(
                                   AppRouter.profileScreen.name,
@@ -245,13 +227,7 @@ class _PostCardExpState extends State<PostCardExp> {
                               GestureDetector(
                                 onTap: () {
                                   String profileUid = widget.snap['profileUid'];
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) =>
-                                  //         ProfileScreen(profileUid: profileUid),
-                                  //   ),
-                                  // );
+
                                   profileUid == profile!.profileUid
                                       ? context.goNamed(
                                           AppRouter.profileScreen.name,
@@ -265,9 +241,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                 },
                                 child: Text(
                                   //widget.snap['username'],
-                                  profileDocs == null
-                                      ? ""
-                                      : profileDocs['username'],
+                                  profileDocs == null ? "" : profileDocs['username'],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: theme.colorScheme.primary,
@@ -286,16 +260,8 @@ class _PostCardExpState extends State<PostCardExp> {
                           children: [
                             //COMMENT
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: InkWell(
-                                // onTap: () => Navigator.of(context).push(
-                                //   MaterialPageRoute(
-                                //     builder: (context) => CommentsScreen(
-                                //       snap: widget.snap,
-                                //     ),
-                                //   ),
-                                // ),
                                 onTap: () => //widget.snap['profileUid'] ==
                                     //profile!.profileUid
                                     // ? context.goNamed(
@@ -327,10 +293,8 @@ class _PostCardExpState extends State<PostCardExp> {
                             //SHARE
                             InkWell(
                               onTap: () async {
-                                String path =
-                                    'cschiappa.github.io/post/${widget.snap['postId']}/${widget.snap['profileUid']}/${profileDocs['username']}';
-                                await Share.share(path,
-                                    subject: 'Pets Social Link'
+                                String path = 'cschiappa.github.io/post/${widget.snap['postId']}/${widget.snap['profileUid']}/${profileDocs['username']}';
+                                await Share.share(path, subject: 'Pets Social Link'
                                     //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
                                     );
                               },
@@ -341,34 +305,20 @@ class _PostCardExpState extends State<PostCardExp> {
                             ),
                             //BOOKMARK
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: SavePostAnimation(
-                                isAnimating: profile?.savedPost != null &&
-                                    profile!.savedPost
-                                        .contains(widget.snap['postId']),
+                                isAnimating: profile?.savedPost != null && profile!.savedPost.contains(widget.snap['postId']),
                                 smallLike: true,
                                 child: InkWell(
                                   onTap: () async {
-                                    await FirestoreMethods()
-                                        .savePost(
-                                            widget.snap['postId'],
-                                            profile!.profileUid,
-                                            profile.savedPost)
-                                        .then((_) {
+                                    await FirestoreMethods().savePost(widget.snap['postId'], profile!.profileUid, profile.savedPost).then((_) {
                                       setState(() {
-                                        Provider.of<UserProvider>(context,
-                                                listen: false)
-                                            .refreshProfile();
+                                        Provider.of<UserProvider>(context, listen: false).refreshProfile();
                                       });
                                     });
                                   },
                                   child: Icon(
-                                    (profile?.savedPost != null &&
-                                            profile!.savedPost.contains(
-                                                widget.snap['postId']))
-                                        ? Icons.bookmark
-                                        : Icons.bookmark_border,
+                                    (profile?.savedPost != null && profile!.savedPost.contains(widget.snap['postId'])) ? Icons.bookmark : Icons.bookmark_border,
                                     color: theme.colorScheme.primary,
                                   ),
                                 ),
@@ -380,84 +330,50 @@ class _PostCardExpState extends State<PostCardExp> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => Padding(
-                                    padding: ResponsiveLayout.isWeb(context)
-                                        ? EdgeInsets.symmetric(
-                                            horizontal: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                3)
-                                        : const EdgeInsets.all(0),
+                                    padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.all(0),
                                     child: Dialog(
-                                      child: StatefulBuilder(builder:
-                                          (BuildContext context,
-                                              StateSetter setState) {
+                                      child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
                                         return ListView(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 16),
+                                          padding: const EdgeInsets.symmetric(vertical: 16),
                                           shrinkWrap: true,
                                           children: [
-                                            if (widget.snap['profileUid'] ==
-                                                profile!.profileUid)
+                                            if (widget.snap['profileUid'] == profile!.profileUid)
                                               InkWell(
                                                 onTap: () {
-                                                  _profileBottomSheet(
-                                                      context, setState);
+                                                  _profileBottomSheet(context, setState);
                                                 },
                                                 child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 16),
+                                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                                   child: const Text(
                                                     'Edit',
                                                   ),
                                                 ),
                                               ),
-                                            widget.snap['profileUid'] ==
-                                                    profile.profileUid
+                                            widget.snap['profileUid'] == profile.profileUid
                                                 ? InkWell(
                                                     onTap: () async {
-                                                      Navigator.of(context)
-                                                          .pop();
+                                                      Navigator.of(context).pop();
                                                       showDialog(
                                                         context: context,
                                                         builder: (context) {
                                                           return AlertDialog(
-                                                            title: const Text(
-                                                                'Are you sure you want to delete this post?'),
-                                                            content: const Text(
-                                                                'If you proceed, this post will be permanently deleted.'),
+                                                            title: const Text('Are you sure you want to delete this post?'),
+                                                            content: const Text('If you proceed, this post will be permanently deleted.'),
                                                             actions: [
                                                               TextButton(
                                                                 onPressed: () {
-                                                                  FirestoreMethods()
-                                                                      .deletePost(
-                                                                          widget
-                                                                              .snap['postId']);
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
+                                                                  FirestoreMethods().deletePost(widget.snap['postId']);
+                                                                  Navigator.of(context).pop();
                                                                 },
-                                                                child: const Text(
-                                                                    'Delete',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Colors
-                                                                            .red)),
+                                                                child: const Text('Delete', style: TextStyle(fontSize: 16, color: Colors.red)),
                                                               ),
                                                               TextButton(
                                                                 onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
+                                                                  Navigator.of(context).pop();
                                                                 },
-                                                                child:
-                                                                    const Text(
+                                                                child: const Text(
                                                                   'Cancel',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16),
+                                                                  style: TextStyle(fontSize: 16),
                                                                 ),
                                                               )
                                                             ],
@@ -466,31 +382,18 @@ class _PostCardExpState extends State<PostCardExp> {
                                                       );
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 12,
-                                                          horizontal: 16),
-                                                      child:
-                                                          const Text('Delete'),
+                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                      child: const Text('Delete'),
                                                     ),
                                                   )
                                                 : InkWell(
                                                     onTap: () async {
                                                       Navigator.pop(context);
-                                                      FirestoreMethods()
-                                                          .blockUser(
-                                                              profile
-                                                                  .profileUid,
-                                                              widget.snap[
-                                                                  'profileUid']);
+                                                      FirestoreMethods().blockUser(profile.profileUid, widget.snap['profileUid']);
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 12,
-                                                          horizontal: 16),
-                                                      child: const Text(
-                                                          'Block User'),
+                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                      child: const Text('Block User'),
                                                     ),
                                                   ),
                                           ],
@@ -660,20 +563,13 @@ class _PostCardExpState extends State<PostCardExp> {
                       top: 8,
                     ),
                     child: RichText(
-                      text: TextSpan(
-                          style: TextStyle(color: theme.colorScheme.primary),
-                          children: [
-                            TextSpan(
-                              text: profileDocs == null
-                                  ? ""
-                                  : profileDocs['username'],
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            TextSpan(
-                                text: ' ${widget.snap['description']}',
-                                style: const TextStyle(fontSize: 15))
-                          ]),
+                      text: TextSpan(style: TextStyle(color: theme.colorScheme.primary), children: [
+                        TextSpan(
+                          text: profileDocs == null ? "" : profileDocs['username'],
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                        TextSpan(text: ' ${widget.snap['description']}', style: const TextStyle(fontSize: 15))
+                      ]),
                     ),
                   ),
                   // Padding(
@@ -721,13 +617,6 @@ class _PostCardExpState extends State<PostCardExp> {
 
                   // SHOW NUMBER OF COMMENTS
                   InkWell(
-                    // onTap: () => Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => CommentsScreen(
-                    //       snap: widget.snap,
-                    //     ),
-                    //   ),
-                    // ),
                     onTap: () =>
                         // widget.snap['profileUid'] == profile!.profileUid
                         //     ? context.goNamed(
@@ -762,10 +651,8 @@ class _PostCardExpState extends State<PostCardExp> {
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      DateFormat.yMMMd()
-                          .format(widget.snap['datePublished'].toDate()),
-                      style: TextStyle(
-                          fontSize: 12, color: theme.colorScheme.primary),
+                      DateFormat.yMMMd().format(widget.snap['datePublished'].toDate()),
+                      style: TextStyle(fontSize: 12, color: theme.colorScheme.primary),
                     ),
                   ),
                 ],
@@ -787,11 +674,7 @@ class _PostCardExpState extends State<PostCardExp> {
       isScrollControlled: true,
       builder: ((context) {
         return Padding(
-          padding: ResponsiveLayout.isWeb(context)
-              ? EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width / 3)
-              : EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SizedBox(
             child: GestureDetector(
               onTap: () {
@@ -819,13 +702,7 @@ class _PostCardExpState extends State<PostCardExp> {
                               showSnackBar(value, context);
                             } else {
                               Navigator.of(context).pop();
-                              // Navigator.pushReplacement(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         const MobileScreenLayout(), // Rebuild the ProfileScreen
-                              //   ),
-                              // );
+
                               context.goNamed(AppRouter.feedScreen.name);
                             }
                           });
@@ -836,8 +713,7 @@ class _PostCardExpState extends State<PostCardExp> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: ShapeDecoration(
                               shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
+                                borderRadius: BorderRadius.all(Radius.circular(4)),
                               ),
                               color: theme.colorScheme.secondary),
                           child: _isLoading

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pets_social/resources/firebase_messaging.dart';
+import 'package:pets_social/resources/firebase_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationsSettings extends StatefulWidget {

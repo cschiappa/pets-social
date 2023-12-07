@@ -8,9 +8,9 @@ class UserProvider with ChangeNotifier {
 
   ModelProfile? get getProfile => _profile;
 
+  //REFRESH PROFILE
   Future<void> refreshProfile({String? profileUid}) async {
-    ModelProfile profile = await _authMethods
-        .getProfileDetails(profileUid ?? _profile?.profileUid);
+    ModelProfile profile = await _authMethods.getProfileDetails(profileUid ?? _profile?.profileUid);
     _profile = profile;
     notifyListeners();
   }
@@ -19,7 +19,7 @@ class UserProvider with ChangeNotifier {
     _profile = null;
   }
 
-  // Method to unblock a profile by their UID
+  // UNBLOCK PROFILE PROVIDER
   void unblockUser(String profileUid) {
     if (_profile != null) {
       _profile!.blockedUsers.remove(profileUid);

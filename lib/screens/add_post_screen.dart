@@ -39,15 +39,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       _isLoading = true;
     });
     try {
-      String res = await FirestoreMethods().uploadPost(
-          uid,
-          _descriptionController.text,
-          _file!,
-          profileUid,
-          username,
-          profImage,
-          _fileType!,
-          _thumbnail!);
+      String res = await FirestoreMethods().uploadPost(uid, _descriptionController.text, _file!, profileUid, username, profImage, _fileType!, _thumbnail!);
 
       if (res == "success") {
         setState(() {
@@ -57,13 +49,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
         showSnackBar('Posted!', context);
         clearImage();
         context.goNamed(AppRouter.feedScreen.name);
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => const ResponsiveLayout(
-        //         webScreenLayout: WebScreenLayout(),
-        //         mobileScreenLayout: MobileScreenLayout()),
-        //   ),
-        // );
       } else {
         setState(() {
           _isLoading = false;
@@ -215,11 +200,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
               title: const Text('Post to'),
               actions: [
                 TextButton(
-                    onPressed: () => postImage(
-                        firebaseauth,
-                        profile!.profileUid,
-                        profile.username,
-                        profile.photoUrl ?? ""),
+                    onPressed: () => postImage(firebaseauth, profile!.profileUid, profile.username, profile.photoUrl ?? ""),
                     child: Text('Post',
                         style: TextStyle(
                           color: theme.colorScheme.secondary,
@@ -242,11 +223,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    backgroundImage:
-                        (profile != null && profile.photoUrl != null)
-                            ? NetworkImage(profile.photoUrl!)
-                            : const AssetImage('assets/default_pic')
-                                as ImageProvider<Object>,
+                    backgroundImage: (profile != null && profile.photoUrl != null) ? NetworkImage(profile.photoUrl!) : const AssetImage('assets/default_pic') as ImageProvider<Object>,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.45,

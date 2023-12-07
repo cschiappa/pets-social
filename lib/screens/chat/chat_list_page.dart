@@ -28,13 +28,8 @@ class _ChatListState extends State<ChatList> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final ModelProfile? profile =
-          Provider.of<UserProvider>(context, listen: false).getProfile;
-      QuerySnapshot<Map<String, dynamic>> usersSnapshot =
-          await FirebaseFirestore.instance
-              .collectionGroup('profiles')
-              .where('profileUid', whereIn: profile!.following)
-              .get();
+      final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+      QuerySnapshot<Map<String, dynamic>> usersSnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile!.following).get();
 
       for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
         ModelProfile profile = ModelProfile.fromSnap(doc);
@@ -62,11 +57,7 @@ class _ChatListState extends State<ChatList> {
             setState(
               () {
                 isShowUsers = true;
-                profilesFiltered = profiles
-                    .where((element) => element.username
-                        .toLowerCase()
-                        .contains(value.toLowerCase()))
-                    .toList();
+                profilesFiltered = profiles.where((element) => element.username.toLowerCase().contains(value.toLowerCase())).toList();
               },
             );
           },
@@ -78,16 +69,6 @@ class _ChatListState extends State<ChatList> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ChatPage(
-                    //       receiverUserEmail: profilesFiltered[index].email,
-                    //       receiverUserID: profilesFiltered[index].profileUid,
-                    //       receiverUsername: profilesFiltered[index].username,
-                    //     ),
-                    //   ),
-                    // );
                     context.goNamed(AppRouter.chatPage.name, pathParameters: {
                       'receiverUserEmail': profilesFiltered[index].email,
                       'receiverUserId': profilesFiltered[index].profileUid,
@@ -96,8 +77,7 @@ class _ChatListState extends State<ChatList> {
                   },
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(profilesFiltered[index].photoUrl!),
+                      backgroundImage: NetworkImage(profilesFiltered[index].photoUrl!),
                     ),
                     title: Text(profilesFiltered[index].username),
                   ),
@@ -115,11 +95,7 @@ class _ChatListState extends State<ChatList> {
     final ThemeData theme = Theme.of(context);
 
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('chats')
-          .orderBy('lastMessage.timestamp', descending: true)
-          .where('users', arrayContains: profile!.profileUid)
-          .snapshots(),
+      stream: FirebaseFirestore.instance.collection('chats').orderBy('lastMessage.timestamp', descending: true).where('users', arrayContains: profile!.profileUid).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('Error');
@@ -161,13 +137,10 @@ class _ChatListState extends State<ChatList> {
               return const Text('Error fetching profiles');
             }
 
-            List<DocumentSnapshot> profileDocs =
-                profileSnapshot.data as List<DocumentSnapshot>;
+            List<DocumentSnapshot> profileDocs = profileSnapshot.data as List<DocumentSnapshot>;
 
             return ListView(
-              children: profileDocs
-                  .map<Widget>((profileDocs) => _buildUserListItem(profileDocs))
-                  .toList(),
+              children: profileDocs.map<Widget>((profileDocs) => _buildUserListItem(profileDocs)).toList(),
             );
           },
         );
@@ -175,15 +148,10 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  Future<List<DocumentSnapshot>> _fetchProfiles(
-      List<String> profileUidList) async {
+  Future<List<DocumentSnapshot>> _fetchProfiles(List<String> profileUidList) async {
     List<Future<DocumentSnapshot>> futures = profileUidList.map(
       (profileUid) {
-        return FirebaseFirestore.instance
-            .collectionGroup('profiles')
-            .where('profileUid', isEqualTo: profileUid)
-            .get()
-            .then((querySnapshot) => querySnapshot.docs.first);
+        return FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get().then((querySnapshot) => querySnapshot.docs.first);
       },
     ).toList();
 
@@ -293,17 +261,6 @@ class _ChatListState extends State<ChatList> {
           color: theme.colorScheme.secondary,
         ),
         onTap: () {
-          //enter chat page when clicked
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => ChatPage(
-          //       receiverUserEmail: data['email'],
-          //       receiverUserID: data['profileUid'],
-          //       receiverUsername: data['username'],
-          //     ),
-          //   ),
-          // );
           context.goNamed(AppRouter.chatPage.name, pathParameters: {
             'receiverUserEmail': data['email'],
             'receiverUserId': data['profileUid'],

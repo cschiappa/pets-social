@@ -37,36 +37,24 @@ class _PrizesScreenState extends State<PrizesScreen> {
   }
 
   getData() async {
-    final ModelProfile? profile =
-        Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     setState(() {
       isLoading = true;
     });
     try {
-      var userSnap = await FirebaseFirestore.instance
-          .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: profile!.profileUid)
-          .get();
+      var userSnap = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profile!.profileUid).get();
 
       //GET POST LENGTH
-      var postSnap = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('profileUid', isEqualTo: profile.profileUid)
-          .get();
+      var postSnap = await FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: profile.profileUid).get();
 
-      var notificationSnap = await FirebaseFirestore.instance
-          .collection('notifications')
-          .where('receiver', isEqualTo: profile.profileUid)
-          .orderBy('datePublished', descending: true)
-          .get();
+      var notificationSnap = await FirebaseFirestore.instance.collection('notifications').where('receiver', isEqualTo: profile.profileUid).orderBy('datePublished', descending: true).get();
 
       postLen = postSnap.docs.length;
       userData = userSnap.docs.first.data();
       followers = userData['followers'].length;
       following = userData['following'].length;
       isFollowing = userData['followers'].contains(profile.profileUid);
-      notificationData =
-          notificationSnap.docs.map((doc) => doc.data()).toList();
+      notificationData = notificationSnap.docs.map((doc) => doc.data()).toList();
 
       for (var post in postSnap.docs) {
         likes += post.data()['likes'].length as int;
@@ -92,10 +80,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
 
     return Scaffold(
         body: SingleChildScrollView(
-      padding: ResponsiveLayout.isWeb(context)
-          ? EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width / 3)
-          : const EdgeInsets.symmetric(horizontal: 0),
+      padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 0),
       child: Column(
         children: [
           const SizedBox(
@@ -131,10 +116,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: CircleAvatar(
-                  backgroundImage: (profile.photoUrl != null)
-                      ? NetworkImage(profile.photoUrl!)
-                      : const AssetImage('assets/default_pic')
-                          as ImageProvider<Object>,
+                  backgroundImage: (profile.photoUrl != null) ? NetworkImage(profile.photoUrl!) : const AssetImage('assets/default_pic') as ImageProvider<Object>,
                 ),
               ),
             ],
@@ -163,8 +145,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                   children: [
                     Text(
                       'Notifications',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     Icon(Icons.notification_add)
                   ],
@@ -180,33 +161,17 @@ class _PrizesScreenState extends State<PrizesScreen> {
                         controller: scrollController,
                         itemCount: notificationData.length,
                         itemBuilder: (context, index) {
-                          final DateTime timeAgo =
-                              notificationData[index]['datePublished'].toDate();
+                          final DateTime timeAgo = notificationData[index]['datePublished'].toDate();
                           return GestureDetector(
                             onTap: () {
                               notificationData[index]['postId'] == ""
-                                  // ? Navigator.of(context).push(
-                                  //     MaterialPageRoute(
-                                  //       builder: (context) => ProfileScreen(
-                                  //         profileUid: notificationData[index]
-                                  //             ['sender'],
-                                  //       ),
-                                  //     ),
-                                  //   )
-                                  ? context.goNamed(
-                                      AppRouter.profileFromPrizes.name,
-                                      pathParameters: {
-                                          'profileUid': notificationData[index]
-                                              ['sender']
-                                        })
+                                  ? context.goNamed(AppRouter.profileFromPrizes.name, pathParameters: {'profileUid': notificationData[index]['sender']})
                                   // :
                                   : context.goNamed(
                                       AppRouter.openPostFromPrizes.name,
                                       pathParameters: {
-                                        'postId': notificationData[index]
-                                            ['postId'],
-                                        'profileUid': notificationData[index]
-                                            ['receiver'],
+                                        'postId': notificationData[index]['postId'],
+                                        'profileUid': notificationData[index]['receiver'],
                                         'username': profile.username,
                                       },
                                     );
@@ -216,8 +181,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                 notificationData[index]['body'],
                                 style: const TextStyle(fontSize: 15),
                               ),
-                              trailing:
-                                  Text(timeago.format(timeAgo).toString()),
+                              trailing: Text(timeago.format(timeAgo).toString()),
                             ),
                           );
                         }),
@@ -253,8 +217,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                       children: [
                         Text(
                           'Stats',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Icon(Icons.query_stats)
                       ],
@@ -267,10 +230,8 @@ class _PrizesScreenState extends State<PrizesScreen> {
                     alignment: Alignment.topLeft,
                     child: Column(
                       children: [
-                        Text('$followers followers',
-                            style: const TextStyle(fontSize: 15)),
-                        Text('$following following',
-                            style: const TextStyle(fontSize: 15)),
+                        Text('$followers followers', style: const TextStyle(fontSize: 15)),
+                        Text('$following following', style: const TextStyle(fontSize: 15)),
                       ],
                     ),
                   )
@@ -301,8 +262,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                       children: [
                         Text(
                           'Prizes',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Icon(Icons.emoji_events)
                       ],
@@ -325,8 +285,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                             onTap: () {
                               _controller.previousPage();
                             },
-                            child: Icon(Icons.arrow_left,
-                                color: theme.colorScheme.primary),
+                            child: Icon(Icons.arrow_left, color: theme.colorScheme.primary),
                           ),
                           Expanded(
                             child: CarouselSlider(
@@ -345,9 +304,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                 Column(
                                   children: [
                                     Image.asset(
-                                      (fish > 0)
-                                          ? 'assets/fish.png'
-                                          : 'assets/fish_border.png',
+                                      (fish > 0) ? 'assets/fish.png' : 'assets/fish_border.png',
                                       width: 100,
                                       height: 100,
                                     ),
@@ -359,15 +316,11 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                 Column(
                                   children: [
                                     Image.asset(
-                                      (likes > 0)
-                                          ? 'assets/like.png'
-                                          : 'assets/like_border.png',
+                                      (likes > 0) ? 'assets/like.png' : 'assets/like_border.png',
                                       width: 100,
                                       height: 100,
                                     ),
-                                    Text((likes == 1)
-                                        ? '$likes like'
-                                        : '$likes likes')
+                                    Text((likes == 1) ? '$likes like' : '$likes likes')
                                   ],
                                 ),
 
@@ -375,15 +328,11 @@ class _PrizesScreenState extends State<PrizesScreen> {
                                 Column(
                                   children: [
                                     Image.asset(
-                                      (bones > 0)
-                                          ? 'assets/bone.png'
-                                          : 'assets/bone_border.png',
+                                      (bones > 0) ? 'assets/bone.png' : 'assets/bone_border.png',
                                       width: 100,
                                       height: 100,
                                     ),
-                                    Text((bones == 1)
-                                        ? '$bones bone'
-                                        : '$bones bones')
+                                    Text((bones == 1) ? '$bones bone' : '$bones bones')
                                   ],
                                 ),
                               ],
@@ -394,8 +343,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
                             onTap: () {
                               _controller.nextPage();
                             },
-                            child: Icon(Icons.arrow_right,
-                                color: theme.colorScheme.primary),
+                            child: Icon(Icons.arrow_right, color: theme.colorScheme.primary),
                           ),
                         ],
                       ),

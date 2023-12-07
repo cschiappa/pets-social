@@ -33,8 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
-        QuerySnapshot<Map<String, dynamic>> usersSnapshot =
-            await FirebaseFirestore.instance.collectionGroup('profiles').get();
+        QuerySnapshot<Map<String, dynamic>> usersSnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').get();
 
         for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
           ModelProfile profile = ModelProfile.fromSnap(doc);
@@ -48,10 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   getData() async {
     try {
-      profileData = await FirebaseFirestore.instance
-          .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: widget.snap['profileUid'])
-          .get();
+      profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();
 
       setState(() {
         profileDocs = profileData.docs.first.data();
@@ -91,11 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
               () {
                 isShowUsers = true;
 
-                profilesFiltered = profiles
-                    .where((element) => element.username
-                        .toLowerCase()
-                        .contains(value.toLowerCase()))
-                    .toList();
+                profilesFiltered = profiles.where((element) => element.username.toLowerCase().contains(value.toLowerCase())).toList();
               },
             );
           },
@@ -108,13 +100,6 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => ProfileScreen(
-                    //         profileUid: profilesFiltered[index].profileUid,
-                    //       ),
-                    //     ));
                     context.goNamed(
                       AppRouter.profileFromSearch.name,
                       pathParameters: {
@@ -124,8 +109,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(profilesFiltered[index].photoUrl!),
+                      backgroundImage: NetworkImage(profilesFiltered[index].photoUrl!),
                     ),
                     title: Text(profilesFiltered[index].username),
                   ),
@@ -133,14 +117,9 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             )
           : Container(
-              padding: ResponsiveLayout.isWeb(context)
-                  ? const EdgeInsets.symmetric(horizontal: 200)
-                  : const EdgeInsets.symmetric(horizontal: 0),
+              padding: ResponsiveLayout.isWeb(context) ? const EdgeInsets.symmetric(horizontal: 200) : const EdgeInsets.symmetric(horizontal: 0),
               child: FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection('posts')
-                    .orderBy('datePublished', descending: true)
-                    .get(),
+                future: FirebaseFirestore.instance.collection('posts').orderBy('datePublished', descending: true).get(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
@@ -153,12 +132,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   return MasonryGridView.builder(
                     itemCount: (snapshot.data! as dynamic).docs.length,
                     itemBuilder: (context, index) {
-                      ModelPost post =
-                          ModelPost.fromSnap(snapshot.data!.docs[index]);
+                      ModelPost post = ModelPost.fromSnap(snapshot.data!.docs[index]);
 
                       Widget mediaWidget;
-                      final String contentType =
-                          getContentTypeFromUrl(post.fileType);
+                      final String contentType = getContentTypeFromUrl(post.fileType);
 
                       if (contentType == 'video') {
                         mediaWidget = ClipRRect(
@@ -190,28 +167,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
                       return GestureDetector(
                         onTap: () {
-                          String profileUid = (snapshot.data! as dynamic)
-                              .docs[index]['profileUid'];
-                          String postId =
-                              (snapshot.data! as dynamic).docs[index]['postId'];
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => OpenPost(
-                          //           postId: postId,
-                          //           profileUid: profileUid,
-                          //           username: profileDocs == null
-                          //               ? ""
-                          //               : profileDocs['username']),
-                          //     ));
+                          String profileUid = (snapshot.data! as dynamic).docs[index]['profileUid'];
+                          String postId = (snapshot.data! as dynamic).docs[index]['postId'];
+
                           context.pushNamed(
                             AppRouter.openPostFromSearch.name,
                             pathParameters: {
                               'postId': postId,
                               'profileUid': profileUid,
-                              'username': profileDocs == null
-                                  ? ""
-                                  : profileDocs['username'],
+                              'username': profileDocs == null ? "" : profileDocs['username'],
                             },
                           );
                         },
@@ -232,11 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       );
                     },
-                    gridDelegate: ResponsiveLayout.isWeb(context)
-                        ? const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 6)
-                        : const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
+                    gridDelegate: ResponsiveLayout.isWeb(context) ? const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 6) : const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                   );
                 },
               ),

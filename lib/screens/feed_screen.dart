@@ -29,8 +29,7 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
-      GlobalKey<LiquidPullToRefreshState>();
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey = GlobalKey<LiquidPullToRefreshState>();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
@@ -171,9 +170,6 @@ class _FeedScreenState extends State<FeedScreen> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) => const ChatList(),
-                    // ));
                     context.goNamed(AppRouter.chatList.name);
                   },
                   icon: Badge.count(
@@ -201,15 +197,8 @@ class _FeedScreenState extends State<FeedScreen> {
                     child: CircularProgressIndicator(),
                   )
                 : StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('posts')
-                        .where('profileUid',
-                            whereIn: [...profile.following, profile.profileUid])
-                        .orderBy('datePublished', descending: true)
-                        .snapshots(),
-                    builder: (context,
-                        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                            snapshot) {
+                    stream: FirebaseFirestore.instance.collection('posts').where('profileUid', whereIn: [...profile.following, profile.profileUid]).orderBy('datePublished', descending: true).snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
                           child: CircularProgressIndicator(
@@ -220,17 +209,14 @@ class _FeedScreenState extends State<FeedScreen> {
 
                       // Filter the posts to exclude those from blocked users.
                       final filteredPosts = snapshot.data!.docs.where((doc) {
-                        return !profile.blockedUsers
-                            .contains(doc['profileUid']);
+                        return !profile.blockedUsers.contains(doc['profileUid']);
                       }).toList();
 
                       if (filteredPosts.isEmpty) {
                         return SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                                minHeight: constraints.maxHeight,
-                                minWidth: constraints.maxWidth),
+                            constraints: BoxConstraints(minHeight: constraints.maxHeight, minWidth: constraints.maxWidth),
                             child: const Center(
                               child: Text('Follow someone to see posts'),
                             ),
@@ -243,9 +229,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         itemCount: filteredPosts.length,
                         itemBuilder: (context, index) => Container(
                           margin: EdgeInsets.symmetric(
-                            horizontal: ResponsiveLayout.isWeb(context)
-                                ? width * 0.37
-                                : 0,
+                            horizontal: ResponsiveLayout.isWeb(context) ? width * 0.37 : 0,
                             vertical: ResponsiveLayout.isWeb(context) ? 15 : 0,
                           ),
                           child: PostCardExp(
@@ -263,11 +247,7 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget _buildProfileList() {
     final ThemeData theme = Theme.of(context);
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('profiles')
-          .snapshots(),
+      stream: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('error');
@@ -275,16 +255,13 @@ class _FeedScreenState extends State<FeedScreen> {
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child:
-                CircularProgressIndicator(color: theme.colorScheme.secondary),
+            child: CircularProgressIndicator(color: theme.colorScheme.secondary),
           );
         }
 
         return ListView(
           shrinkWrap: true,
-          children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildProfileListItem(doc))
-              .toList(),
+          children: snapshot.data!.docs.map<Widget>((doc) => _buildProfileListItem(doc)).toList(),
         );
       },
     );
@@ -306,15 +283,11 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       ),
       title: Text(data['username']),
-      selected: Provider.of<UserProvider>(context, listen: false)
-              .getProfile
-              ?.profileUid ==
-          data['profileUid'],
+      selected: Provider.of<UserProvider>(context, listen: false).getProfile?.profileUid == data['profileUid'],
       selectedTileColor: theme.colorScheme.secondary,
       onTap: () {
         setState(() {
-          Provider.of<UserProvider>(context, listen: false)
-              .refreshProfile(profileUid: data['profileUid']);
+          Provider.of<UserProvider>(context, listen: false).refreshProfile(profileUid: data['profileUid']);
         });
         Navigator.of(context).pop();
       },

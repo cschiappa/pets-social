@@ -50,29 +50,18 @@ class _WelcomePageState extends State<WelcomePage> {
                 SmoothPageIndicator(
                   controller: _controller,
                   count: 3,
-                  effect:
-                      const JumpingDotEffect(activeDotColor: Colors.deepPurple),
+                  effect: const JumpingDotEffect(activeDotColor: Colors.deepPurple),
                 ),
                 onLastPage
                     ? GestureDetector(
                         onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) {
-                          //       return const SignupScreen();
-                          //     },
-                          //   ),
-                          // );
                           context.goNamed(AppRouter.signup.name);
                         },
                         child: const Text('done'),
                       )
                     : GestureDetector(
                         onTap: () {
-                          _controller.nextPage(
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeIn);
+                          _controller.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
                         },
                         child: const Text('next'),
                       ),

@@ -28,10 +28,7 @@ class _SavedPostsState extends State<SavedPosts> {
 
   getData() async {
     try {
-      profileData = await FirebaseFirestore.instance
-          .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: widget.snap['profileUid'])
-          .get();
+      profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();
 
       setState(() {
         profileDocs = profileData.docs.first.data();
@@ -61,10 +58,7 @@ class _SavedPostsState extends State<SavedPosts> {
               child: Text('No posts available.'),
             )
           : FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collection('posts')
-                  .where('postId', whereIn: profile.savedPost)
-                  .get(),
+              future: FirebaseFirestore.instance.collection('posts').where('postId', whereIn: profile.savedPost).get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -83,18 +77,12 @@ class _SavedPostsState extends State<SavedPosts> {
                 return GridView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data!.docs.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 5,
-                      mainAxisSpacing: 1.5,
-                      childAspectRatio: 1),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
                   itemBuilder: (context, index) {
-                    ModelPost post =
-                        ModelPost.fromSnap(snapshot.data!.docs[index]);
+                    ModelPost post = ModelPost.fromSnap(snapshot.data!.docs[index]);
 
                     Widget mediaWidget;
-                    final String contentType =
-                        getContentTypeFromUrl(post.fileType);
+                    final String contentType = getContentTypeFromUrl(post.fileType);
 
                     if (contentType == 'video') {
                       mediaWidget = ClipRRect(
@@ -119,25 +107,12 @@ class _SavedPostsState extends State<SavedPosts> {
 
                     return GestureDetector(
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (context) => OpenPost(
-                        //       postId: post.postId,
-                        //       profileUid: post.profileUid,
-                        //       username: profileDocs == null
-                        //           ? ""
-                        //           : profileDocs['username'],
-                        //     ),
-                        //   ),
-                        // );
                         context.goNamed(
                           AppRouter.openPostFromProfile.name,
                           pathParameters: {
                             'postId': post.postId,
                             'profileUid': post.profileUid,
-                            'username': profileDocs == null
-                                ? ""
-                                : profileDocs['username'],
+                            'username': profileDocs == null ? "" : profileDocs['username'],
                           },
                         );
                       },

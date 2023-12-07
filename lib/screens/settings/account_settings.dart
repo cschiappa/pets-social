@@ -14,8 +14,7 @@ class AccountSettingsPage extends StatefulWidget {
 }
 
 class _AccountSettingsPageState extends State<AccountSettingsPage> {
-  final TextEditingController _currentPasswordController =
-      TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   bool passEnable = true;
@@ -46,11 +45,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             leading: const Icon(Icons.groups),
             title: const Text('Profiles'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const ProfileSettings(),
-              //   ),
-              // );
               context.goNamed(AppRouter.profileSettings.name);
             },
           ),
@@ -58,11 +52,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             leading: const Icon(Icons.info),
             title: const Text('Personal Details'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const PersonalDetailsPage(),
-              //   ),
-              // );
               context.goNamed(AppRouter.personalDetails.name);
             },
           ),
@@ -83,21 +72,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           padding: EdgeInsets.all(8.0),
                           child: Text('Enter your current password:'),
                         ),
-                        TextFieldInput(
-                            textEditingController: _currentPasswordController,
-                            isPass: passEnable,
-                            labelText: 'Current password',
-                            textInputType: TextInputType.text),
+                        TextFieldInput(textEditingController: _currentPasswordController, isPass: passEnable, labelText: 'Current password', textInputType: TextInputType.text),
                         //Enter new password
                         const Padding(
                           padding: EdgeInsets.only(top: 20.0, bottom: 8.0),
                           child: Text('Enter your new password:'),
                         ),
-                        TextFieldInput(
-                            textEditingController: _passwordController,
-                            isPass: passEnable,
-                            labelText: 'New password',
-                            textInputType: TextInputType.text),
+                        TextFieldInput(textEditingController: _passwordController, isPass: passEnable, labelText: 'New password', textInputType: TextInputType.text),
                         //Repeat Password
                         const Padding(
                           padding: EdgeInsets.only(top: 20.0, bottom: 8.0),
@@ -114,19 +95,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     actions: [
                       TextButton(
                         onPressed: () async {
-                          String currentPassword =
-                              _currentPasswordController.text;
+                          String currentPassword = _currentPasswordController.text;
                           String newPassword = _passwordController.text;
-                          String newPasswordConfirmation =
-                              _newPasswordController.text;
-                          bool isCurrentPasswordValid = await AuthMethods()
-                              .verifyCurrentPassword(currentPassword);
+                          String newPasswordConfirmation = _newPasswordController.text;
+                          bool isCurrentPasswordValid = await AuthMethods().verifyCurrentPassword(currentPassword);
                           if (isCurrentPasswordValid) {
                             if (AuthMethods().isPasswordValid(newPassword)) {
                               if (newPassword == newPasswordConfirmation) {
                                 if (!mounted) return;
-                                AuthMethods()
-                                    .changePassword(context, newPassword);
+                                AuthMethods().changePassword(context, newPassword);
 
                                 _currentPasswordController.clear();
                                 _newPasswordController.clear();
@@ -143,8 +120,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                      "Your new password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character."),
+                                  content: Text("Your new password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character."),
                                 ),
                               );
                             }
@@ -182,10 +158,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text(
-                        'Are you sure you want to delete your account?'),
-                    content: const Text(
-                        'If you proceed your account will be deleted permanently and everything will be lost.'),
+                    title: const Text('Are you sure you want to delete your account?'),
+                    content: const Text('If you proceed your account will be deleted permanently and everything will be lost.'),
                     actions: [
                       TextButton(
                         child: const Text(
@@ -197,8 +171,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             context: context,
                             builder: ((context) {
                               return AlertDialog(
-                                title: const Text(
-                                    'Please introduce your password'),
+                                title: const Text('Please introduce your password'),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -206,8 +179,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                     TextFieldInput(
                                       labelText: 'Enter your password',
                                       textInputType: TextInputType.text,
-                                      textEditingController:
-                                          _passwordController,
+                                      textEditingController: _passwordController,
                                       isPass: true,
                                     ),
                                     const SizedBox(
@@ -218,24 +190,17 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                 actions: [
                                   TextButton(
                                     onPressed: () async {
-                                      String currentPassword =
-                                          _passwordController.text;
+                                      String currentPassword = _passwordController.text;
 
-                                      bool isCurrentPasswordValid =
-                                          await AuthMethods()
-                                              .verifyCurrentPassword(
-                                                  currentPassword);
+                                      bool isCurrentPasswordValid = await AuthMethods().verifyCurrentPassword(currentPassword);
                                       if (isCurrentPasswordValid) {
                                         if (!mounted) return;
-                                        AuthMethods()
-                                            .deleteUserAccount(context);
+                                        AuthMethods().deleteUserAccount(context);
                                       } else {
                                         if (!mounted) return;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
-                                            content: Text(
-                                                "Current password is incorrect"),
+                                            content: Text("Current password is incorrect"),
                                           ),
                                         );
                                       }
@@ -257,8 +222,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                       TextButton(
                         child: Text(
                           'Cancel',
-                          style: TextStyle(
-                              fontSize: 16, color: theme.colorScheme.tertiary),
+                          style: TextStyle(fontSize: 16, color: theme.colorScheme.tertiary),
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();

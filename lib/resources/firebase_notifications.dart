@@ -52,15 +52,13 @@ class FirebaseApi {
       },
     );
 
-    final platform = _localNotifications.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final platform = _localNotifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     await platform?.createNotificationChannel(_androidChannel);
   }
 
   //PUSH NOTIFICATION
   Future initPushNotifications() async {
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
@@ -90,7 +88,7 @@ class FirebaseApi {
     });
   }
 
-  //INITNOTIFICATIONS GROUP
+  //INIT-NOTIFICATIONS GROUP
   Future<void> initNotifications() async {
     await _firebaseMessaging.requestPermission();
     final fCMToken = await _firebaseMessaging.getToken();
@@ -108,10 +106,7 @@ class FirebaseApi {
   //SAVE TOKEN TO DATABASE
   Future<void> saveTokenToDatabase(String token) async {
     if (FirebaseAuth.instance.currentUser != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
+      await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
         'tokens': FieldValue.arrayUnion([token]),
       });
     }
@@ -122,23 +117,17 @@ class FirebaseApi {
     final token = await _firebaseMessaging.getToken();
 
     if (FirebaseAuth.instance.currentUser != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
+      await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
         'tokens': FieldValue.arrayRemove([token]),
       });
     }
   }
 
 // SEND NOTIFICATION
-  Future<void> sendNotificationToUser(String userUid, String title, String body,
-      String postId, String receiverUid, String senderUid) async {
-    const String url =
-        'https://fcm.googleapis.com/v1/projects/pets-social-3d14e/messages:send';
+  Future<void> sendNotificationToUser(String userUid, String title, String body, String postId, String receiverUid, String senderUid) async {
+    const String url = 'https://fcm.googleapis.com/v1/projects/pets-social-3d14e/messages:send';
 
-    final user =
-        await FirebaseFirestore.instance.collection('users').doc(userUid).get();
+    final user = await FirebaseFirestore.instance.collection('users').doc(userUid).get();
 
     final List<String> userFCMTokenList = List<String>.from(user['tokens']);
 
@@ -171,8 +160,7 @@ class FirebaseApi {
         if (response.statusCode == 200) {
           debugPrint('Notification sent: ${response.body}');
         } else {
-          debugPrint(
-              'Failed to send notification. Status code: ${response.statusCode}');
+          debugPrint('Failed to send notification. Status code: ${response.statusCode}');
         }
       }
     } catch (e) {
@@ -193,59 +181,44 @@ class FirebaseApi {
     );
     var scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
 
-    AuthClient client =
-        await clientViaServiceAccount(accountCredentials, scopes);
+    AuthClient client = await clientViaServiceAccount(accountCredentials, scopes);
 
     return client;
   }
 
 //NOTIFICATION METHOD FOR POSTS
-  Future<void> notificationMethod(
-      String postId, String profileUid, String action) async {
+  Future<void> notificationMethod(String postId, String profileUid, String action) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     //get user that made the post
-    final user =
-        await firestore.collection('posts').doc(postId).get().then((value) {
+    final user = await firestore.collection('posts').doc(postId).get().then((value) {
       return value.data()!['uid'];
     });
 
     //get profile that made the post
-    final receiverUid =
-        await firestore.collection('posts').doc(postId).get().then((value) {
+    final receiverUid = await firestore.collection('posts').doc(postId).get().then((value) {
       return value.data()!['profileUid'];
     });
 
     //get profile that liked the post
-    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
-        .collectionGroup('profiles')
-        .where('profileUid', isEqualTo: profileUid)
-        .get();
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       final actionUser = querySnapshot.docs[0].data()['username'];
 
-      await FirebaseApi().sendNotificationToUser(user, 'Pets Social',
-          '$actionUser $action your post.', postId, receiverUid, profileUid);
+      await FirebaseApi().sendNotificationToUser(user, 'Pets Social', '$actionUser $action your post.', postId, receiverUid, profileUid);
     }
   }
 
 //NOTIFICATION METHOD FOR FOLLOWING
-  Future<void> followNotificationMethod(
-      String followedProfile, String followingProfile) async {
+  Future<void> followNotificationMethod(String followedProfile, String followingProfile) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final userProfile = await firestore
-        .collectionGroup('profiles')
-        .where('profileUid', isEqualTo: followedProfile)
-        .get();
+    final userProfile = await firestore.collectionGroup('profiles').where('profileUid', isEqualTo: followedProfile).get();
 
     if (userProfile.docs.isNotEmpty) {
       final user = userProfile.docs[0].reference.parent.parent!.id;
 
       //get profile that liked the post
-      final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
-          .collectionGroup('profiles')
-          .where('profileUid', isEqualTo: followingProfile)
-          .get();
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore.collectionGroup('profiles').where('profileUid', isEqualTo: followingProfile).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         final actionUser = querySnapshot.docs[0].data()['username'];
@@ -267,24 +240,15 @@ class FirebaseApi {
   }
 
 //UPLOAD NOTIFICATION TO STORAGE
-  Future<void> uploadNotificationToStorage(
-      String postId, String body, String receiverUid, String senderUid) async {
+  Future<void> uploadNotificationToStorage(String postId, String body, String receiverUid, String senderUid) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     try {
       String notificationId = const Uuid().v1();
 
-      ModelNotification notification = ModelNotification(
-          postId: postId,
-          body: body,
-          receiver: receiverUid,
-          sender: senderUid,
-          datePublished: DateTime.now());
+      ModelNotification notification = ModelNotification(postId: postId, body: body, receiver: receiverUid, sender: senderUid, datePublished: DateTime.now());
 
-      firestore
-          .collection('notifications')
-          .doc(notificationId)
-          .set(notification.toJson());
+      firestore.collection('notifications').doc(notificationId).set(notification.toJson());
 
       debugPrint('Notification added successfully!');
     } catch (e) {

@@ -9,32 +9,22 @@ import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/resources/storage_methods.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-
 import '../providers/user_provider.dart';
-import 'firebase_messaging.dart';
+import 'firebase_notifications.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  //GET PROFILE DETAILS
   Future<ModelProfile> getProfileDetails(String? profileUid) async {
     User currentUser = _auth.currentUser!;
     DocumentSnapshot snap;
 
     if (profileUid != null) {
-      snap = await _firestore
-          .collection('users')
-          .doc(currentUser.uid)
-          .collection('profiles')
-          .doc(profileUid)
-          .get();
+      snap = await _firestore.collection('users').doc(currentUser.uid).collection('profiles').doc(profileUid).get();
     } else {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('users')
-          .doc(currentUser.uid)
-          .collection('profiles')
-          .limit(1)
-          .get();
+      QuerySnapshot querySnapshot = await _firestore.collection('users').doc(currentUser.uid).collection('profiles').limit(1).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         snap = querySnapshot.docs.first;
@@ -45,7 +35,7 @@ class AuthMethods {
     return ModelProfile.fromSnap(snap);
   }
 
-  //Checks if password follows all the requirement
+  //PASSWORD CHECKER
   bool isPasswordValid(String password) {
     const lengthRequirement = 5;
     final uppercaseRegex = RegExp(r'[A-Z]');
@@ -53,18 +43,14 @@ class AuthMethods {
     final numberRegex = RegExp(r'[0-9]');
     final specialCharacterRegex = RegExp(r'[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]');
 
-    if (password.length < lengthRequirement ||
-        !uppercaseRegex.hasMatch(password) ||
-        !lowercaseRegex.hasMatch(password) ||
-        !numberRegex.hasMatch(password) ||
-        !specialCharacterRegex.hasMatch(password)) {
+    if (password.length < lengthRequirement || !uppercaseRegex.hasMatch(password) || !lowercaseRegex.hasMatch(password) || !numberRegex.hasMatch(password) || !specialCharacterRegex.hasMatch(password)) {
       return false;
     }
 
     return true;
   }
 
-  //sign up user
+  //SIGN UP
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -79,22 +65,17 @@ class AuthMethods {
         if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
           if (username.length <= 15 && bio!.length <= 150) {
             //register user
-            UserCredential cred = await _auth.createUserWithEmailAndPassword(
-                email: email, password: password);
+            UserCredential cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
 
             if (file != null) {
-              photoUrl = await StorageMethods()
-                  .uploadImageToStorage('profilePics', file, false);
+              photoUrl = await StorageMethods().uploadImageToStorage('profilePics', file, false);
             } else {
-              photoUrl =
-                  'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
+              photoUrl = 'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
             }
 
-            ModelAccount account =
-                ModelAccount(email: email, uid: cred.user!.uid);
+            ModelAccount account = ModelAccount(email: email, uid: cred.user!.uid);
 
-            String profileUid =
-                const Uuid().v1(); //v1 creates unique id based on time
+            String profileUid = const Uuid().v1(); //v1 creates unique id based on time
             ModelProfile profile = ModelProfile(
               username: username,
               profileUid: profileUid,
@@ -108,15 +89,10 @@ class AuthMethods {
             );
 
             final batch = _firestore.batch();
-            var accountCollection =
-                _firestore.collection('users').doc(cred.user!.uid);
+            var accountCollection = _firestore.collection('users').doc(cred.user!.uid);
             batch.set(accountCollection, account.toJson());
 
-            var profileCollection = _firestore
-                .collection('users')
-                .doc(cred.user!.uid)
-                .collection('profiles')
-                .doc(profile.profileUid);
+            var profileCollection = _firestore.collection('users').doc(cred.user!.uid).collection('profiles').doc(profile.profileUid);
 
             batch.set(profileCollection, profile.toJson());
 
@@ -125,15 +101,13 @@ class AuthMethods {
             //FirebaseApi().initNotifications();
             res = "success";
           } else {
-            res =
-                "Username must be 30 characters or less and bio must be 150 characters or less.";
+            res = "Username must be 30 characters or less and bio must be 150 characters or less.";
           }
         } else {
           res = "You must choose an email and password.";
         }
       } else {
-        res =
-            "Your password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character.";
+        res = "Your password must contain a minimum of 5 letters, at least 1 upper case letter, 1 lower case letter, 1 numeric character and one special character.";
       }
     } catch (err) {
       res = err.toString();
@@ -141,15 +115,13 @@ class AuthMethods {
     return res;
   }
 
-  //log in user
-  Future<String> loginUser(
-      {required String email, required String password}) async {
+  //LOG IN
+  Future<String> loginUser({required String email, required String password}) async {
     String res = "An error occurred";
 
     try {
       if (email.isNotEmpty && password.isNotEmpty) {
-        await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
+        await _auth.signInWithEmailAndPassword(email: email, password: password);
 
         FirebaseApi().initNotifications();
         res = "success";
@@ -162,17 +134,15 @@ class AuthMethods {
     return res;
   }
 
-  //Sign Out
+  //SIGN OUT
   Future<void> signOut(context) async {
     UserProvider userProvider = Provider.of(context, listen: false);
-    await FirebaseApi()
-        .removeTokenFromDatabase()
-        .then((value) => _auth.signOut());
+    await FirebaseApi().removeTokenFromDatabase().then((value) => _auth.signOut());
     await userProvider.disposeProfile();
     //await FirebaseApi.removeTokenFromDatabase();
   }
 
-  //Delete User
+  //DELETE PROFILE
   Future<void> deleteUserAccount(context) async {
     final User? user = FirebaseAuth.instance.currentUser;
 
@@ -183,18 +153,9 @@ class AuthMethods {
         await user.delete();
 
         //Delete the user's account from Firestore collection
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .delete();
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
 
         context.goNamed(AppRouter.login.name);
-
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (context) => const LoginScreen(),
-        //   ),
-        // );
       } catch (e) {
         // Handle any errors that may occur during deletion
         debugPrint('Error deleting account: $e');
@@ -207,7 +168,7 @@ class AuthMethods {
     }
   }
 
-  //Change password
+  //CHANGE PASSWORD
   Future<void> changePassword(BuildContext context, String newPassword) async {
     final User? user = FirebaseAuth.instance.currentUser;
     try {
@@ -231,12 +192,11 @@ class AuthMethods {
     }
   }
 
-  //Verify Current Password
+  //AUTHENTICATION
   Future<bool> verifyCurrentPassword(String currentPassword) async {
     final User? user = FirebaseAuth.instance.currentUser;
 
-    AuthCredential credential = EmailAuthProvider.credential(
-        email: user!.email!, password: currentPassword);
+    AuthCredential credential = EmailAuthProvider.credential(email: user!.email!, password: currentPassword);
 
     try {
       await user.reauthenticateWithCredential(credential);
@@ -247,7 +207,7 @@ class AuthMethods {
     }
   }
 
-  //Format date
+  //DATE FORMATTER
   String formatDate(String date) {
     DateTime newDate = DateTime.parse(date);
     final formatedDate = DateFormat.MMMMd().format(newDate);
