@@ -17,7 +17,7 @@ import '../widgets/text_field_input.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? profileUid;
-  final snap;
+  final dynamic snap;
 
   const ProfileScreen({super.key, this.profileUid, this.snap});
 
@@ -26,7 +26,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  var userData = {};
+  Map<dynamic, dynamic> userData = {};
   int postLen = 0;
   int likes = 0;
   int fish = 0;
@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int followers = 0;
   bool isFollowing = false;
   bool isLoading = false;
-  String userId = "";
+  late String userId = "";
   late TextEditingController _bioController = TextEditingController();
   late TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;

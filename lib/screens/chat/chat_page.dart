@@ -91,8 +91,6 @@ class ChatPageState extends State<ChatPage> {
     if (!data['read'] && data['receiverUid'] == profile) {
       final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('users', arrayContains: data['receiverUid']).where('users', arrayContains: data['senderUid']).get();
 
-      print(querySnapshot);
-
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         if (doc['lastMessage'] != null) {
           await doc.reference.update({

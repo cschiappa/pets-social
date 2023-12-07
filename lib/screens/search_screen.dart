@@ -9,7 +9,7 @@ import '../models/post.dart';
 import '../utils/utils.dart';
 
 class SearchScreen extends StatefulWidget {
-  final snap;
+  final dynamic snap;
   const SearchScreen({super.key, this.snap});
 
   @override
@@ -22,8 +22,8 @@ class _SearchScreenState extends State<SearchScreen> {
   var userData = {};
   List<ModelProfile> profiles = [];
   List<ModelProfile> profilesFiltered = [];
-  var profileData;
-  var profileDocs;
+  dynamic profileData;
+  dynamic profileDocs;
 
   @override
   void initState() {

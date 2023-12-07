@@ -9,7 +9,7 @@ import '../resources/firestore_methods.dart';
 import 'like_animation.dart';
 
 class CommentCard extends StatefulWidget {
-  final snap;
+  final dynamic snap;
   const CommentCard({super.key, required this.snap});
 
   @override

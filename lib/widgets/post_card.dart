@@ -20,7 +20,7 @@ import 'package:share_plus/share_plus.dart';
 import '../features/app_router.dart';
 
 class PostCardExp extends StatefulWidget {
-  final snap;
+  final dynamic snap;
   const PostCardExp({super.key, required this.snap});
 
   @override
@@ -34,8 +34,8 @@ class _PostCardExpState extends State<PostCardExp> {
   final CarouselController _controller = CarouselController();
   final TextEditingController _descriptionController = TextEditingController();
   bool _isLoading = false;
-  var profileData;
-  var profileDocs;
+  dynamic profileData;
+  dynamic profileDocs;
 
   @override
   void initState() {

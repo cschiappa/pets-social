@@ -9,7 +9,7 @@ import '../../providers/user_provider.dart';
 import '../../utils/utils.dart';
 
 class SavedPosts extends StatefulWidget {
-  final snap;
+  final dynamic snap;
   const SavedPosts({super.key, this.snap});
 
   @override
@@ -17,8 +17,8 @@ class SavedPosts extends StatefulWidget {
 }
 
 class _SavedPostsState extends State<SavedPosts> {
-  var profileData;
-  var profileDocs;
+  dynamic profileData;
+  dynamic profileDocs;
 
   @override
   void initState() {

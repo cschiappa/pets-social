@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class WebScreenLayout extends StatelessWidget {
   const WebScreenLayout({required this.navigationShell, Key? key}) : super(key: key);
 
-  final navigationShell;
+  final dynamic navigationShell;
 
   @override
   Widget build(BuildContext context) {
