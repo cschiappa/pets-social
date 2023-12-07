@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -5,6 +6,7 @@ import 'package:pets_social/resources/chat_methods.dart';
 import 'package:pets_social/widgets/chat_bubble.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../models/profile.dart';
 import '../../providers/user_provider.dart';
@@ -29,6 +31,12 @@ class ChatPageState extends State<ChatPage> {
       //clear text after sending
       _messageController.clear();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    messageRead();
   }
 
   @override
@@ -81,26 +89,25 @@ class ChatPageState extends State<ChatPage> {
         }
 
         return ListView(
+          reverse: true,
           children: snapshot.data!.docs.map((document) => _buildMessageItem(document)).toList(),
         );
       },
     );
   }
 
-  Future<void> messageRead(Map<String, dynamic> data, String profile) async {
-    if (!data['read'] && data['receiverUid'] == profile) {
-      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('users', arrayContains: data['receiverUid']).where('users', arrayContains: data['senderUid']).get();
+  Future<void> messageRead() async {
+    final String profileUid = Provider.of<UserProvider>(context, listen: false).getProfile!.profileUid;
 
-      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-        if (doc['lastMessage'] != null) {
-          await doc.reference.update({
-            'lastMessage': {
-              ...doc['lastMessage'],
-              'read': true,
-            },
-          });
-        }
-      }
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.senderUid', isEqualTo: widget.receiverUserID).where('lastMessage.read', isEqualTo: false).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      await querySnapshot.docs.first.reference.update({
+        'lastMessage': {
+          ...querySnapshot.docs.first['lastMessage'],
+          'read': true,
+        },
+      });
     }
   }
 
@@ -110,10 +117,8 @@ class ChatPageState extends State<ChatPage> {
     final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
     final ThemeData theme = Theme.of(context);
 
-    messageRead(data, profile!.profileUid);
-
     //align messages to right or left
-    var alignment = (data['senderUid'] == profile.profileUid) ? Alignment.centerRight : Alignment.centerLeft;
+    var alignment = (data['senderUid'] == profile!.profileUid) ? Alignment.centerRight : Alignment.centerLeft;
 
     var color = (data['senderUid'] == profile.profileUid) ? theme.colorScheme.secondary : Colors.grey.shade700;
 

@@ -23,7 +23,9 @@ class _SavedPostsState extends State<SavedPosts> {
   @override
   void initState() {
     super.initState();
-    getData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getData();
+    });
   }
 
   //GET PROFILE DATA
@@ -109,11 +111,11 @@ class _SavedPostsState extends State<SavedPosts> {
                     return GestureDetector(
                       onTap: () {
                         context.goNamed(
-                          AppRouter.openPostFromProfile.name,
+                          AppRouter.openPostFromFeed.name,
                           pathParameters: {
                             'postId': post.postId,
                             'profileUid': post.profileUid,
-                            'username': profileDocs == null ? "" : profileDocs['username'],
+                            'username': profileDocs['username'],
                           },
                         );
                       },

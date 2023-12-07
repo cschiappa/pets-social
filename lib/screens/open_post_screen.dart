@@ -33,7 +33,6 @@ class _OpenPostState extends State<OpenPost> {
         index: posts.indexWhere((element) => element['postId'] == widget.postId),
         alignment: 0,
       );
-
       firstScroll = false;
     }
   }

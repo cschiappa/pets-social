@@ -171,14 +171,30 @@ class _FeedScreenState extends State<FeedScreen> {
                   onPressed: () {
                     context.goNamed(AppRouter.chatList.name);
                   },
-                  icon: Badge.count(
-                    textColor: Colors.white,
-                    backgroundColor: theme.colorScheme.secondary,
-                    count: 3,
-                    child: const Icon(
-                      Icons.forum,
-                      size: 25,
-                    ),
+                  icon: FutureBuilder<int>(
+                    future: numberOfUnreadChats(profile!.profileUid),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return const Icon(Icons.error);
+                      } else {
+                        return snapshot.data! > 0
+                            ? Badge.count(
+                                textColor: Colors.white,
+                                backgroundColor: theme.colorScheme.secondary,
+                                count: snapshot.data!,
+                                child: const Icon(
+                                  Icons.forum,
+                                  size: 25,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.forum,
+                                size: 25,
+                              );
+                      }
+                    },
                   ),
                 ),
               ],
@@ -240,6 +256,12 @@ class _FeedScreenState extends State<FeedScreen> {
                   ));
       }),
     );
+  }
+
+  Future<int> numberOfUnreadChats(String profileUid) async {
+    final QuerySnapshot chats = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.read', isEqualTo: false).get();
+
+    return chats.docs.length;
   }
 
   //PROFILE LIST FOR DRAWER

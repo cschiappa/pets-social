@@ -86,6 +86,7 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
+  //PROFILES LIST
   Widget _buildUserList() {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final ThemeData theme = Theme.of(context);
@@ -107,9 +108,6 @@ class _ChatListState extends State<ChatList> {
 
         for (var doc in snapshot.data!.docs) {
           List<dynamic> users = doc['users'];
-
-          // Retrieve the 'lastMessage' field
-          //Map<String, dynamic>? lastMessageMap = doc['lastMessage'];
 
           for (var profileUid in users) {
             if (profileUid != profile.profileUid) {
@@ -144,6 +142,7 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
+  //FETCH PROFILES
   Future<List<DocumentSnapshot>> _fetchProfiles(List<String> profileUidList) async {
     List<Future<DocumentSnapshot>> futures = profileUidList.map(
       (profileUid) {
@@ -154,88 +153,14 @@ class _ChatListState extends State<ChatList> {
     return await Future.wait(futures);
   }
 
-  //build a list of profiles
-  // Widget _buildUserList() {
-  //   final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-  //   final ThemeData theme = Theme.of(context);
+  //CHECK UNREAD MESSAGES
+  Future<List<Map<String, dynamic>>> checkReads(String receiverUid, String senderUid) async {
+    final QuerySnapshot messages = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: receiverUid).where('lastMessage.senderUid', isEqualTo: senderUid).get();
 
-  //      FirebaseFirestore.instance
-  //         .collection('chats')
-  //         .where('users', arrayContains: profile!.profileUid)
-  //         .orderBy('timestamp', descending: true)
-  //         .snapshots()
-  //         .asyncMap((querySnapshot) async {
-  //       // Get the list of profile UIDs different from the current profile
-  //       List<String> profileUidList = [];
-  //       for (var doc in querySnapshot.docs) {
-  //         List<dynamic> users = doc['users'];
-  //         for (var profileUid in users) {
-  //           if (profileUid != profile.profileUid) {
-  //             profileUidList.add(profileUid);
-  //           }
-  //         }
-  //       }
+    return messages.docs.map((doc) => doc['lastMessage'] as Map<String, dynamic>).toList();
+  }
 
-  //       // Step 2: Fetch corresponding profiles from the 'profiles' collection group
-  //       await Future.wait(
-  //         profileUidList.map(
-  //           (profileUid) async {
-  //             var profileDocs = await FirebaseFirestore.instance
-  //                 .collectionGroup('profiles')
-  //                 .where('profileUid', isEqualTo: profileUid)
-  //                 .get();
-
-  //           },
-  //         ),
-  //       );
-  //     });
-
-  //   return StreamBuilder<QuerySnapshot>(
-  //     stream: profileDocs,
-  //     builder: (context, snapshot){
-  //       if (snapshot.hasError) {
-  //         return const Text('error');
-  //       }
-
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return LinearProgressIndicator(
-  //           color: theme.colorScheme.secondary,
-  //         );
-  //       }
-
-  //       return ListView(
-  //         children: snapshot.data!.docs
-  //             .map<Widget>((doc) => _buildUserListItem(doc))
-  //             .toList(),
-  //       );
-  //     });
-
-  //   // return StreamBuilder<QuerySnapshot>(
-  //   //   stream: FirebaseFirestore.instance
-  //   //       .collectionGroup('profiles')
-  //   //       .where('profileUid', whereIn: profile!.following)
-  //   //       .snapshots(),
-  //   //   builder: (context, snapshot) {
-  //   //     if (snapshot.hasError) {
-  //   //       return const Text('error');
-  //   //     }
-
-  //   //     if (snapshot.connectionState == ConnectionState.waiting) {
-  //   //       return LinearProgressIndicator(
-  //   //         color: theme.colorScheme.secondary,
-  //   //       );
-  //   //     }
-
-  //   //     return ListView(
-  //   //       children: snapshot.data!.docs
-  //   //           .map<Widget>((doc) => _buildUserListItem(doc))
-  //   //           .toList(),
-  //   //     );
-  //   //   },
-  //   // );
-  // }
-
-  //build individual user list items
+  //PROFILES LIST ITEMS
   Widget _buildUserListItem(
     DocumentSnapshot document,
   ) {
@@ -243,30 +168,63 @@ class _ChatListState extends State<ChatList> {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final ThemeData theme = Theme.of(context);
 
-    //display all users except current user
-    if (profile!.profileUid != data['profileUid']) {
-      return ListTile(
-        leading: CircleAvatar(
-          radius: 15,
-          backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
-        ),
-        title: Text(data['username']),
-        trailing: Icon(
-          Icons.mark_chat_unread,
-          size: 20,
-          color: theme.colorScheme.secondary,
-        ),
-        onTap: () {
-          context.goNamed(AppRouter.chatPage.name, pathParameters: {
-            'receiverUserEmail': data['email'],
-            'receiverUserId': data['profileUid'],
-            'receiverUsername': data['username'],
-          });
-        },
-      );
-    } else {
-      //return empty container
-      return Container();
-    }
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: checkReads(profile!.profileUid, data['profileUid']),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LinearProgressIndicator(
+            color: theme.colorScheme.secondary,
+          );
+        }
+
+        if (snapshot.hasError) {
+          return const Text('Error checking unread messages');
+        }
+
+        List<Map<String, dynamic>> lastMessages = snapshot.data ?? [];
+
+        bool hasUnreadMessages = lastMessages.any((lastMessage) => !lastMessage['read']);
+        String message = lastMessages.isNotEmpty ? lastMessages[0]['message'] : '';
+
+        // Display all users except the current user
+        if (profile.profileUid != data['profileUid']) {
+          return ListTile(
+            leading: CircleAvatar(
+              radius: 15,
+              backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
+            ),
+            title: hasUnreadMessages
+                ? Text(
+                    data['username'],
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  )
+                : Text(data['username']),
+            subtitle: hasUnreadMessages
+                ? Text(
+                    message,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  )
+                : null,
+            trailing: hasUnreadMessages
+                ? Icon(
+                    Icons.fiber_manual_record,
+                    size: 20,
+                    color: theme.colorScheme.secondary,
+                  )
+                : null,
+            onTap: () {
+              context.goNamed(AppRouter.chatPage.name, pathParameters: {
+                'receiverUserEmail': data['email'],
+                'receiverUserId': data['profileUid'],
+                'receiverUsername': data['username'],
+              });
+            },
+          );
+        } else {
+          // Return empty container for the current user
+          return Container();
+        }
+      },
+    );
   }
 }

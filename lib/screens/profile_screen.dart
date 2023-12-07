@@ -179,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       if (e == 'Saved Posts') {
                                         Navigator.pop(context);
 
-                                        context.goNamed(AppRouter.savedPosts.name);
+                                        context.goNamed(AppRouter.savedPosts.name, extra: widget.snap);
                                       } else if (e == 'Settings') {
                                         Navigator.pop(context);
 
