@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../utils/global_variables.dart';
-import '../widgets/post_card_exp.dart';
+import '../widgets/post_card.dart';
 
 class OpenPost extends StatefulWidget {
   const OpenPost({
@@ -32,8 +32,7 @@ class _OpenPostState extends State<OpenPost> {
   void scrollToPost(List posts) {
     if (firstScroll) {
       itemController.jumpTo(
-        index:
-            posts.indexWhere((element) => element['postId'] == widget.postId),
+        index: posts.indexWhere((element) => element['postId'] == widget.postId),
         alignment: 0,
       );
 
@@ -56,21 +55,11 @@ class _OpenPostState extends State<OpenPost> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      appBar: ResponsiveLayout.isWeb(context)
-          ? null
-          : AppBar(
-              backgroundColor: theme.appBarTheme.backgroundColor,
-              centerTitle: false,
-              title: Text('Post from ${widget.username}')),
+      appBar: ResponsiveLayout.isWeb(context) ? null : AppBar(backgroundColor: theme.appBarTheme.backgroundColor, centerTitle: false, title: Text('Post from ${widget.username}')),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('posts')
-            .where('profileUid', isEqualTo: widget.profileUid)
-            .orderBy('datePublished', descending: true)
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: widget.profileUid).orderBy('datePublished', descending: true).snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              Provider.of<UserProvider>(context).getProfile == null) {
+          if (snapshot.connectionState == ConnectionState.waiting || Provider.of<UserProvider>(context).getProfile == null) {
             return Center(
               child: CircularProgressIndicator(
                 color: theme.colorScheme.secondary,
@@ -83,8 +72,7 @@ class _OpenPostState extends State<OpenPost> {
             scrollToPost(snapshot.data!.docs);
           });
           return ScrollablePositionedList.builder(
-            initialScrollIndex: snapshot.data!.docs
-                .indexWhere((element) => element['postId'] == widget.postId),
+            initialScrollIndex: snapshot.data!.docs.indexWhere((element) => element['postId'] == widget.postId),
             itemScrollController: itemController,
             key: _listKey,
             itemCount: snapshot.data!.docs.length,

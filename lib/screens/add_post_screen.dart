@@ -29,6 +29,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   bool _isLoading = false;
 
+  //POST IMAGE
   void postImage(
     String uid,
     String profileUid,
@@ -61,6 +62,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
   }
 
+  //SELECT IMAGE
   _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -162,7 +164,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         });
   }
 
-//clear image after posting
+//CLEAR IMAGE AFTER POSTING
   void clearImage() {
     setState(() {
       _file = null;

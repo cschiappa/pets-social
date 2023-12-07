@@ -262,19 +262,7 @@ class _PostCardExpState extends State<PostCardExp> {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: InkWell(
-                                onTap: () => //widget.snap['profileUid'] ==
-                                    //profile!.profileUid
-                                    // ? context.goNamed(
-                                    //     AppRouter.commentsFromProfile.name,
-                                    //     extra: widget.snap,
-                                    //     pathParameters: {
-                                    //       'postId': widget.snap['postId'],
-                                    //       'profileUid':
-                                    //           widget.snap['profileUid'],
-                                    //       'username': profileDocs['username'],
-                                    //     },
-                                    //   )
-                                    context.pushNamed(
+                                onTap: () => context.pushNamed(
                                   AppRouter.commentsFromFeed.name,
                                   extra: widget.snap,
                                   pathParameters: {
@@ -427,126 +415,6 @@ class _PostCardExpState extends State<PostCardExp> {
                     postId: widget.snap['postId'],
                     controller: _controller,
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 90),
-                  //   child: Container(
-                  //     padding: const EdgeInsets.all(2.0),
-                  //     decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(10.0),
-                  //       color: const Color.fromARGB(100, 0, 0, 0),
-                  //     ),
-                  //     child: Row(
-                  //       children: [
-                  //         //ARROW LEFT SWIPE
-                  //         InkWell(
-                  //           onTap: () {
-                  //             _controller.previousPage();
-                  //           },
-                  //           child: Icon(
-                  //             Icons.arrow_left,
-                  //             color: theme.colorScheme.primary,
-                  //           ),
-                  //         ),
-                  //         Expanded(
-                  //           child: CarouselSlider(
-                  //             carouselController: _controller,
-                  //             options: CarouselOptions(
-                  //               viewportFraction: 0.4,
-                  //               aspectRatio: 4,
-                  //               enableInfiniteScroll: true,
-                  //               initialPage: 1,
-                  //               enlargeCenterPage: true,
-                  //               enlargeFactor: 0.5,
-                  //               enlargeStrategy: CenterPageEnlargeStrategy.zoom,
-                  //             ),
-                  //             items: [
-                  //               // FISH
-                  //               FishAnimation(
-                  //                 isAnimating: widget.snap['fish'] != null &&
-                  //                     widget.snap['fish']
-                  //                         .contains(profile!.profileUid),
-                  //                 smallLike: true,
-                  //                 child: InkWell(
-                  //                   onTap: () async {
-                  //                     await FirestoreMethods().giveFishToPost(
-                  //                         widget.snap['postId'],
-                  //                         profile!.profileUid,
-                  //                         widget.snap['fish']);
-                  //                   },
-                  //                   child: Image.asset(
-                  //                     (widget.snap['fish'] != null &&
-                  //                             widget.snap['fish'].contains(
-                  //                                 profile!.profileUid))
-                  //                         ? 'assets/fish.png'
-                  //                         : 'assets/fish_border.png',
-                  //                     //width: 100,
-                  //                     //height: 100,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //               //LIKES
-                  //               LikeAnimation(
-                  //                 isAnimating: widget.snap['likes'] != null &&
-                  //                     widget.snap['likes']
-                  //                         .contains(profile!.profileUid),
-                  //                 smallLike: true,
-                  //                 child: InkWell(
-                  //                   onTap: () async {
-                  //                     await FirestoreMethods().likePost(
-                  //                         widget.snap['postId'],
-                  //                         profile!.profileUid,
-                  //                         widget.snap['likes']);
-                  //                   },
-                  //                   child: Image.asset(
-                  //                     (widget.snap['likes'] != null &&
-                  //                             widget.snap['likes'].contains(
-                  //                                 profile!.profileUid))
-                  //                         ? 'assets/like.png'
-                  //                         : 'assets/like_border.png',
-                  //                     //width: 100,
-                  //                     //height: 100,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //               //BONES
-                  //               BoneAnimation(
-                  //                 isAnimating: widget.snap['bones'] != null &&
-                  //                     widget.snap['bones']
-                  //                         .contains(profile!.profileUid),
-                  //                 smallLike: true,
-                  //                 child: InkWell(
-                  //                   onTap: () async {
-                  //                     await FirestoreMethods().giveBoneToPost(
-                  //                         widget.snap['postId'],
-                  //                         profile!.profileUid,
-                  //                         widget.snap['bones']);
-                  //                   },
-                  //                   child: Image.asset(
-                  //                     (widget.snap['bones'] != null &&
-                  //                             widget.snap['bones'].contains(
-                  //                                 profile!.profileUid))
-                  //                         ? 'assets/bone.png'
-                  //                         : 'assets/bone_border.png',
-                  //                     //width: 100,
-                  //                     //height: 100,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //         //ARROW RIGHT SWIPE
-                  //         InkWell(
-                  //           onTap: () {
-                  //             _controller.nextPage();
-                  //           },
-                  //           child: Icon(Icons.arrow_right,
-                  //               color: theme.colorScheme.primary),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                 )
               ],
             ),
@@ -572,63 +440,9 @@ class _PostCardExpState extends State<PostCardExp> {
                       ]),
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(top: 8),
-                  //   child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.end,
-                  //       children: [
-                  //         //show number of likes
-                  //         DefaultTextStyle(
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .subtitle2!
-                  //               .copyWith(fontWeight: FontWeight.w800),
-                  //           child: Text(
-                  //             '${widget.snap['likes'].length} likes',
-                  //             style: Theme.of(context).textTheme.bodyText2,
-                  //           ),
-                  //         ),
-                  //         SizedBox(width: 10), // Add space
-                  //         //show number of fish
-                  //         DefaultTextStyle(
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .subtitle2!
-                  //               .copyWith(fontWeight: FontWeight.w800),
-                  //           child: Text(
-                  //             '${widget.snap['fish'] != null ? widget.snap['fish'].length : 0} fish',
-                  //             style: Theme.of(context).textTheme.bodyText2,
-                  //           ),
-                  //         ),
-                  //         SizedBox(width: 10), // Add space
-                  //         //show number of bones
-                  //         DefaultTextStyle(
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .subtitle2!
-                  //               .copyWith(fontWeight: FontWeight.w800),
-                  //           child: Text(
-                  //             '${widget.snap['bones'] != null ? widget.snap['bones'].length : 0} bones',
-                  //             style: Theme.of(context).textTheme.bodyText2,
-                  //           ),
-                  //         ),
-                  //       ]),
-                  // ),
-
                   // SHOW NUMBER OF COMMENTS
                   InkWell(
-                    onTap: () =>
-                        // widget.snap['profileUid'] == profile!.profileUid
-                        //     ? context.goNamed(
-                        //         AppRouter.commentsFromProfile.name,
-                        //         extra: widget.snap,
-                        //         pathParameters: {
-                        //           'postId': widget.snap['postId'],
-                        //           'profileUid': widget.snap['profileUid'],
-                        //           'username': profileDocs['username'],
-                        //         },
-                        //       )
-                        context.pushNamed(
+                    onTap: () => context.pushNamed(
                       AppRouter.commentsFromFeed.name,
                       extra: widget.snap,
                       pathParameters: {
@@ -678,7 +492,6 @@ class _PostCardExpState extends State<PostCardExp> {
           child: SizedBox(
             child: GestureDetector(
               onTap: () {
-                // Close the keyboard when tapping outside the text fields
                 FocusScope.of(context).unfocus();
               },
               child: SafeArea(

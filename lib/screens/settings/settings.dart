@@ -71,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.report_problem),
             title: const Text('Report a Problem'),
             onTap: () {
-              _profileBottomSheet(context);
+              _feedbackBottomSheet(context);
             },
           )
         ],
@@ -79,7 +79,8 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  _profileBottomSheet(BuildContext context) {
+  //FEEDBACK BOTTOMSHEET
+  _feedbackBottomSheet(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return CustomBottomSheet.show(context: context, listWidget: [
       Column(

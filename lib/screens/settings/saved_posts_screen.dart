@@ -26,6 +26,7 @@ class _SavedPostsState extends State<SavedPosts> {
     getData();
   }
 
+  //GET PROFILE DATA
   getData() async {
     try {
       profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();

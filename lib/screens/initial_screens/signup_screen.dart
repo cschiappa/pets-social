@@ -35,6 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
+  //SELECT IMAGE
   void selectImage() async {
     Uint8List im;
     (im, _, _, _) = await pickImage(ImageSource.gallery);
@@ -43,6 +44,7 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
+  //SIGNUP
   void signUpUser() async {
     setState(() {
       _isLoading = true;
@@ -69,6 +71,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
+  //NAVIGATE TO LOGIN
   void navigateToLogin() {
     context.goNamed(AppRouter.login.name);
   }
@@ -89,7 +92,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(flex: 2, fit: FlexFit.loose, child: Container()),
-                  // logo image
+                  //LOGO
                   Padding(
                     padding: const EdgeInsets.only(top: 60.0),
                     child: Image.asset(
@@ -99,7 +102,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   const SizedBox(height: 44),
-                  //circular widget to accept and show selected file
+                  //SELECT IMAGE
                   Stack(
                     children: [
                       _image != null
@@ -127,7 +130,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  //text field input for username
+                  //USERNAME
                   TextFieldInput(
                     labelText: 'Enter your username',
                     textInputType: TextInputType.text,
@@ -136,7 +139,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  // text field input for email
+                  //EMAIL
                   TextFieldInput(
                     labelText: 'Enter your email',
                     textInputType: TextInputType.emailAddress,
@@ -145,7 +148,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  //text field unput for password
+                  //PASSWORD
                   TextFieldInput(
                     labelText: 'Enter your password',
                     textInputType: TextInputType.text,
@@ -163,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  //button signin
+                  //SIGN IN BUTTON
                   InkWell(
                     onTap: signUpUser,
                     child: Container(
@@ -211,7 +214,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ],
                   )
-                  // transitioning to signing up
                 ],
               ),
             ),

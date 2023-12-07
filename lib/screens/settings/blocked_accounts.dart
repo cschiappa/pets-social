@@ -27,16 +27,13 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
     );
   }
 
-  //build a list of blocked users
+  //BLOCKED PROFILES LIST
   Widget _buildUserList() {
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final ThemeData theme = Theme.of(context);
     return profile!.blockedUsers.isNotEmpty
         ? StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collectionGroup('profiles')
-                .where('profileUid', whereIn: profile.blockedUsers)
-                .snapshots(),
+            stream: FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile.blockedUsers).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('error');
@@ -49,9 +46,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
               }
 
               return ListView(
-                children: snapshot.data!.docs
-                    .map<Widget>((doc) => _buildUserListItem(doc))
-                    .toList(),
+                children: snapshot.data!.docs.map<Widget>((doc) => _buildUserListItem(doc)).toList(),
               );
             },
           )
@@ -60,7 +55,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
           );
   }
 
-  //build individual user list items
+  //BLOCKED PROFILES LIST ITEMS
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
     final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;

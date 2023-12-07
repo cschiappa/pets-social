@@ -19,6 +19,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     getNotificationPreferences();
   }
 
+  //GET NOTIFICATION PREFERENCES
   Future<void> getNotificationPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -26,6 +27,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     });
   }
 
+  //SET NOTIFICATION PREFERENCES
   Future<void> setNotificationPreferences(bool value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {

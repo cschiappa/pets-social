@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
-import '../../utils/global_variables.dart';
-
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 
@@ -22,17 +20,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
+  //PASSWORD RESET TO EMAIL
   Future passwordLinkToEmail() async {
     try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: _emailController.text.trim());
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text.trim());
       if (!mounted) return;
       showDialog(
           context: context,
           builder: (context) {
             return const AlertDialog(
-              content: Text(
-                  'If this email exists, we have sent you a password reset link.'),
+              content: Text('If this email exists, we have sent you a password reset link.'),
             );
           });
     } on FirebaseAuthException catch (e) {
@@ -41,8 +38,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         context: context,
         builder: (context) {
           return const AlertDialog(
-            content: Text(
-                'If this email exists, we have sent you a password reset link.'),
+            content: Text('If this email exists, we have sent you a password reset link.'),
           );
         },
       );
@@ -58,29 +54,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       body: Padding(
-        padding: ResponsiveLayout.isWeb(context)
-            ? EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width / 3)
-            : const EdgeInsets.symmetric(horizontal: 32),
+        padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            const Text(
-                'Enter your email and we will send you a password reset link:'),
-
+            const Text('Enter your email and we will send you a password reset link:'),
             const SizedBox(
               height: 24,
             ),
             //email textfield
-            TextFieldInput(
-                textEditingController: _emailController,
-                labelText: 'Email',
-                textInputType: TextInputType.emailAddress),
-
+            TextFieldInput(textEditingController: _emailController, labelText: 'Email', textInputType: TextInputType.emailAddress),
             const SizedBox(
               height: 24,
             ),
-
-            //button to send
+            //SEND BUTTON
             InkWell(
               onTap: () {
                 passwordLinkToEmail();

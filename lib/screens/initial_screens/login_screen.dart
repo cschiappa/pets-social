@@ -7,8 +7,6 @@ import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
-import '../../utils/global_variables.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -68,14 +66,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Flexible(flex: 2, fit: FlexFit.loose, child: Container()),
-                    // svg image
+                    //LOGO
                     Image.asset(
                       'assets/logo.png',
                       color: theme.colorScheme.primary,
                       height: 64,
                     ),
                     const SizedBox(height: 64),
-                    // text field input for email
+                    //EMAIL
                     TextFieldInput(
                       labelText: 'Email',
                       textInputType: TextInputType.emailAddress,
@@ -84,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(
                       height: 24,
                     ),
-                    //text field unput for password
+                    //PASSWORD
                     TextFieldInput(
                       labelText: 'Password',
                       textInputType: TextInputType.text,
@@ -105,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    //button login
+                    //LOGIN BUTTON
                     InkWell(
                       onTap: loginUser,
                       child: Container(
@@ -153,7 +151,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     )
-                    // transitioning to signing up
                   ],
                 ),
               ),
