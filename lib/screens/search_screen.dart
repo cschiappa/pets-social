@@ -19,11 +19,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   bool isShowUsers = false;
-  var userData = {};
   List<ModelProfile> profiles = [];
   List<ModelProfile> profilesFiltered = [];
-  dynamic profileData;
-  dynamic profileDocs;
 
   @override
   void initState() {
@@ -40,20 +37,6 @@ class _SearchScreenState extends State<SearchScreen> {
         }
       },
     );
-    getData();
-  }
-
-  //GET DATA
-  getData() async {
-    try {
-      profileData = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: widget.snap['profileUid']).get();
-
-      setState(() {
-        profileDocs = profileData.docs.first.data();
-      });
-    } catch (e) {
-      showSnackBar(e.toString(), context);
-    }
   }
 
   @override
@@ -133,67 +116,77 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemBuilder: (context, index) {
                       ModelPost post = ModelPost.fromSnap(snapshot.data!.docs[index]);
 
-                      Widget mediaWidget;
-                      final String contentType = getContentTypeFromUrl(post.fileType);
-                      //return video
-                      if (contentType == 'video') {
-                        mediaWidget = ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            image: NetworkImage(post.videoThumbnail),
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                        //return image
-                      } else if (contentType == 'image') {
-                        mediaWidget = ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            image: NetworkImage(post.postUrl),
-                            fit: BoxFit.fitWidth,
-                          ),
-                        );
-                      } else {
-                        mediaWidget = const Text('file format not available');
-                      }
+                      return FutureBuilder(
+                          future: FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: post.profileUid).get(),
+                          builder: (context, profileSnapshot) {
+                            if (profileSnapshot.connectionState == ConnectionState.waiting) {
+                              return Container();
+                            }
+                            Widget mediaWidget;
+                            final String contentType = getContentTypeFromUrl(post.fileType);
+                            //return video
+                            if (contentType == 'video') {
+                              mediaWidget = ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image(
+                                  image: NetworkImage(post.videoThumbnail),
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                              //return image
+                            } else if (contentType == 'image') {
+                              mediaWidget = ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image(
+                                  image: NetworkImage(post.postUrl),
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              );
+                            } else {
+                              mediaWidget = const Text('file format not available');
+                            }
 
-                      if (!snapshot.hasData) {
-                        return Center(
-                            child: CircularProgressIndicator(
-                          color: theme.colorScheme.secondary,
-                        ));
-                      }
+                            if (!snapshot.hasData) {
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                color: theme.colorScheme.secondary,
+                              ));
+                            }
 
-                      return GestureDetector(
-                        onTap: () {
-                          String profileUid = (snapshot.data! as dynamic).docs[index]['profileUid'];
-                          String postId = (snapshot.data! as dynamic).docs[index]['postId'];
+                            // Fetch username
+                            String username = profileSnapshot.data!.docs.isNotEmpty ? profileSnapshot.data!.docs.first['username'] : '';
 
-                          context.pushNamed(
-                            AppRouter.openPostFromSearch.name,
-                            pathParameters: {
-                              'postId': postId,
-                              'profileUid': profileUid,
-                              'username': profileDocs == null ? "" : profileDocs['username'],
-                            },
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.0),
-                              color: Colors.black,
-                            ),
-                            width: double.infinity,
-                            constraints: const BoxConstraints(maxHeight: 300),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: mediaWidget,
-                            ),
-                          ),
-                        ),
-                      );
+                            return GestureDetector(
+                              onTap: () {
+                                String profileUid = (snapshot.data! as dynamic).docs[index]['profileUid'];
+                                String postId = (snapshot.data! as dynamic).docs[index]['postId'];
+
+                                context.pushNamed(
+                                  AppRouter.openPostFromSearch.name,
+                                  pathParameters: {
+                                    'postId': postId,
+                                    'profileUid': profileUid,
+                                    'username': username,
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.black,
+                                  ),
+                                  width: double.infinity,
+                                  constraints: const BoxConstraints(maxHeight: 300),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: mediaWidget,
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
                     },
                     gridDelegate: ResponsiveLayout.isWeb(context) ? const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 6) : const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                   );

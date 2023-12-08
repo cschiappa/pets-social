@@ -160,6 +160,14 @@ class _ChatListState extends State<ChatList> {
     return messages.docs.map((doc) => doc['lastMessage'] as Map<String, dynamic>).toList();
   }
 
+  String cropMessage(String message, int maxLetters) {
+    if (message.length <= maxLetters) {
+      return message;
+    } else {
+      return message.substring(0, maxLetters) + '...';
+    }
+  }
+
   //PROFILES LIST ITEMS
   Widget _buildUserListItem(
     DocumentSnapshot document,
@@ -185,12 +193,13 @@ class _ChatListState extends State<ChatList> {
 
         bool hasUnreadMessages = lastMessages.any((lastMessage) => !lastMessage['read']);
         String message = lastMessages.isNotEmpty ? lastMessages[0]['message'] : '';
+        String croppedMessage = cropMessage(message, 25);
 
         // Display all users except the current user
         if (profile.profileUid != data['profileUid']) {
           return ListTile(
             leading: CircleAvatar(
-              radius: 15,
+              radius: 20,
               backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
             ),
             title: hasUnreadMessages
@@ -201,10 +210,12 @@ class _ChatListState extends State<ChatList> {
                 : Text(data['username']),
             subtitle: hasUnreadMessages
                 ? Text(
-                    message,
+                    croppedMessage,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   )
-                : null,
+                : Text(
+                    croppedMessage,
+                  ),
             trailing: hasUnreadMessages
                 ? Icon(
                     Icons.fiber_manual_record,
