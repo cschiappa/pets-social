@@ -49,6 +49,9 @@ class AppRouter {
   static const Routes prizesScreen = Routes(name: 'prizesScreen', path: '/prizes');
   static const Routes profileScreen = Routes(name: 'profileScreen', path: '/profile');
 
+  //Navigate to profile
+  static const Routes navigateToProfile = Routes(name: 'navigateToProfile', path: '/:profileUid');
+
   //FeedScreen Sub-Routes
   static const Routes openPostFromDeeplink = Routes(name: 'openPostFromDeeplink', path: '/post/:postId/:profileUid/:username');
   static const Routes profileFromFeed = Routes(name: 'profileFromFeed', path: 'profile/:profileUid');
@@ -205,9 +208,8 @@ final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation
             username: state.pathParameters["username"]!,
           ),
         ),
-      ])
+      ]),
       //ADD POST SCREEN
-      ,
       GoRoute(
         name: AppRouter.addpostScreen.name,
         path: AppRouter.addpostScreen.path,
@@ -233,9 +235,8 @@ final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation
             username: state.pathParameters["username"]!,
           ),
         ),
-      ])
+      ]),
       //PROFILE SCREEN
-      ,
       GoRoute(
           name: AppRouter.profileScreen.name,
           path: AppRouter.profileScreen.path,
@@ -296,7 +297,14 @@ final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation
                 builder: (context, state) => const BlockedAccountsPage(),
               ),
             ])
-          ])
+          ]),
+      GoRoute(
+        name: AppRouter.navigateToProfile.name,
+        path: AppRouter.navigateToProfile.path,
+        builder: (context, state) => ProfileScreen(
+          profileUid: state.pathParameters["profileUid"]!,
+        ),
+      ),
     ],
   )
 ]);

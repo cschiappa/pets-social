@@ -200,8 +200,8 @@ class _PostCardExpState extends State<PostCardExp> {
                               ? context.goNamed(
                                   AppRouter.profileScreen.name,
                                 )
-                              : context.goNamed(
-                                  AppRouter.profileFromFeed.name,
+                              : context.pushNamed(
+                                  AppRouter.navigateToProfile.name,
                                   pathParameters: {
                                     'profileUid': profileUid,
                                   },
@@ -231,8 +231,8 @@ class _PostCardExpState extends State<PostCardExp> {
                                       ? context.goNamed(
                                           AppRouter.profileScreen.name,
                                         )
-                                      : context.goNamed(
-                                          AppRouter.profileFromFeed.name,
+                                      : context.pushNamed(
+                                          AppRouter.navigateToProfile.name,
                                           pathParameters: {
                                             'profileUid': profileUid,
                                           },
