@@ -142,7 +142,7 @@ class AuthMethods {
     //await FirebaseApi.removeTokenFromDatabase();
   }
 
-  //DELETE PROFILE
+  //DELETE ACCOUNT
   Future<void> deleteUserAccount(context) async {
     final User? user = FirebaseAuth.instance.currentUser;
 

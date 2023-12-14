@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/models/feedback.dart';
+import 'package:pets_social/providers/user_provider.dart';
 import 'package:pets_social/resources/firebase_notifications.dart';
 import 'package:pets_social/resources/storage_methods.dart';
+import 'package:provider/provider.dart';
 
 import 'package:uuid/uuid.dart';
 import '../models/post.dart';
@@ -283,10 +285,11 @@ class FirestoreMethods {
   //DELETE PROFILE
   Future<void> deleteProfile(profileUid, context) async {
     final User? user = FirebaseAuth.instance.currentUser;
+    UserProvider userProvider = Provider.of(context, listen: false);
     if (profileUid != null) {
       try {
         //Delete the user's profile from Firestore collection
-        await FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('profiles').doc(profileUid).delete();
+        await FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('profiles').doc(profileUid).delete().then((value) => userProvider.disposeProfile());
       } catch (e) {
         // Handle any errors that may occur during deletion
         debugPrint('Error deleting account: $e');
