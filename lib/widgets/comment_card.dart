@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+
 import '../features/app_router.dart';
 import '../models/profile.dart';
-import '../providers/user_provider.dart';
-import '../resources/firestore_methods.dart';
+import '../services/firestore_methods.dart';
 import 'like_animation.dart';
 
-class CommentCard extends StatefulWidget {
+class CommentCard extends ConsumerStatefulWidget {
   final dynamic snap;
   const CommentCard({super.key, required this.snap});
 
   @override
-  State<CommentCard> createState() => _CommentCardState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CommentCardState();
 }
 
-class _CommentCardState extends State<CommentCard> {
+class _CommentCardState extends ConsumerState<CommentCard> {
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),

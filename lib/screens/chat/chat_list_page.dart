@@ -1,19 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:provider/provider.dart';
-import '../../models/profile.dart';
-import '../../providers/user_provider.dart';
+import 'package:pets_social/providers/chat/chat_provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 
-class ChatList extends StatefulWidget {
+import '../../models/profile.dart';
+
+class ChatList extends ConsumerStatefulWidget {
   const ChatList({super.key});
 
   @override
-  State<ChatList> createState() => _ChatListState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ChatListState();
 }
 
-class _ChatListState extends State<ChatList> {
+class _ChatListState extends ConsumerState<ChatList> {
   bool isShowUsers = false;
   final TextEditingController searchController = TextEditingController();
   List<ModelProfile> profiles = [];
@@ -24,7 +26,7 @@ class _ChatListState extends State<ChatList> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+      final ModelProfile? profile = ref.read(userProvider).getProfile;
       QuerySnapshot<Map<String, dynamic>> usersSnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile!.following).get();
 
       for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
@@ -37,7 +39,7 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
@@ -88,69 +90,26 @@ class _ChatListState extends State<ChatList> {
 
   //PROFILES LIST
   Widget _buildUserList() {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
+    final chatsList = ref.watch(getChatsListProvider(profile));
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('chats').orderBy('lastMessage.timestamp', descending: true).where('users', arrayContains: profile!.profileUid).snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('Error');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LinearProgressIndicator(
-            color: theme.colorScheme.secondary,
+    return chatsList.when(
+      loading: () => LinearProgressIndicator(
+        color: theme.colorScheme.secondary,
+      ),
+      error: (error, stackTrace) => Text('Error: $error'),
+      data: (chats) {
+        if (chats.isEmpty) {
+          return const Center(
+            child: Text('No chats found.'),
           );
         }
-
-        List<String> profileUidList = [];
-
-        for (var doc in snapshot.data!.docs) {
-          List<dynamic> users = doc['users'];
-
-          for (var profileUid in users) {
-            if (profileUid != profile.profileUid) {
-              profileUidList.add(profileUid);
-            }
-          }
-        }
-
-        return FutureBuilder(
-          future: _fetchProfiles(
-            profileUidList,
-          ),
-          builder: (context, profileSnapshot) {
-            if (profileSnapshot.connectionState == ConnectionState.waiting) {
-              return LinearProgressIndicator(
-                color: theme.colorScheme.secondary,
-              );
-            }
-
-            if (profileSnapshot.hasError) {
-              return const Text('Error fetching profiles');
-            }
-
-            List<DocumentSnapshot> profileDocs = profileSnapshot.data as List<DocumentSnapshot>;
-
-            return ListView(
-              children: profileDocs.map<Widget>((profileDocs) => _buildUserListItem(profileDocs)).toList(),
-            );
-          },
+        return ListView(
+          children: chats.map<Widget>((chats) => _buildUserListItem(chats)).toList(),
         );
       },
     );
-  }
-
-  //FETCH PROFILES
-  Future<List<DocumentSnapshot>> _fetchProfiles(List<String> profileUidList) async {
-    List<Future<DocumentSnapshot>> futures = profileUidList.map(
-      (profileUid) {
-        return FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get().then((querySnapshot) => querySnapshot.docs.first);
-      },
-    ).toList();
-
-    return await Future.wait(futures);
   }
 
   //CHECK UNREAD MESSAGES
@@ -173,7 +132,7 @@ class _ChatListState extends State<ChatList> {
     DocumentSnapshot document,
   ) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return FutureBuilder<List<Map<String, dynamic>>>(

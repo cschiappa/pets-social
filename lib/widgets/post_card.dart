@@ -3,11 +3,12 @@ import 'package:cached_video_player/cached_video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/carousel_slider.dart';
@@ -15,19 +16,19 @@ import 'package:pets_social/widgets/like_animation.dart';
 import 'package:pets_social/widgets/save_post_animation.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 import 'package:pets_social/widgets/video_player.dart';
-import 'package:provider/provider.dart';
+
 import 'package:share_plus/share_plus.dart';
 import '../features/app_router.dart';
 
-class PostCardExp extends StatefulWidget {
+class PostCardExp extends ConsumerStatefulWidget {
   final dynamic snap;
   const PostCardExp({super.key, required this.snap});
 
   @override
-  State<PostCardExp> createState() => _PostCardExpState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PostCardExpState();
 }
 
-class _PostCardExpState extends State<PostCardExp> {
+class _PostCardExpState extends ConsumerState<PostCardExp> {
   late CachedVideoPlayerController _videoController;
   bool isLikeAnimating = false;
   int commentLen = 0;
@@ -100,7 +101,7 @@ class _PostCardExpState extends State<PostCardExp> {
   @override
   Widget build(BuildContext context) {
     final videoUri = Uri.parse(widget.snap['postUrl']);
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
 
@@ -301,7 +302,7 @@ class _PostCardExpState extends State<PostCardExp> {
                                   onTap: () async {
                                     await FirestoreMethods().savePost(widget.snap['postId'], profile!.profileUid, profile.savedPost).then((_) {
                                       setState(() {
-                                        Provider.of<UserProvider>(context, listen: false).refreshProfile();
+                                        ref.read(userProvider).refreshProfile();
                                       });
                                     });
                                   },

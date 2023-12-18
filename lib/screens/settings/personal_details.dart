@@ -1,17 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:provider/provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 
-import '../../providers/user_provider.dart';
-
-class PersonalDetailsPage extends StatelessWidget {
+class PersonalDetailsPage extends ConsumerWidget {
   const PersonalDetailsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
     final DateFormat format = DateFormat("dd/MM/yyyy");
 
@@ -35,8 +34,7 @@ class PersonalDetailsPage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.cake),
             title: const Text('Account Birthday'),
-            subtitle: Text(format.format(
-                FirebaseAuth.instance.currentUser!.metadata.creationTime!)),
+            subtitle: Text(format.format(FirebaseAuth.instance.currentUser!.metadata.creationTime!)),
           ),
         ],
       ),

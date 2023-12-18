@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 
-class ResponsiveLayout extends StatefulWidget {
+class ResponsiveLayout extends ConsumerStatefulWidget {
   final Widget mobile;
   final Widget web;
   static bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 600;
@@ -17,10 +17,10 @@ class ResponsiveLayout extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ResponsiveLayout> createState() => _ResponsiveLayoutState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ResponsiveLayoutState();
 }
 
-class _ResponsiveLayoutState extends State<ResponsiveLayout> {
+class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
   @override
   void initState() {
     super.initState();
@@ -28,8 +28,7 @@ class _ResponsiveLayoutState extends State<ResponsiveLayout> {
   }
 
   addData() async {
-    UserProvider userProvider = Provider.of(context, listen: false);
-    await userProvider.refreshProfile();
+    await ref.read(userProvider).refreshProfile();
   }
 
   @override

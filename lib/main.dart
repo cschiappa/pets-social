@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/providers/theme_provider.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/resources/firebase_notifications.dart';
+import 'package:pets_social/providers/theme/theme_provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/firebase_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+
+//Riverpod Providers
+final userProvider = ChangeNotifierProvider<UserProvider>((ref) => UserProvider());
+final themeData = ChangeNotifierProvider<ThemeProvider>((ref) => ThemeProvider());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,32 +27,25 @@ void main() async {
     await FirebaseApi().initNotifications();
   }
 
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => UserProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ThemeProvider(),
-        )
-      ],
-      child: Builder(builder: (context) {
-        var themeData = Provider.of<ThemeProvider>(context).themeData;
-        return MaterialApp.router(
-          routerConfig: router,
-          debugShowCheckedModeBanner: false,
-          title: 'Pet Social',
-          theme: themeData,
-        );
-      }),
+  Widget build(BuildContext context, WidgetRef ref) {
+    var themeData = ref.watch(themeProvider).themeData;
+
+    return MaterialApp.router(
+      routerConfig: router,
+      debugShowCheckedModeBanner: false,
+      title: 'Pet Social',
+      theme: themeData,
     );
   }
 }

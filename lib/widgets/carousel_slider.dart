@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/widgets/bone_animation.dart';
 import 'package:pets_social/widgets/fish_animation.dart';
 import 'package:pets_social/widgets/like_animation.dart';

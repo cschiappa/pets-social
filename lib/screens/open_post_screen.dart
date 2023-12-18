@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/providers/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-import 'package:provider/provider.dart';
+
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../widgets/post_card.dart';
 
-class OpenPost extends StatefulWidget {
+class OpenPost extends ConsumerStatefulWidget {
   const OpenPost({
     super.key,
     required this.postId,
@@ -18,10 +19,10 @@ class OpenPost extends StatefulWidget {
   final String profileUid;
 
   @override
-  State<OpenPost> createState() => _OpenPostState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _OpenPostState();
 }
 
-class _OpenPostState extends State<OpenPost> {
+class _OpenPostState extends ConsumerState<OpenPost> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   final itemController = ItemScrollController();
   bool firstScroll = true;
@@ -42,7 +43,7 @@ class _OpenPostState extends State<OpenPost> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<UserProvider>(context, listen: false).refreshProfile();
+      ref.read(userProvider).refreshProfile();
     });
   }
 
@@ -56,7 +57,7 @@ class _OpenPostState extends State<OpenPost> {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: widget.profileUid).orderBy('datePublished', descending: true).snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting || Provider.of<UserProvider>(context).getProfile == null) {
+          if (snapshot.connectionState == ConnectionState.waiting || ref.read(userProvider).getProfile == null) {
             return Center(
               child: CircularProgressIndicator(
                 color: theme.colorScheme.secondary,

@@ -1,33 +1,31 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'package:pets_social/resources/chat_methods.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/chat_methods.dart';
 import 'package:pets_social/widgets/chat_bubble.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
-import 'package:provider/provider.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../models/profile.dart';
-import '../../providers/user_provider.dart';
 
-class ChatPage extends StatefulWidget {
+class ChatPage extends ConsumerStatefulWidget {
   final String receiverUserEmail;
   final String receiverUserID;
   final String receiverUsername;
   const ChatPage({super.key, required this.receiverUserEmail, required this.receiverUserID, required this.receiverUsername});
 
   @override
-  ChatPageState createState() => ChatPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => ChatPageState();
 }
 
-class ChatPageState extends State<ChatPage> {
+class ChatPageState extends ConsumerState<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(widget.receiverUserID, widget.receiverUsername, _messageController.text, context);
+      final ModelProfile? profile = ref.read(userProvider).getProfile;
+      await _chatService.sendMessage(widget.receiverUserID, widget.receiverUsername, _messageController.text, context, profile);
       //clear text after sending
       _messageController.clear();
     }
@@ -72,7 +70,7 @@ class ChatPageState extends State<ChatPage> {
 
   //build message list
   Widget _buildMessageList() {
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.read(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return StreamBuilder(
@@ -97,7 +95,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   Future<void> messageRead() async {
-    final String profileUid = Provider.of<UserProvider>(context, listen: false).getProfile!.profileUid;
+    final String profileUid = ref.watch(userProvider).getProfile!.profileUid;
 
     final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.senderUid', isEqualTo: widget.receiverUserID).where('lastMessage.read', isEqualTo: false).get();
 
@@ -114,7 +112,7 @@ class ChatPageState extends State<ChatPage> {
   //build message item
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.read(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     //align messages to right or left

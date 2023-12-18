@@ -1,25 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+
 import '../../features/app_router.dart';
 import '../../models/post.dart';
 import '../../models/profile.dart';
-import '../../providers/user_provider.dart';
+import '../../providers/user/user_provider.dart';
 import '../../utils/utils.dart';
 
-class SavedPosts extends StatefulWidget {
+class SavedPosts extends ConsumerStatefulWidget {
   final dynamic snap;
   const SavedPosts({super.key, this.snap});
 
   @override
-  State<SavedPosts> createState() => _SavedPostsState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SavedPostsState();
 }
 
-class _SavedPostsState extends State<SavedPosts> {
+class _SavedPostsState extends ConsumerState<SavedPosts> {
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(

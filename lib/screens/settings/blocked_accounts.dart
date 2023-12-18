@@ -1,19 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/profile/profile_provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+
 import 'package:pets_social/models/profile.dart';
 
-import '../../resources/firestore_methods.dart';
+import '../../services/firestore_methods.dart';
 
-class BlockedAccountsPage extends StatefulWidget {
+class BlockedAccountsPage extends ConsumerStatefulWidget {
   const BlockedAccountsPage({super.key});
 
   @override
-  State<BlockedAccountsPage> createState() => _BlockedAccountsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _BlockedAccountsPageState();
 }
 
-class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
+class _BlockedAccountsPageState extends ConsumerState<BlockedAccountsPage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -29,37 +31,32 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
 
   //BLOCKED PROFILES LIST
   Widget _buildUserList() {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final blockedAccountsState = ref.watch(getBlockedProfilesProvider(profile));
     final ThemeData theme = Theme.of(context);
-    return profile!.blockedUsers.isNotEmpty
-        ? StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile.blockedUsers).snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text('error');
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return LinearProgressIndicator(
-                  color: theme.colorScheme.secondary,
-                );
-              }
-
-              return ListView(
-                children: snapshot.data!.docs.map<Widget>((doc) => _buildUserListItem(doc)).toList(),
-              );
-            },
-          )
-        : const Center(
+    return blockedAccountsState.when(
+      loading: () => LinearProgressIndicator(
+        color: theme.colorScheme.secondary,
+      ),
+      error: (error, stackTrace) => Text('Error: $error'),
+      data: (blockedAccounts) {
+        if (blockedAccounts.isEmpty) {
+          return const Center(
             child: Text('No users blocked.'),
           );
+        }
+
+        return ListView(
+          children: blockedAccounts.map<Widget>((blockedAccount) => _buildUserListItem(blockedAccount)).toList(),
+        );
+      },
+    );
   }
 
   //BLOCKED PROFILES LIST ITEMS
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     //display all users except current user
     return ListTile(
         leading: CircleAvatar(
@@ -74,7 +71,7 @@ class _BlockedAccountsPageState extends State<BlockedAccountsPage> {
               data['profileUid'],
             );
 
-            userProvider.unblockUser(data['profileUid']);
+            ref.watch(userProvider).unblockProfile(data['profileUid']);
           },
           child: const Text('Unblock'),
         ));

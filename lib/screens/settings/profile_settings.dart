@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../resources/auth_methods.dart';
-import '../../resources/firestore_methods.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/main.dart';
+import '../../services/auth_methods.dart';
+import '../../services/firestore_methods.dart';
 import '../../widgets/text_field_input.dart';
 
-class ProfileSettings extends StatefulWidget {
+class ProfileSettings extends ConsumerStatefulWidget {
   const ProfileSettings({super.key});
 
   @override
-  State<ProfileSettings> createState() => _ProfileSettingsState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProfileSettingsState();
 }
 
-class _ProfileSettingsState extends State<ProfileSettings> {
+class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
@@ -117,7 +118,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                         bool isCurrentPasswordValid = await AuthMethods().verifyCurrentPassword(currentPassword);
                                         if (isCurrentPasswordValid) {
                                           if (!mounted) return;
-                                          FirestoreMethods().deleteProfile(data['profileUid'], context);
+                                          FirestoreMethods().deleteProfile(data['profileUid'], context).then((value) => ref.read(userProvider).disposeProfile());
                                           _passwordController.clear();
                                           Navigator.of(context).pop();
                                           Navigator.of(context).pop();

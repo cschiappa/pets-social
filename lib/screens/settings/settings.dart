@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/providers/theme_provider.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/providers/theme/theme_provider.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/widgets/bottom_sheet.dart';
 import 'package:pets_social/widgets/text_field_input.dart';
 
-import 'package:provider/provider.dart';
-
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends ConsumerState<SettingsPage> {
   final TextEditingController _problemSummaryController = TextEditingController();
   final TextEditingController _problemDetailsController = TextEditingController();
 
@@ -47,9 +46,9 @@ class _SettingsPageState extends State<SettingsPage> {
               context.goNamed(AppRouter.blockedAccounts.name);
             },
             trailing: Switch(
-              value: Provider.of<ThemeProvider>(context).themeData.brightness == Brightness.dark,
+              value: ref.watch(themeProvider).themeData.brightness == Brightness.dark,
               onChanged: (value) {
-                Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                ref.read(themeProvider).toggleTheme();
               },
             ),
           ),

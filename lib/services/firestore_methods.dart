@@ -3,17 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/models/feedback.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/resources/firebase_notifications.dart';
-import 'package:pets_social/resources/storage_methods.dart';
-import 'package:provider/provider.dart';
+import 'package:pets_social/services/firebase_notifications.dart';
+import 'package:pets_social/services/firestore_path.dart';
+import 'package:pets_social/services/storage_methods.dart';
 
 import 'package:uuid/uuid.dart';
 import '../models/post.dart';
 import '../models/profile.dart';
 
 class FirestoreMethods {
+  //const FirestoreMethods(this._firestore);
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //UPLOAD POST
@@ -33,11 +34,24 @@ class FirestoreMethods {
 
       String videoThumbnail = await StorageMethods().uploadImageToStorage('videoThumbnails', thumbnail, true);
 
-      String postId = const Uuid().v1(); //v1 creates unique id based on time
+      String postId = const Uuid().v1();
+      final String postPath = FirestorePath.post(postId);
 
-      ModelPost post = ModelPost(uid: uid, description: description ?? "", profileUid: profileUid, postId: postId, datePublished: DateTime.now(), postUrl: photoUrl, likes: [], fish: [], bones: [], fileType: fileType, videoThumbnail: videoThumbnail);
+      ModelPost post = ModelPost(
+        uid: uid,
+        description: description ?? "",
+        profileUid: profileUid,
+        postId: postId,
+        datePublished: DateTime.now(),
+        postUrl: photoUrl,
+        likes: [],
+        fish: [],
+        bones: [],
+        fileType: fileType,
+        videoThumbnail: videoThumbnail,
+      );
 
-      _firestore.collection('posts').doc(postId).set(
+      _firestore.doc(postPath).set(
             post.toJson(),
           );
       res = "success";
@@ -50,12 +64,14 @@ class FirestoreMethods {
   //LIKE POST
   Future<void> likePost(String postId, String profileUid, List likes) async {
     try {
+      final postPath = FirestorePath.post(postId);
+
       if (likes.contains(profileUid)) {
-        await _firestore.collection('posts').doc(postId).update({
+        await _firestore.doc(postPath).update({
           'likes': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).update(
+        await _firestore.doc(postPath).update(
           {
             'likes': FieldValue.arrayUnion([profileUid]),
           },
@@ -71,12 +87,14 @@ class FirestoreMethods {
   //GIVE FISH TO POST
   Future<void> giveFishToPost(String postId, String profileUid, List fish) async {
     try {
+      final postPath = FirestorePath.post(postId);
+
       if (fish.contains(profileUid)) {
-        await _firestore.collection('posts').doc(postId).update({
+        await _firestore.doc(postPath).update({
           'fish': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).update(
+        await _firestore.doc(postPath).update(
           {
             'fish': FieldValue.arrayUnion([profileUid]),
           },
@@ -92,12 +110,14 @@ class FirestoreMethods {
   //GIVE BONE TO POST
   Future<void> giveBoneToPost(String postId, String profileUid, List bones) async {
     try {
+      final postPath = FirestorePath.post(postId);
+
       if (bones.contains(profileUid)) {
-        await _firestore.collection('posts').doc(postId).update({
+        await _firestore.doc(postPath).update({
           'bones': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).update(
+        await _firestore.doc(postPath).update(
           {
             'bones': FieldValue.arrayUnion([profileUid]),
           },
@@ -113,9 +133,10 @@ class FirestoreMethods {
   //POST COMMENT
   Future<void> postComment(String postId, String text, String profileUid, String name, String profilePic, List likes) async {
     try {
+      String commentId = const Uuid().v1();
+      final commentPath = FirestorePath.comment(postId, commentId);
       if (text.isNotEmpty) {
-        String commentId = const Uuid().v1();
-        await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).set({'profilePic': profilePic, 'name': name, 'profileUid': profileUid, 'text': text, 'commentId': commentId, 'datePublished': DateTime.now(), 'likes': likes, 'postId': postId});
+        await _firestore.doc(commentPath).set({'profilePic': profilePic, 'name': name, 'profileUid': profileUid, 'text': text, 'commentId': commentId, 'datePublished': DateTime.now(), 'likes': likes, 'postId': postId});
       } else {
         debugPrint('text is empty');
       }
@@ -129,12 +150,13 @@ class FirestoreMethods {
   //LIKE COMMENT
   Future<void> likeComment(String postId, String commentId, String profileUid, List likes) async {
     try {
+      final commentPath = FirestorePath.comment(postId, commentId);
       if (likes.contains(profileUid)) {
-        await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).update({
+        await _firestore.doc(commentPath).update({
           'likes': FieldValue.arrayRemove([profileUid]),
         });
       } else {
-        await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).update({
+        await _firestore.doc(commentPath).update({
           'likes': FieldValue.arrayUnion([profileUid]),
         });
       }
@@ -160,12 +182,14 @@ class FirestoreMethods {
 //SAVE AND UNSAVE POST
   Future<void> savePost(String postId, String profileUid, List<dynamic> savedPost) async {
     try {
+      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+
       if (savedPost.contains(postId)) {
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).update({
+        await _firestore.doc(profilePath).update({
           'savedPost': FieldValue.arrayRemove([postId]),
         });
       } else {
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).update({
+        await _firestore.doc(profilePath).update({
           'savedPost': FieldValue.arrayUnion([postId]),
         });
       }
@@ -177,6 +201,8 @@ class FirestoreMethods {
   //FOLLOW AND UNFOLLOW USER
   Future<void> followUser(String profileUid, String followId) async {
     try {
+      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+
       DocumentSnapshot snap = await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).get();
       List following = (snap.data()! as dynamic)['following'];
 
@@ -187,7 +213,7 @@ class FirestoreMethods {
           'followers': FieldValue.arrayRemove([profileUid])
         });
 
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).update({
+        await _firestore.doc(profilePath).update({
           'following': FieldValue.arrayRemove([followId])
         });
       } else {
@@ -197,7 +223,7 @@ class FirestoreMethods {
           'followers': FieldValue.arrayUnion([profileUid])
         });
 
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).update({
+        await _firestore.doc(profilePath).update({
           'following': FieldValue.arrayUnion([followId])
         });
 
@@ -211,18 +237,20 @@ class FirestoreMethods {
   //BLOCK USER
   Future<void> blockUser(String profileUid, String blockedId) async {
     try {
+      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+
       DocumentSnapshot snap = await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).get();
       List blockedUsers = (snap.data()! as dynamic)['blockedUsers'];
 
       if (blockedUsers.contains(blockedId)) {
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).update(
+        await _firestore.doc(profilePath).update(
           {
             'blockedUsers': FieldValue.arrayRemove([blockedId])
           },
         );
         debugPrint('User unblocked successfully');
       } else {
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).update(
+        await _firestore.doc(profilePath).update(
           {
             'blockedUsers': FieldValue.arrayUnion([blockedId]),
             'following': FieldValue.arrayRemove([blockedId]),
@@ -268,9 +296,9 @@ class FirestoreMethods {
           blockedUsers: [],
         );
 
-        var profileCollection = _firestore.collection('users').doc(uid).collection('profiles').doc(profile.profileUid);
+        final profilePath = FirestorePath.profile(uid, profile.profileUid);
 
-        await profileCollection.set(profile.toJson());
+        await _firestore.doc(profilePath).set(profile.toJson());
 
         res = "Profile created successfully";
       } else {
@@ -284,14 +312,11 @@ class FirestoreMethods {
 
   //DELETE PROFILE
   Future<void> deleteProfile(profileUid, context) async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    UserProvider userProvider = Provider.of(context, listen: false);
     if (profileUid != null) {
       try {
-        //Delete the user's profile from Firestore collection
-        await FirebaseFirestore.instance.collection('users').doc(user!.uid).collection('profiles').doc(profileUid).delete().then((value) => userProvider.disposeProfile());
+        final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+        await _firestore.doc(profilePath).delete();
       } catch (e) {
-        // Handle any errors that may occur during deletion
         debugPrint('Error deleting account: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -312,18 +337,19 @@ class FirestoreMethods {
   }) async {
     String res = "Some error occurred";
     try {
+      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
       if (newUsername.length <= 15 && newBio.length <= 150) {
         if (file != null) {
           photoUrl = await StorageMethods().uploadImageToStorage('profilePics', file, false);
 
-          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').doc(profileUid).update({
+          await _firestore.doc(profilePath).update({
             'username': newUsername,
             'bio': newBio,
             'photoUrl': photoUrl,
           });
         } else {
           // Update the user's profile without changing the image URL
-          await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').doc(profileUid).update({
+          await _firestore.doc(profilePath).update({
             'username': newUsername,
             'bio': newBio,
           });
@@ -346,8 +372,9 @@ class FirestoreMethods {
   }) async {
     String res = "Some error occurred";
     try {
+      final postPath = FirestorePath.post(postId);
       if (newDescription.length <= 2000) {
-        await FirebaseFirestore.instance.collection('posts').doc(postId).update({
+        await _firestore.doc(postPath).update({
           'description': newDescription,
         });
 
@@ -370,6 +397,7 @@ class FirestoreMethods {
 
     try {
       String feedbackId = const Uuid().v1();
+      final String feedbackPath = FirestorePath.feedback(feedbackId);
 
       ModelFeedback feedback = ModelFeedback(
         summary: summary,
@@ -377,7 +405,7 @@ class FirestoreMethods {
         datePublished: DateTime.now(),
       );
 
-      _firestore.collection('feedback').doc(feedbackId).set(
+      _firestore.doc(feedbackPath).set(
             feedback.toJson(),
           );
       res = "success";
@@ -385,5 +413,37 @@ class FirestoreMethods {
       res = e.toString();
     }
     return res;
+  }
+
+  //GET POSTS DESCENDING
+  Future<List<ModelPost>> getPostsDescending() async {
+    QuerySnapshot querySnapshot = await _firestore.collection('posts').orderBy('datePublished', descending: true).get();
+
+    return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
+  }
+
+  //GET FEED POSTS
+  Stream<List<DocumentSnapshot>> getFeedPosts(ModelProfile? profile) {
+    return FirebaseFirestore.instance.collection('posts').where('profileUid', whereIn: [...profile!.following, profile.profileUid]).orderBy('datePublished', descending: true).snapshots().map(
+          (snapshot) {
+            return snapshot.docs.where(
+              (doc) {
+                return !profile.blockedUsers.contains(doc['profileUid']);
+              },
+            ).toList();
+          },
+        );
+  }
+
+  //GET BLOCKED PROFILES
+  Future<List<DocumentSnapshot>> getBlockedProfiles(ModelProfile? profile) async {
+    if (profile!.blockedUsers.isEmpty) {
+      return [];
+    }
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile.blockedUsers).get();
+
+    List<DocumentSnapshot> documents = snapshot.docs;
+
+    return documents;
   }
 }

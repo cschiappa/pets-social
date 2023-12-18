@@ -6,10 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/resources/storage_methods.dart';
-import 'package:provider/provider.dart';
+import 'package:pets_social/services/firestore_path.dart';
+import 'package:pets_social/services/storage_methods.dart';
 import 'package:uuid/uuid.dart';
-import '../providers/user_provider.dart';
 import 'firebase_notifications.dart';
 
 class AuthMethods {
@@ -136,10 +135,7 @@ class AuthMethods {
 
   //SIGN OUT
   Future<void> signOut(context) async {
-    UserProvider userProvider = Provider.of(context, listen: false);
     await FirebaseApi().removeTokenFromDatabase().then((value) => _auth.signOut());
-    await userProvider.disposeProfile();
-    //await FirebaseApi.removeTokenFromDatabase();
   }
 
   //DELETE ACCOUNT
@@ -148,16 +144,15 @@ class AuthMethods {
 
     if (user != null) {
       try {
-        // user.reauthenticateWithCredential()
+        final userPath = FirestorePath.user(user.uid);
         // Delete the user's account from Firebase Authentication
         await user.delete();
 
         //Delete the user's account from Firestore collection
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+        await _firestore.doc(userPath).delete();
 
         context.goNamed(AppRouter.login.name);
       } catch (e) {
-        // Handle any errors that may occur during deletion
         debugPrint('Error deleting account: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

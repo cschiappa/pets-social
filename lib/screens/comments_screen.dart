@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 
 import '../models/profile.dart';
-import '../providers/user_provider.dart';
 import '../widgets/comment_card.dart';
 
-class CommentsScreen extends StatefulWidget {
+class CommentsScreen extends ConsumerStatefulWidget {
   final dynamic snap;
   const CommentsScreen({super.key, required this.snap});
 
   @override
-  State<CommentsScreen> createState() => _CommentsScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CommentsScreenState();
 }
 
-class _CommentsScreenState extends State<CommentsScreen> {
+class _CommentsScreenState extends ConsumerState<CommentsScreen> {
   final TextEditingController _commentController = TextEditingController();
 
   @override
@@ -26,7 +26,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(

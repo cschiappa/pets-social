@@ -1,23 +1,24 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
-import 'package:provider/provider.dart';
+
 import 'package:timeago/timeago.dart' as timeago;
 import '../features/app_router.dart';
 import '../models/profile.dart';
-import '../providers/user_provider.dart';
 import '../utils/utils.dart';
 
-class PrizesScreen extends StatefulWidget {
+class PrizesScreen extends ConsumerStatefulWidget {
   const PrizesScreen({super.key});
 
   @override
-  State<PrizesScreen> createState() => _PrizesScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PrizesScreenState();
 }
 
-class _PrizesScreenState extends State<PrizesScreen> {
+class _PrizesScreenState extends ConsumerState<PrizesScreen> {
   var notificationData = [];
   var userData = {};
   int postLen = 0;
@@ -38,7 +39,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
 
   //GET DATA
   getData() async {
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     setState(() {
       isLoading = true;
     });
@@ -75,7 +76,7 @@ class _PrizesScreenState extends State<PrizesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
     final ScrollController scrollController = ScrollController();
 

@@ -3,28 +3,31 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/providers/chat/chat_provider.dart';
+import 'package:pets_social/providers/post/post_provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/widgets/bottom_sheet.dart';
-import 'package:provider/provider.dart';
+
 import '../features/app_router.dart';
-import '../providers/user_provider.dart';
 import '../utils/utils.dart';
 import '../widgets/post_card.dart';
 import '../widgets/text_field_input.dart';
 
-class FeedScreen extends StatefulWidget {
+class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
 
   @override
-  State<FeedScreen> createState() => _FeedScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> {
+class _FeedScreenState extends ConsumerState<FeedScreen> {
   final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey = GlobalKey<LiquidPullToRefreshState>();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -42,7 +45,7 @@ class _FeedScreenState extends State<FeedScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<UserProvider>(context, listen: false).refreshProfile();
+      await ref.read(userProvider).refreshProfile();
     });
   }
 
@@ -57,7 +60,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   //REFRESH PROFILE
   Future<void> _handleRefresh() async {
-    await Provider.of<UserProvider>(context, listen: false).refreshProfile();
+    await ref.read(userProvider).refreshProfile();
     return await Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -91,8 +94,10 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final postsState = ref.watch(getFeedPostsProvider(profile));
+    final chatsState = ref.watch(numberOfUnreadChatsProvider(profile!.profileUid));
 
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
@@ -171,29 +176,26 @@ class _FeedScreenState extends State<FeedScreen> {
                   onPressed: () {
                     context.goNamed(AppRouter.chatList.name);
                   },
-                  icon: FutureBuilder<int>(
-                    future: numberOfUnreadChats(profile!.profileUid),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return const Icon(Icons.error);
-                      } else {
-                        return snapshot.data! > 0
-                            ? Badge.count(
-                                textColor: Colors.white,
-                                backgroundColor: theme.colorScheme.secondary,
-                                count: snapshot.data!,
-                                child: const Icon(
-                                  Icons.forum,
-                                  size: 25,
-                                ),
-                              )
-                            : const Icon(
+                  icon: chatsState.when(
+                    loading: () => Center(
+                      child: CircularProgressIndicator(color: theme.colorScheme.secondary),
+                    ),
+                    error: (error, stackTrace) => Text('Error: $error'),
+                    data: (chats) {
+                      return chats > 0
+                          ? Badge.count(
+                              textColor: Colors.white,
+                              backgroundColor: theme.colorScheme.secondary,
+                              count: chats,
+                              child: const Icon(
                                 Icons.forum,
                                 size: 25,
-                              );
-                      }
+                              ),
+                            )
+                          : const Icon(
+                              Icons.forum,
+                              size: 25,
+                            );
                     },
                   ),
                 ),
@@ -207,61 +209,41 @@ class _FeedScreenState extends State<FeedScreen> {
             animSpeedFactor: 4,
             color: const Color.fromARGB(255, 48, 48, 48),
             backgroundColor: theme.colorScheme.background,
-            child: profile == null
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : StreamBuilder(
-                    stream: FirebaseFirestore.instance.collection('posts').where('profileUid', whereIn: [...profile.following, profile.profileUid]).orderBy('datePublished', descending: true).snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: theme.colorScheme.secondary,
-                          ),
-                        );
-                      }
+            child: postsState.when(
+              loading: () => Center(
+                child: CircularProgressIndicator(color: theme.colorScheme.secondary),
+              ),
+              error: (error, stackTrace) => Text('Error: $error'),
+              data: (posts) {
+                if (posts.isEmpty) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: constraints.maxHeight, minWidth: constraints.maxWidth),
+                      child: const Center(
+                        child: Text('Follow someone to see posts'),
+                      ),
+                    ),
+                  );
+                }
 
-                      // Filter the posts to exclude those from blocked users.
-                      final filteredPosts = snapshot.data!.docs.where((doc) {
-                        return !profile.blockedUsers.contains(doc['profileUid']);
-                      }).toList();
-
-                      if (filteredPosts.isEmpty) {
-                        return SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(minHeight: constraints.maxHeight, minWidth: constraints.maxWidth),
-                            child: const Center(
-                              child: Text('Follow someone to see posts'),
-                            ),
-                          ),
-                        );
-                      }
-
-                      // POST CARD
-                      return ListView.builder(
-                        itemCount: filteredPosts.length,
-                        itemBuilder: (context, index) => Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: ResponsiveLayout.isWeb(context) ? width * 0.37 : 0,
-                            vertical: ResponsiveLayout.isWeb(context) ? 15 : 0,
-                          ),
-                          child: PostCardExp(
-                            snap: filteredPosts[index].data(),
-                          ),
-                        ),
-                      );
-                    },
-                  ));
+                // POST CARD
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) => Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: ResponsiveLayout.isWeb(context) ? width * 0.37 : 0,
+                      vertical: ResponsiveLayout.isWeb(context) ? 15 : 0,
+                    ),
+                    child: PostCardExp(
+                      snap: posts[index].data(),
+                    ),
+                  ),
+                );
+              },
+            ));
       }),
     );
-  }
-
-  Future<int> numberOfUnreadChats(String profileUid) async {
-    final QuerySnapshot chats = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.read', isEqualTo: false).get();
-
-    return chats.docs.length;
   }
 
   //PROFILE LIST FOR DRAWER
@@ -305,11 +287,11 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       ),
       title: Text(data['username']),
-      selected: Provider.of<UserProvider>(context, listen: false).getProfile?.profileUid == data['profileUid'],
+      selected: ref.read(userProvider).getProfile?.profileUid == data['profileUid'],
       selectedTileColor: theme.colorScheme.secondary,
       onTap: () {
         setState(() {
-          Provider.of<UserProvider>(context, listen: false).refreshProfile(profileUid: data['profileUid']);
+          ref.read(userProvider).refreshProfile(profileUid: data['profileUid']);
         });
         Navigator.of(context).pop();
       },

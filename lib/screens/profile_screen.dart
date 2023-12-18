@@ -1,31 +1,32 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/resources/auth_methods.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/auth_methods.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/utils/utils.dart';
 import 'package:pets_social/widgets/bottom_sheet.dart';
-import 'package:provider/provider.dart';
+
 import '../models/profile.dart';
-import '../providers/user_provider.dart';
 import '../widgets/follow_button.dart';
 import '../widgets/text_field_input.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   final String? profileUid;
   final dynamic snap;
 
   const ProfileScreen({super.key, this.profileUid, this.snap});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Map<dynamic, dynamic> userData = {};
   int postLen = 0;
   int likes = 0;
@@ -52,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   //FIELD VALUES
   void fieldsValues() {
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.read(userProvider).getProfile;
     _usernameController = TextEditingController(text: profile!.username);
     _bioController = TextEditingController(text: profile.bio);
   }
@@ -60,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.read(userProvider).getProfile;
 
     //verifies if profile belongs to current profile or another profile
     userId = widget.profileUid ?? profile!.profileUid;
@@ -79,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   //GET DATA
   getData() async {
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.read(userProvider).getProfile;
     setState(() {
       isLoading = true;
     });
@@ -121,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   //EDIT PROFILE FUNCTION
   void updateProfile() async {
-    final ModelProfile? profile = Provider.of<UserProvider>(context, listen: false).getProfile;
+    final ModelProfile? profile = ref.read(userProvider).getProfile;
     setState(() {
       _isLoading = true;
     });
@@ -147,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
 
     return isLoading
@@ -372,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     textColor: theme.colorScheme.tertiary,
                     borderColor: Colors.grey,
                     function: () async {
-                      await AuthMethods().signOut(context);
+                      await AuthMethods().signOut(context).then((value) => ref.read(userProvider).disposeProfile());
                       if (!mounted) return;
 
                       context.goNamed(AppRouter.login.name);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/resources/auth_methods.dart';
+import 'package:pets_social/services/auth_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import 'package:pets_social/utils/utils.dart';

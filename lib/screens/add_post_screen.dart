@@ -1,24 +1,25 @@
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
-import 'package:pets_social/providers/user_provider.dart';
-import 'package:pets_social/resources/firestore_methods.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
+import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/utils/utils.dart';
-import 'package:provider/provider.dart';
 
-class AddPostScreen extends StatefulWidget {
+class AddPostScreen extends ConsumerStatefulWidget {
   const AddPostScreen({super.key});
 
   @override
-  State<AddPostScreen> createState() => _AddPostScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddPostScreenState();
 }
 
-class _AddPostScreenState extends State<AddPostScreen> {
+class _AddPostScreenState extends ConsumerState<AddPostScreen> {
   Uint8List? _file;
   String? _fileType;
   Uint8List? _thumbnail;
@@ -176,7 +177,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = Provider.of<UserProvider>(context).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     final ThemeData theme = Theme.of(context);
     final firebaseauth = FirebaseAuth.instance.currentUser!.uid;
 
