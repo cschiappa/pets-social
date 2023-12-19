@@ -53,7 +53,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   //FIELD VALUES
   void fieldsValues() {
-    final ModelProfile? profile = ref.read(userProvider).getProfile;
+    final ModelProfile? profile = ref.read(userProvider);
     _usernameController = TextEditingController(text: profile!.username);
     _bioController = TextEditingController(text: profile.bio);
   }
@@ -61,7 +61,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final ModelProfile? profile = ref.read(userProvider).getProfile;
+    final ModelProfile? profile = ref.read(userProvider);
 
     //verifies if profile belongs to current profile or another profile
     userId = widget.profileUid ?? profile!.profileUid;
@@ -80,7 +80,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   //GET DATA
   getData() async {
-    final ModelProfile? profile = ref.read(userProvider).getProfile;
+    final ModelProfile? profile = ref.read(userProvider);
     setState(() {
       isLoading = true;
     });
@@ -122,7 +122,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   //EDIT PROFILE FUNCTION
   void updateProfile() async {
-    final ModelProfile? profile = ref.read(userProvider).getProfile;
+    final ModelProfile? profile = ref.read(userProvider);
     setState(() {
       _isLoading = true;
     });
@@ -148,7 +148,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
 
     return isLoading
@@ -373,7 +373,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     textColor: theme.colorScheme.tertiary,
                     borderColor: Colors.grey,
                     function: () async {
-                      await AuthMethods().signOut(context).then((value) => ref.read(userProvider).disposeProfile());
+                      await AuthMethods().signOut(context).then((value) => ref.read(userProvider.notifier).disposeProfile());
                       if (!mounted) return;
 
                       context.goNamed(AppRouter.login.name);

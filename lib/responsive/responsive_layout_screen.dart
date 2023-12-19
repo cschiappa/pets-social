@@ -28,7 +28,7 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
   }
 
   addData() async {
-    await ref.read(userProvider).refreshProfile();
+    await ref.read(userProvider.notifier).refreshProfile();
   }
 
   @override

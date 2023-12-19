@@ -26,7 +26,7 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(

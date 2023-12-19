@@ -101,7 +101,7 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
   @override
   Widget build(BuildContext context) {
     final videoUri = Uri.parse(widget.snap['postUrl']);
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
 
@@ -302,7 +302,7 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
                                   onTap: () async {
                                     await FirestoreMethods().savePost(widget.snap['postId'], profile!.profileUid, profile.savedPost).then((_) {
                                       setState(() {
-                                        ref.read(userProvider).refreshProfile();
+                                        ref.read(userProvider.notifier).refreshProfile();
                                       });
                                     });
                                   },
@@ -378,7 +378,8 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
                                                 : InkWell(
                                                     onTap: () async {
                                                       Navigator.pop(context);
-                                                      FirestoreMethods().blockUser(profile.profileUid, widget.snap['profileUid']);
+                                                      // FirestoreMethods().blockUser(profile.profileUid, widget.snap['profileUid']);
+                                                      ref.watch(userProvider.notifier).blockProfile(widget.snap['profileUid']);
                                                     },
                                                     child: Container(
                                                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

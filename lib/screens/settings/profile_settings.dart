@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/main.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 import '../../services/auth_methods.dart';
 import '../../services/firestore_methods.dart';
 import '../../widgets/text_field_input.dart';
@@ -118,7 +119,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
                                         bool isCurrentPasswordValid = await AuthMethods().verifyCurrentPassword(currentPassword);
                                         if (isCurrentPasswordValid) {
                                           if (!mounted) return;
-                                          FirestoreMethods().deleteProfile(data['profileUid'], context).then((value) => ref.read(userProvider).disposeProfile());
+                                          FirestoreMethods().deleteProfile(data['profileUid'], context).then((value) => ref.read(userProvider.notifier).disposeProfile());
                                           _passwordController.clear();
                                           Navigator.of(context).pop();
                                           Navigator.of(context).pop();

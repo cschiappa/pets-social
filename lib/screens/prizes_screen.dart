@@ -39,7 +39,7 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
 
   //GET DATA
   getData() async {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     setState(() {
       isLoading = true;
     });
@@ -76,7 +76,7 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
     final ScrollController scrollController = ScrollController();
 

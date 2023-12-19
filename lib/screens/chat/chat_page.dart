@@ -24,7 +24,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      final ModelProfile? profile = ref.read(userProvider).getProfile;
+      final ModelProfile? profile = ref.read(userProvider);
       await _chatService.sendMessage(widget.receiverUserID, widget.receiverUsername, _messageController.text, context, profile);
       //clear text after sending
       _messageController.clear();
@@ -70,7 +70,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
 
   //build message list
   Widget _buildMessageList() {
-    final ModelProfile? profile = ref.read(userProvider).getProfile;
+    final ModelProfile? profile = ref.read(userProvider);
     final ThemeData theme = Theme.of(context);
 
     return StreamBuilder(
@@ -95,7 +95,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
   }
 
   Future<void> messageRead() async {
-    final String profileUid = ref.watch(userProvider).getProfile!.profileUid;
+    final String profileUid = ref.watch(userProvider)!.profileUid;
 
     final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.senderUid', isEqualTo: widget.receiverUserID).where('lastMessage.read', isEqualTo: false).get();
 
@@ -112,7 +112,7 @@ class ChatPageState extends ConsumerState<ChatPage> {
   //build message item
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-    final ModelProfile? profile = ref.read(userProvider).getProfile;
+    final ModelProfile? profile = ref.read(userProvider);
     final ThemeData theme = Theme.of(context);
 
     //align messages to right or left

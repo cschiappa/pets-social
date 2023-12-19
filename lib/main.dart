@@ -10,9 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-//Riverpod Providers
-final userProvider = ChangeNotifierProvider<UserProvider>((ref) => UserProvider());
-final themeData = ChangeNotifierProvider<ThemeProvider>((ref) => ThemeProvider());
+// //Riverpod Providers
+// final userProvider = ChangeNotifierProvider<UserProvider>((ref) => UserProvider());
+// final themeData = ChangeNotifierProvider<ThemeProvider>((ref) => ThemeProvider());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

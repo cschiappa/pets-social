@@ -7,7 +7,7 @@ part of 'profile_provider.dart';
 // **************************************************************************
 
 String _$getBlockedProfilesHash() =>
-    r'a7149fab852e309e16547116934596d087010776';
+    r'b9c6b1c75ac5a977d3b00bb54b46df8a186587cd';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -36,16 +36,16 @@ const getBlockedProfilesProvider = GetBlockedProfilesFamily();
 
 /// See also [getBlockedProfiles].
 class GetBlockedProfilesFamily
-    extends Family<AsyncValue<List<DocumentSnapshot>>> {
+    extends Family<AsyncValue<QuerySnapshot<Map<String, dynamic>>>> {
   /// See also [getBlockedProfiles].
   const GetBlockedProfilesFamily();
 
   /// See also [getBlockedProfiles].
   GetBlockedProfilesProvider call(
-    ModelProfile? profile,
+    List<dynamic>? blockedProfiles,
   ) {
     return GetBlockedProfilesProvider(
-      profile,
+      blockedProfiles,
     );
   }
 
@@ -54,7 +54,7 @@ class GetBlockedProfilesFamily
     covariant GetBlockedProfilesProvider provider,
   ) {
     return call(
-      provider.profile,
+      provider.blockedProfiles,
     );
   }
 
@@ -75,14 +75,14 @@ class GetBlockedProfilesFamily
 
 /// See also [getBlockedProfiles].
 class GetBlockedProfilesProvider
-    extends AutoDisposeFutureProvider<List<DocumentSnapshot>> {
+    extends AutoDisposeStreamProvider<QuerySnapshot<Map<String, dynamic>>> {
   /// See also [getBlockedProfiles].
   GetBlockedProfilesProvider(
-    ModelProfile? profile,
+    List<dynamic>? blockedProfiles,
   ) : this._internal(
           (ref) => getBlockedProfiles(
             ref as GetBlockedProfilesRef,
-            profile,
+            blockedProfiles,
           ),
           from: getBlockedProfilesProvider,
           name: r'getBlockedProfilesProvider',
@@ -93,7 +93,7 @@ class GetBlockedProfilesProvider
           dependencies: GetBlockedProfilesFamily._dependencies,
           allTransitiveDependencies:
               GetBlockedProfilesFamily._allTransitiveDependencies,
-          profile: profile,
+          blockedProfiles: blockedProfiles,
         );
 
   GetBlockedProfilesProvider._internal(
@@ -103,14 +103,15 @@ class GetBlockedProfilesProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.profile,
+    required this.blockedProfiles,
   }) : super.internal();
 
-  final ModelProfile? profile;
+  final List<dynamic>? blockedProfiles;
 
   @override
   Override overrideWith(
-    FutureOr<List<DocumentSnapshot>> Function(GetBlockedProfilesRef provider)
+    Stream<QuerySnapshot<Map<String, dynamic>>> Function(
+            GetBlockedProfilesRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -122,43 +123,46 @@ class GetBlockedProfilesProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        profile: profile,
+        blockedProfiles: blockedProfiles,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<DocumentSnapshot>> createElement() {
+  AutoDisposeStreamProviderElement<QuerySnapshot<Map<String, dynamic>>>
+      createElement() {
     return _GetBlockedProfilesProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetBlockedProfilesProvider && other.profile == profile;
+    return other is GetBlockedProfilesProvider &&
+        other.blockedProfiles == blockedProfiles;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, profile.hashCode);
+    hash = _SystemHash.combine(hash, blockedProfiles.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin GetBlockedProfilesRef
-    on AutoDisposeFutureProviderRef<List<DocumentSnapshot>> {
-  /// The parameter `profile` of this provider.
-  ModelProfile? get profile;
+    on AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>> {
+  /// The parameter `blockedProfiles` of this provider.
+  List<dynamic>? get blockedProfiles;
 }
 
 class _GetBlockedProfilesProviderElement
-    extends AutoDisposeFutureProviderElement<List<DocumentSnapshot>>
-    with GetBlockedProfilesRef {
+    extends AutoDisposeStreamProviderElement<
+        QuerySnapshot<Map<String, dynamic>>> with GetBlockedProfilesRef {
   _GetBlockedProfilesProviderElement(super.provider);
 
   @override
-  ModelProfile? get profile => (origin as GetBlockedProfilesProvider).profile;
+  List<dynamic>? get blockedProfiles =>
+      (origin as GetBlockedProfilesProvider).blockedProfiles;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

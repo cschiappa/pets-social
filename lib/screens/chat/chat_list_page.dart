@@ -26,7 +26,7 @@ class _ChatListState extends ConsumerState<ChatList> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final ModelProfile? profile = ref.read(userProvider).getProfile;
+      final ModelProfile? profile = ref.read(userProvider);
       QuerySnapshot<Map<String, dynamic>> usersSnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile!.following).get();
 
       for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
@@ -39,7 +39,7 @@ class _ChatListState extends ConsumerState<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
@@ -90,7 +90,7 @@ class _ChatListState extends ConsumerState<ChatList> {
 
   //PROFILES LIST
   Widget _buildUserList() {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
     final chatsList = ref.watch(getChatsListProvider(profile));
 
@@ -132,7 +132,7 @@ class _ChatListState extends ConsumerState<ChatList> {
     DocumentSnapshot document,
   ) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
 
     return FutureBuilder<List<Map<String, dynamic>>>(

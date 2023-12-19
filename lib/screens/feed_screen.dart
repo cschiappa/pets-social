@@ -45,7 +45,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(userProvider).refreshProfile();
+      await ref.read(userProvider.notifier).refreshProfile();
     });
   }
 
@@ -60,7 +60,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   //REFRESH PROFILE
   Future<void> _handleRefresh() async {
-    await ref.read(userProvider).refreshProfile();
+    await ref.read(userProvider.notifier).refreshProfile();
     return await Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -94,7 +94,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final postsState = ref.watch(getFeedPostsProvider(profile));
     final chatsState = ref.watch(numberOfUnreadChatsProvider(profile!.profileUid));
 
@@ -287,11 +287,11 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         ),
       ),
       title: Text(data['username']),
-      selected: ref.read(userProvider).getProfile?.profileUid == data['profileUid'],
+      selected: ref.read(userProvider)!.profileUid == data['profileUid'],
       selectedTileColor: theme.colorScheme.secondary,
       onTap: () {
         setState(() {
-          ref.read(userProvider).refreshProfile(profileUid: data['profileUid']);
+          ref.read(userProvider.notifier).refreshProfile(profileUid: data['profileUid']);
         });
         Navigator.of(context).pop();
       },

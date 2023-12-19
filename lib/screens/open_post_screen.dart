@@ -43,7 +43,7 @@ class _OpenPostState extends ConsumerState<OpenPost> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ref.read(userProvider).refreshProfile();
+      ref.read(userProvider.notifier).refreshProfile();
     });
   }
 
@@ -57,7 +57,7 @@ class _OpenPostState extends ConsumerState<OpenPost> {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: widget.profileUid).orderBy('datePublished', descending: true).snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting || ref.read(userProvider).getProfile == null) {
+          if (snapshot.connectionState == ConnectionState.waiting || ref.read(userProvider) == null) {
             return Center(
               child: CircularProgressIndicator(
                 color: theme.colorScheme.secondary,

@@ -19,61 +19,66 @@ class _BlockedAccountsPageState extends ConsumerState<BlockedAccountsPage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.appBarTheme.backgroundColor,
-      appBar: AppBar(
-        title: const Text('Blocked Accounts'),
-        backgroundColor: theme.colorScheme.background,
+    return ProviderScope(
+      child: Scaffold(
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        appBar: AppBar(
+          title: const Text('Blocked Accounts'),
+          backgroundColor: theme.colorScheme.background,
+        ),
+        body: _buildUserList(),
       ),
-      body: _buildUserList(),
     );
   }
 
   //BLOCKED PROFILES LIST
   Widget _buildUserList() {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
-    final blockedAccountsState = ref.watch(getBlockedProfilesProvider(profile));
+    final ModelProfile profile = ref.watch(userProvider)!;
+    final blockedAccountsState = ref.watch(getBlockedProfilesProvider(profile.blockedUsers));
     final ThemeData theme = Theme.of(context);
-    return blockedAccountsState.when(
-      loading: () => LinearProgressIndicator(
-        color: theme.colorScheme.secondary,
-      ),
-      error: (error, stackTrace) => Text('Error: $error'),
-      data: (blockedAccounts) {
-        if (blockedAccounts.isEmpty) {
-          return const Center(
+
+    return profile.blockedUsers.isNotEmpty
+        ? blockedAccountsState.when(
+            loading: () => LinearProgressIndicator(
+              color: theme.colorScheme.secondary,
+            ),
+            error: (error, stackTrace) => Text('Error: $error'),
+            data: (blockedAccounts) {
+              return ListView(
+                children: blockedAccounts.docs.map<Widget>((blockedAccount) => _buildUserListItem(blockedAccount)).toList(),
+              );
+            },
+          )
+        : const Center(
             child: Text('No users blocked.'),
           );
-        }
-
-        return ListView(
-          children: blockedAccounts.map<Widget>((blockedAccount) => _buildUserListItem(blockedAccount)).toList(),
-        );
-      },
-    );
   }
 
   //BLOCKED PROFILES LIST ITEMS
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
     //display all users except current user
-    return ListTile(
-        leading: CircleAvatar(
-          radius: 15,
-          backgroundImage: NetworkImage(data['photoUrl']),
-        ),
-        title: Text(data['username']),
-        trailing: TextButton(
-          onPressed: () async {
-            await FirestoreMethods().blockUser(
-              profile!.profileUid,
-              data['profileUid'],
-            );
+    return Consumer(
+      builder: (context, ref, child) {
+        final ModelProfile? profile = ref.watch(userProvider);
+        return ListTile(
+            leading: CircleAvatar(
+              radius: 15,
+              backgroundImage: NetworkImage(data['photoUrl']),
+            ),
+            title: Text(data['username']),
+            trailing: TextButton(
+              onPressed: () async {
+                // await FirestoreMethods().blockUser(
+                //   profile!.profileUid,
+                //   data['profileUid'],
+                // );
 
-            ref.watch(userProvider).unblockProfile(data['profileUid']);
-          },
-          child: const Text('Unblock'),
-        ));
+                ref.watch(userProvider.notifier).unblockProfile(data['profileUid']);
+              },
+              child: const Text('Unblock'),
+            ));
+      },
+    );
   }
 }

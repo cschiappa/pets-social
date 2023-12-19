@@ -20,7 +20,7 @@ class SavedPosts extends ConsumerStatefulWidget {
 class _SavedPostsState extends ConsumerState<SavedPosts> {
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(

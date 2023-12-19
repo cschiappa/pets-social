@@ -177,7 +177,7 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
     final firebaseauth = FirebaseAuth.instance.currentUser!.uid;
 

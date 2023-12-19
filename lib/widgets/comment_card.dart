@@ -20,7 +20,7 @@ class CommentCard extends ConsumerStatefulWidget {
 class _CommentCardState extends ConsumerState<CommentCard> {
   @override
   Widget build(BuildContext context) {
-    final ModelProfile? profile = ref.watch(userProvider).getProfile;
+    final ModelProfile? profile = ref.watch(userProvider);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),

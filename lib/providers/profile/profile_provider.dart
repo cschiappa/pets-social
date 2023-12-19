@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'profile_provider.g.dart';
 
 @riverpod
-Future<List<DocumentSnapshot>> getBlockedProfiles(GetBlockedProfilesRef ref, ModelProfile? profile) {
+Stream<QuerySnapshot<Map<String, dynamic>>> getBlockedProfiles(GetBlockedProfilesRef ref, List<dynamic>? blockedProfiles) {
   final repository = ref.watch(firestoreProvider);
-  return repository.getBlockedProfiles(profile);
+  return repository.getBlockedProfiles(blockedProfiles);
 }
