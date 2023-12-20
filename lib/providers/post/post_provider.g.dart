@@ -21,7 +21,7 @@ final firestoreProvider = Provider<FirestoreMethods>.internal(
 
 typedef FirestoreRef = ProviderRef<FirestoreMethods>;
 String _$getPostsDescendingHash() =>
-    r'fcb19f6adef77e21ff7cbea27618a05ed90e4b87';
+    r'364be3f006058457d8ed33cfdf931cc1bdffa871';
 
 /// See also [getPostsDescending].
 @ProviderFor(getPostsDescending)
@@ -37,7 +37,7 @@ final getPostsDescendingProvider =
 );
 
 typedef GetPostsDescendingRef = AutoDisposeFutureProviderRef<List<ModelPost>>;
-String _$getFeedPostsHash() => r'910b718fe352d2cff0bfab5d79eb29602fc8f036';
+String _$getFeedPostsHash() => r'28db209c5be396101226c42b4c55115a9aa04e57';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -186,6 +186,403 @@ class _GetFeedPostsProviderElement
 
   @override
   ModelProfile? get profile => (origin as GetFeedPostsProvider).profile;
+}
+
+String _$getSavedPostsHash() => r'8f554063ec11f0357f89b113cdfd42ffa5717d04';
+
+/// See also [getSavedPosts].
+@ProviderFor(getSavedPosts)
+const getSavedPostsProvider = GetSavedPostsFamily();
+
+/// See also [getSavedPosts].
+class GetSavedPostsFamily extends Family<AsyncValue<List<ModelPost>>> {
+  /// See also [getSavedPosts].
+  const GetSavedPostsFamily();
+
+  /// See also [getSavedPosts].
+  GetSavedPostsProvider call(
+    List<dynamic> savedPosts,
+  ) {
+    return GetSavedPostsProvider(
+      savedPosts,
+    );
+  }
+
+  @override
+  GetSavedPostsProvider getProviderOverride(
+    covariant GetSavedPostsProvider provider,
+  ) {
+    return call(
+      provider.savedPosts,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getSavedPostsProvider';
+}
+
+/// See also [getSavedPosts].
+class GetSavedPostsProvider extends AutoDisposeFutureProvider<List<ModelPost>> {
+  /// See also [getSavedPosts].
+  GetSavedPostsProvider(
+    List<dynamic> savedPosts,
+  ) : this._internal(
+          (ref) => getSavedPosts(
+            ref as GetSavedPostsRef,
+            savedPosts,
+          ),
+          from: getSavedPostsProvider,
+          name: r'getSavedPostsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getSavedPostsHash,
+          dependencies: GetSavedPostsFamily._dependencies,
+          allTransitiveDependencies:
+              GetSavedPostsFamily._allTransitiveDependencies,
+          savedPosts: savedPosts,
+        );
+
+  GetSavedPostsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.savedPosts,
+  }) : super.internal();
+
+  final List<dynamic> savedPosts;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<ModelPost>> Function(GetSavedPostsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetSavedPostsProvider._internal(
+        (ref) => create(ref as GetSavedPostsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        savedPosts: savedPosts,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<ModelPost>> createElement() {
+    return _GetSavedPostsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetSavedPostsProvider && other.savedPosts == savedPosts;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, savedPosts.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetSavedPostsRef on AutoDisposeFutureProviderRef<List<ModelPost>> {
+  /// The parameter `savedPosts` of this provider.
+  List<dynamic> get savedPosts;
+}
+
+class _GetSavedPostsProviderElement
+    extends AutoDisposeFutureProviderElement<List<ModelPost>>
+    with GetSavedPostsRef {
+  _GetSavedPostsProviderElement(super.provider);
+
+  @override
+  List<dynamic> get savedPosts => (origin as GetSavedPostsProvider).savedPosts;
+}
+
+String _$getCommentsHash() => r'7eb3092a339165f2402fbb97c5d571766fa8ed57';
+
+/// See also [getComments].
+@ProviderFor(getComments)
+const getCommentsProvider = GetCommentsFamily();
+
+/// See also [getComments].
+class GetCommentsFamily
+    extends Family<AsyncValue<QuerySnapshot<Map<String, dynamic>>>> {
+  /// See also [getComments].
+  const GetCommentsFamily();
+
+  /// See also [getComments].
+  GetCommentsProvider call(
+    String postId,
+  ) {
+    return GetCommentsProvider(
+      postId,
+    );
+  }
+
+  @override
+  GetCommentsProvider getProviderOverride(
+    covariant GetCommentsProvider provider,
+  ) {
+    return call(
+      provider.postId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getCommentsProvider';
+}
+
+/// See also [getComments].
+class GetCommentsProvider
+    extends AutoDisposeStreamProvider<QuerySnapshot<Map<String, dynamic>>> {
+  /// See also [getComments].
+  GetCommentsProvider(
+    String postId,
+  ) : this._internal(
+          (ref) => getComments(
+            ref as GetCommentsRef,
+            postId,
+          ),
+          from: getCommentsProvider,
+          name: r'getCommentsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getCommentsHash,
+          dependencies: GetCommentsFamily._dependencies,
+          allTransitiveDependencies:
+              GetCommentsFamily._allTransitiveDependencies,
+          postId: postId,
+        );
+
+  GetCommentsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.postId,
+  }) : super.internal();
+
+  final String postId;
+
+  @override
+  Override overrideWith(
+    Stream<QuerySnapshot<Map<String, dynamic>>> Function(
+            GetCommentsRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetCommentsProvider._internal(
+        (ref) => create(ref as GetCommentsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        postId: postId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<QuerySnapshot<Map<String, dynamic>>>
+      createElement() {
+    return _GetCommentsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetCommentsProvider && other.postId == postId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, postId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetCommentsRef
+    on AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>> {
+  /// The parameter `postId` of this provider.
+  String get postId;
+}
+
+class _GetCommentsProviderElement extends AutoDisposeStreamProviderElement<
+    QuerySnapshot<Map<String, dynamic>>> with GetCommentsRef {
+  _GetCommentsProviderElement(super.provider);
+
+  @override
+  String get postId => (origin as GetCommentsProvider).postId;
+}
+
+String _$getProfilePostsHash() => r'71902b1adfecd6e2bdac0a1f23f147952567017c';
+
+/// See also [getProfilePosts].
+@ProviderFor(getProfilePosts)
+const getProfilePostsProvider = GetProfilePostsFamily();
+
+/// See also [getProfilePosts].
+class GetProfilePostsFamily
+    extends Family<AsyncValue<QuerySnapshot<Map<String, dynamic>>>> {
+  /// See also [getProfilePosts].
+  const GetProfilePostsFamily();
+
+  /// See also [getProfilePosts].
+  GetProfilePostsProvider call(
+    String profileUid,
+  ) {
+    return GetProfilePostsProvider(
+      profileUid,
+    );
+  }
+
+  @override
+  GetProfilePostsProvider getProviderOverride(
+    covariant GetProfilePostsProvider provider,
+  ) {
+    return call(
+      provider.profileUid,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getProfilePostsProvider';
+}
+
+/// See also [getProfilePosts].
+class GetProfilePostsProvider
+    extends AutoDisposeStreamProvider<QuerySnapshot<Map<String, dynamic>>> {
+  /// See also [getProfilePosts].
+  GetProfilePostsProvider(
+    String profileUid,
+  ) : this._internal(
+          (ref) => getProfilePosts(
+            ref as GetProfilePostsRef,
+            profileUid,
+          ),
+          from: getProfilePostsProvider,
+          name: r'getProfilePostsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getProfilePostsHash,
+          dependencies: GetProfilePostsFamily._dependencies,
+          allTransitiveDependencies:
+              GetProfilePostsFamily._allTransitiveDependencies,
+          profileUid: profileUid,
+        );
+
+  GetProfilePostsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.profileUid,
+  }) : super.internal();
+
+  final String profileUid;
+
+  @override
+  Override overrideWith(
+    Stream<QuerySnapshot<Map<String, dynamic>>> Function(
+            GetProfilePostsRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetProfilePostsProvider._internal(
+        (ref) => create(ref as GetProfilePostsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        profileUid: profileUid,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<QuerySnapshot<Map<String, dynamic>>>
+      createElement() {
+    return _GetProfilePostsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetProfilePostsProvider && other.profileUid == profileUid;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, profileUid.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetProfilePostsRef
+    on AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>> {
+  /// The parameter `profileUid` of this provider.
+  String get profileUid;
+}
+
+class _GetProfilePostsProviderElement extends AutoDisposeStreamProviderElement<
+    QuerySnapshot<Map<String, dynamic>>> with GetProfilePostsRef {
+  _GetProfilePostsProviderElement(super.provider);
+
+  @override
+  String get profileUid => (origin as GetProfilePostsProvider).profileUid;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

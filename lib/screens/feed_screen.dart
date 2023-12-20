@@ -10,6 +10,7 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/chat/chat_provider.dart';
 import 'package:pets_social/providers/post/post_provider.dart';
+import 'package:pets_social/providers/profile/profile_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/services/firestore_methods.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
@@ -248,26 +249,20 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   //PROFILE LIST FOR DRAWER
   Widget _buildProfileList() {
+    final accountProfiles = ref.watch(getAccountProfilesProvider);
     final ThemeData theme = Theme.of(context);
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('error');
-        }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(color: theme.colorScheme.secondary),
+    return accountProfiles.when(
+        error: (error, stackTrace) => Text('Error: $error'),
+        loading: () => LinearProgressIndicator(
+              color: theme.colorScheme.secondary,
+            ),
+        data: (accountProfiles) {
+          return ListView(
+            shrinkWrap: true,
+            children: accountProfiles.docs.map<Widget>((doc) => _buildProfileListItem(doc)).toList(),
           );
-        }
-
-        return ListView(
-          shrinkWrap: true,
-          children: snapshot.data!.docs.map<Widget>((doc) => _buildProfileListItem(doc)).toList(),
-        );
-      },
-    );
+        });
   }
 
   //PROFILE LIST ITEM FOR DRAWER

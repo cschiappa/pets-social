@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/post/post_provider.dart';
 import 'package:pets_social/services/auth_methods.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,4 +24,10 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getBlockedProfiles(GetBlockedProfile
 Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles(GetAccountProfilesRef ref) {
   final repository = ref.watch(authMethodsProvider);
   return repository.getAccountProfiles();
+}
+
+@riverpod
+Future<List<ModelProfile>> getProfilesWhere(GetProfilesWhereRef ref, String profileUid) {
+  final repository = ref.watch(firestoreProvider);
+  return repository.getProfilesWhere(profileUid);
 }

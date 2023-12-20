@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/post/post_provider.dart';
+import 'package:pets_social/providers/profile/profile_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import '../models/post.dart';
 import '../utils/utils.dart';
@@ -45,6 +46,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final postsState = ref.watch(getPostsDescendingProvider);
+
     return Scaffold(
       //SEARCHBAR
       appBar: AppBar(
@@ -119,22 +121,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   return MasonryGridView.builder(
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
-                      ModelPost post = posts[index];
+                      ModelPost postIndex = posts[index];
+                      final getProfiles = ref.watch(getProfilesWhereProvider(postIndex.profileUid));
 
-                      return FutureBuilder(
-                          future: FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: post.profileUid).get(),
-                          builder: (context, profileSnapshot) {
-                            if (profileSnapshot.connectionState == ConnectionState.waiting) {
-                              return Container();
-                            }
+                      return getProfiles.when(
+                          loading: () => Container(),
+                          error: (error, stackTrace) => Text('Error: $error'),
+                          data: (getProfiles) {
                             Widget mediaWidget;
-                            final String contentType = getContentTypeFromUrl(post.fileType);
+                            final String contentType = getContentTypeFromUrl(postIndex.fileType);
                             //return video
                             if (contentType == 'video') {
                               mediaWidget = ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: Image(
-                                  image: NetworkImage(post.videoThumbnail),
+                                  image: NetworkImage(postIndex.videoThumbnail),
                                   fit: BoxFit.cover,
                                 ),
                               );
@@ -143,7 +144,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               mediaWidget = ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: Image(
-                                  image: NetworkImage(post.postUrl),
+                                  image: NetworkImage(postIndex.postUrl),
                                   fit: BoxFit.fitWidth,
                                 ),
                               );
@@ -151,13 +152,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               mediaWidget = const Text('file format not available');
                             }
 
+                            ModelProfile profileIndex = getProfiles[index];
                             // Fetch username
-                            String username = profileSnapshot.data!.docs.isNotEmpty ? profileSnapshot.data!.docs.first['username'] : '';
+                            String username = getProfiles.isNotEmpty ? profileIndex.username : '';
 
                             return GestureDetector(
                               onTap: () {
-                                String profileUid = post.profileUid;
-                                String postId = post.postId;
+                                String profileUid = postIndex.profileUid;
+                                String postId = postIndex.postId;
 
                                 context.pushNamed(
                                   AppRouter.openPostFromSearch.name,

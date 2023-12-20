@@ -415,7 +415,7 @@ class FirestoreMethods {
     return res;
   }
 
-  //GET POSTS DESCENDING
+  //GET ALL POSTS DESCENDING
   Future<List<ModelPost>> getPostsDescending() async {
     QuerySnapshot querySnapshot = await _firestore.collection('posts').orderBy('datePublished', descending: true).get();
 
@@ -438,5 +438,29 @@ class FirestoreMethods {
   //GET BLOCKED PROFILES DATA
   Stream<QuerySnapshot<Map<String, dynamic>>> getBlockedProfiles(List<dynamic>? blockedProfiles) {
     return FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: blockedProfiles).snapshots();
+  }
+
+  //GET SAVED POSTS
+  Future<List<ModelPost>> getSavedPosts(List<dynamic> savedPosts) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('posts').where('postId', whereIn: savedPosts).get();
+
+    return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
+  }
+
+  //GET PROFILES WHERE
+  Future<List<ModelProfile>> getProfilesWhere(String profileUid) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
+
+    return querySnapshot.docs.map((doc) => ModelProfile.fromSnap(doc)).toList();
+  }
+
+  //GET COMMENTS
+  Stream<QuerySnapshot<Map<String, dynamic>>> getComments(String postId) {
+    return FirebaseFirestore.instance.collection('posts').doc(postId).collection('comments').orderBy('datePublished', descending: true).snapshots();
+  }
+
+  //GET PROFILE'S POSTS DESCENDING
+  Stream<QuerySnapshot<Map<String, dynamic>>> getProfilePosts(String profileUid) {
+    return FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: profileUid).orderBy('datePublished', descending: true).snapshots();
   }
 }

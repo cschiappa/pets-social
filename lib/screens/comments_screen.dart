@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/post/post_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/services/firestore_methods.dart';
 
@@ -28,6 +29,7 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
   Widget build(BuildContext context) {
     final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
+    final getComments = ref.watch(getCommentsProvider(widget.snap['postId']));
 
     return Scaffold(
       appBar: AppBar(
@@ -35,18 +37,20 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
         title: const Text('Comments'),
         centerTitle: false,
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('posts').doc(widget.snap['postId']).collection('comments').orderBy('datePublished', descending: true).snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: theme.colorScheme.secondary,
-              ),
-            );
-          }
-
-          return ListView.builder(itemCount: (snapshot.data! as dynamic).docs.length, itemBuilder: (context, index) => CommentCard(snap: (snapshot.data! as dynamic).docs[index].data()));
+      body: getComments.when(
+        error: (error, stacktrace) => Text('error: $error'),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: theme.colorScheme.secondary,
+          ),
+        ),
+        data: (getComments) {
+          return ListView.builder(
+            itemCount: getComments.docs.length,
+            itemBuilder: (context, index) => CommentCard(
+              snap: getComments.docs[index].data(),
+            ),
+          );
         },
       ),
       bottomNavigationBar: SafeArea(

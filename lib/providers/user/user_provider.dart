@@ -30,7 +30,7 @@ class UserProvider extends StateNotifier<ModelProfile?> {
     }
   }
 
-  // // UNBLOCK PROFILE
+  // UNBLOCK PROFILE
   void unblockProfile(String blockedId) async {
     if (state != null) {
       state!.blockedUsers.remove(blockedId);
@@ -38,7 +38,7 @@ class UserProvider extends StateNotifier<ModelProfile?> {
     }
   }
 
-  // // BLOCK PROFILE
+  // BLOCK PROFILE
   void blockProfile(String blockedId) async {
     if (state != null) {
       state!.blockedUsers.add(blockedId);

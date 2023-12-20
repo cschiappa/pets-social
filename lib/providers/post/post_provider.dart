@@ -8,27 +8,43 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'post_provider.g.dart';
 
+//FIRESTOREMETHODS PROVIDER
 @Riverpod(keepAlive: true)
 FirestoreMethods firestore(FirestoreRef ref) {
   return FirestoreMethods();
 }
 
+//GET ALL POSTS IN DESCENDING
 @riverpod
 Future<List<ModelPost>> getPostsDescending(GetPostsDescendingRef ref) {
-  final user = ref.watch(firebaseAuthProvider).currentUser;
-  if (user == null) {
-    throw AssertionError('User can\'t be null');
-  }
   final repository = ref.watch(firestoreProvider);
   return repository.getPostsDescending();
 }
 
+//GET FEED POSTS
 @riverpod
 Stream<List<DocumentSnapshot>> getFeedPosts(GetFeedPostsRef ref, ModelProfile? profile) {
-  final user = ref.watch(firebaseAuthProvider).currentUser;
-  if (user == null) {
-    throw AssertionError('User can\'t be null');
-  }
   final repository = ref.watch(firestoreProvider);
   return repository.getFeedPosts(profile);
+}
+
+//GET SAVED POSTS
+@riverpod
+Future<List<ModelPost>> getSavedPosts(GetSavedPostsRef ref, List<dynamic> savedPosts) {
+  final repository = ref.watch(firestoreProvider);
+  return repository.getSavedPosts(savedPosts);
+}
+
+//GET COMMENTS
+@riverpod
+Stream<QuerySnapshot<Map<String, dynamic>>> getComments(GetCommentsRef ref, String postId) {
+  final repository = ref.watch(firestoreProvider);
+  return repository.getComments(postId);
+}
+
+//GET PROFILE POSTS
+@riverpod
+Stream<QuerySnapshot<Map<String, dynamic>>> getProfilePosts(GetProfilePostsRef ref, String profileUid) {
+  final repository = ref.watch(firestoreProvider);
+  return repository.getProfilePosts(profileUid);
 }

@@ -197,5 +197,134 @@ final getAccountProfilesProvider =
 
 typedef GetAccountProfilesRef
     = AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>>;
+String _$getProfilesWhereHash() => r'e30c91ccb32f63560360c0d0e6e39741822b1594';
+
+/// See also [getProfilesWhere].
+@ProviderFor(getProfilesWhere)
+const getProfilesWhereProvider = GetProfilesWhereFamily();
+
+/// See also [getProfilesWhere].
+class GetProfilesWhereFamily extends Family<AsyncValue<List<ModelProfile>>> {
+  /// See also [getProfilesWhere].
+  const GetProfilesWhereFamily();
+
+  /// See also [getProfilesWhere].
+  GetProfilesWhereProvider call(
+    String profileUid,
+  ) {
+    return GetProfilesWhereProvider(
+      profileUid,
+    );
+  }
+
+  @override
+  GetProfilesWhereProvider getProviderOverride(
+    covariant GetProfilesWhereProvider provider,
+  ) {
+    return call(
+      provider.profileUid,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getProfilesWhereProvider';
+}
+
+/// See also [getProfilesWhere].
+class GetProfilesWhereProvider
+    extends AutoDisposeFutureProvider<List<ModelProfile>> {
+  /// See also [getProfilesWhere].
+  GetProfilesWhereProvider(
+    String profileUid,
+  ) : this._internal(
+          (ref) => getProfilesWhere(
+            ref as GetProfilesWhereRef,
+            profileUid,
+          ),
+          from: getProfilesWhereProvider,
+          name: r'getProfilesWhereProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getProfilesWhereHash,
+          dependencies: GetProfilesWhereFamily._dependencies,
+          allTransitiveDependencies:
+              GetProfilesWhereFamily._allTransitiveDependencies,
+          profileUid: profileUid,
+        );
+
+  GetProfilesWhereProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.profileUid,
+  }) : super.internal();
+
+  final String profileUid;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<ModelProfile>> Function(GetProfilesWhereRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetProfilesWhereProvider._internal(
+        (ref) => create(ref as GetProfilesWhereRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        profileUid: profileUid,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<ModelProfile>> createElement() {
+    return _GetProfilesWhereProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetProfilesWhereProvider && other.profileUid == profileUid;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, profileUid.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetProfilesWhereRef on AutoDisposeFutureProviderRef<List<ModelProfile>> {
+  /// The parameter `profileUid` of this provider.
+  String get profileUid;
+}
+
+class _GetProfilesWhereProviderElement
+    extends AutoDisposeFutureProviderElement<List<ModelProfile>>
+    with GetProfilesWhereRef {
+  _GetProfilesWhereProviderElement(super.provider);
+
+  @override
+  String get profileUid => (origin as GetProfilesWhereProvider).profileUid;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

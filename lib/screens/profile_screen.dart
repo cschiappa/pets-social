@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/features/app_router.dart';
+import 'package:pets_social/providers/post/post_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/services/auth_methods.dart';
 import 'package:pets_social/services/firestore_methods.dart';
@@ -150,6 +151,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
+    final profilePosts = ref.watch(getProfilePostsProvider(userId));
 
     return isLoading
         ? Center(
@@ -273,70 +275,67 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       //PICTURES GRID
-                      FutureBuilder(
-                        future: FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: userId).orderBy('datePublished', descending: true).get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: theme.colorScheme.secondary,
+                      profilePosts.when(
+                          error: (error, stacktrace) => Text('error: $error'),
+                          loading: () => Center(
+                                child: CircularProgressIndicator(
+                                  color: theme.colorScheme.secondary,
+                                ),
                               ),
-                            );
-                          }
-                          return GridView.builder(
-                            shrinkWrap: true,
-                            itemCount: (snapshot.data! as dynamic).docs.length,
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
-                            itemBuilder: (context, index) {
-                              DocumentSnapshot snap = (snapshot.data! as dynamic).docs[index];
+                          data: (profilePosts) {
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: profilePosts.docs.length,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot post = profilePosts.docs[index];
 
-                              Widget mediaWidget;
-                              final String contentType = getContentTypeFromUrl(snap['fileType']);
-                              //return video
-                              if (contentType == 'video') {
-                                mediaWidget = ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image(
-                                    image: NetworkImage(snap['videoThumbnail']),
-                                    fit: BoxFit.cover,
-                                  ),
+                                Widget mediaWidget;
+                                final String contentType = getContentTypeFromUrl(post['fileType']);
+                                //return video
+                                if (contentType == 'video') {
+                                  mediaWidget = ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Image(
+                                      image: NetworkImage(post['videoThumbnail']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                } else {
+                                  // return image
+                                  mediaWidget = ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Image(
+                                      image: NetworkImage(post['postUrl']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                }
+                                return GestureDetector(
+                                  onTap: () {
+                                    post['profileUid'] == profile!.profileUid
+                                        ? context.goNamed(
+                                            AppRouter.openPostFromProfile.name,
+                                            pathParameters: {
+                                              'postId': post['postId'],
+                                              'profileUid': post['profileUid'],
+                                              'username': userData['username'],
+                                            },
+                                          )
+                                        : context.goNamed(
+                                            AppRouter.openPostFromFeed.name,
+                                            pathParameters: {
+                                              'postId': post['postId'],
+                                              'profileUid': post['profileUid'],
+                                              'username': userData['username'],
+                                            },
+                                          );
+                                  },
+                                  child: mediaWidget,
                                 );
-                              } else {
-                                // return image
-                                mediaWidget = ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image(
-                                    image: NetworkImage(snap['postUrl']),
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              }
-                              return GestureDetector(
-                                onTap: () {
-                                  snap['profileUid'] == profile!.profileUid
-                                      ? context.goNamed(
-                                          AppRouter.openPostFromProfile.name,
-                                          pathParameters: {
-                                            'postId': snap['postId'],
-                                            'profileUid': snap['profileUid'],
-                                            'username': userData['username'],
-                                          },
-                                        )
-                                      : context.goNamed(
-                                          AppRouter.openPostFromFeed.name,
-                                          pathParameters: {
-                                            'postId': snap['postId'],
-                                            'profileUid': snap['profileUid'],
-                                            'username': userData['username'],
-                                          },
-                                        );
-                                },
-                                child: mediaWidget,
-                              );
-                            },
-                          );
-                        },
-                      ),
+                              },
+                            );
+                          }),
                     ],
                   ),
                 ],
