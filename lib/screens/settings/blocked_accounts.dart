@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/providers/profile/profile_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
-
 import 'package:pets_social/models/profile.dart';
-
-import '../../services/firestore_methods.dart';
 
 class BlockedAccountsPage extends ConsumerStatefulWidget {
   const BlockedAccountsPage({super.key});
@@ -57,28 +54,17 @@ class _BlockedAccountsPageState extends ConsumerState<BlockedAccountsPage> {
   //BLOCKED PROFILES LIST ITEMS
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    //display all users except current user
-    return Consumer(
-      builder: (context, ref, child) {
-        final ModelProfile? profile = ref.watch(userProvider);
-        return ListTile(
-            leading: CircleAvatar(
-              radius: 15,
-              backgroundImage: NetworkImage(data['photoUrl']),
-            ),
-            title: Text(data['username']),
-            trailing: TextButton(
-              onPressed: () async {
-                // await FirestoreMethods().blockUser(
-                //   profile!.profileUid,
-                //   data['profileUid'],
-                // );
-
-                ref.watch(userProvider.notifier).unblockProfile(data['profileUid']);
-              },
-              child: const Text('Unblock'),
-            ));
-      },
-    );
+    return ListTile(
+        leading: CircleAvatar(
+          radius: 15,
+          backgroundImage: NetworkImage(data['photoUrl']),
+        ),
+        title: Text(data['username']),
+        trailing: TextButton(
+          onPressed: () async {
+            ref.watch(userProvider.notifier).unblockProfile(data['profileUid']);
+          },
+          child: const Text('Unblock'),
+        ));
   }
 }

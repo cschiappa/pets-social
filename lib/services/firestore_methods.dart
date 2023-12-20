@@ -435,12 +435,7 @@ class FirestoreMethods {
         );
   }
 
-  //GET BLOCKED PROFILES
-  // Stream<List<DocumentSnapshot>> getBlockedProfiles(ModelProfile? profile) {
-  //   return FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile!.blockedUsers).snapshots().map((snapshot) {
-  //     return snapshot.docs;
-  //   });
-  // }
+  //GET BLOCKED PROFILES DATA
   Stream<QuerySnapshot<Map<String, dynamic>>> getBlockedProfiles(List<dynamic>? blockedProfiles) {
     return FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: blockedProfiles).snapshots();
   }

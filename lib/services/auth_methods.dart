@@ -208,4 +208,9 @@ class AuthMethods {
     final formatedDate = DateFormat.MMMMd().format(newDate);
     return formatedDate;
   }
+
+  //GET PROFILES FROM CURRENT USER
+  Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles() {
+    return FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').snapshots();
+  }
 }

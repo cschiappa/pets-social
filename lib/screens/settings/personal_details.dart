@@ -10,7 +10,7 @@ class PersonalDetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ModelProfile? profile = ref.watch(userProvider);
+    final ModelProfile profile = ref.watch(userProvider)!;
     final ThemeData theme = Theme.of(context);
     final DateFormat format = DateFormat("dd/MM/yyyy");
 
@@ -24,7 +24,7 @@ class PersonalDetailsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.person),
             title: const Text('Username'),
-            subtitle: Text(profile!.username),
+            subtitle: Text(profile.username),
           ),
           ListTile(
             leading: const Icon(Icons.mail),

@@ -74,11 +74,36 @@ class ChatService extends ChangeNotifier {
     return firestore.collection('chats').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: true).snapshots();
   }
 
-  //GET NUMBER OF CHATS
-  Future<int> numberOfUnreadChats(String profileUid) async {
-    final QuerySnapshot chats = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.read', isEqualTo: false).get();
+  //UPDATE MESSAGE READ VALUE
+  Future<void> messageRead(String profileUid, String receiverUiD) async {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.senderUid', isEqualTo: receiverUiD).where('lastMessage.read', isEqualTo: false).get();
 
-    return chats.docs.length;
+    if (querySnapshot.docs.isNotEmpty) {
+      await querySnapshot.docs.first.reference.update({
+        'lastMessage': {
+          ...querySnapshot.docs.first['lastMessage'],
+          'read': true,
+        },
+      });
+    }
+  }
+
+  //CHECK UNREAD MESSAGES
+  Stream<List<Map<String, dynamic>>> getLastMessage(String receiverUid, String senderUid) {
+    final Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: receiverUid).where('lastMessage.senderUid', isEqualTo: senderUid);
+
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) => doc['lastMessage'] as Map<String, dynamic>).toList();
+    });
+  }
+
+  //GET NUMBER OF CHATS
+  Stream<int> numberOfUnreadChats(String profileUid) {
+    final Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.read', isEqualTo: false);
+
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.length;
+    });
   }
 
   //GET CHAT LIST

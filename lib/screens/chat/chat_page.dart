@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/providers/chat/chat_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/services/chat_methods.dart';
 import 'package:pets_social/widgets/chat_bubble.dart';
@@ -26,15 +27,8 @@ class ChatPageState extends ConsumerState<ChatPage> {
     if (_messageController.text.isNotEmpty) {
       final ModelProfile? profile = ref.read(userProvider);
       await _chatService.sendMessage(widget.receiverUserID, widget.receiverUsername, _messageController.text, context, profile);
-      //clear text after sending
       _messageController.clear();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    messageRead();
   }
 
   @override
@@ -53,13 +47,12 @@ class ChatPageState extends ConsumerState<ChatPage> {
       ),
       body: Column(
         children: [
-          //messages
+          //MESSAGES
           Expanded(
             child: _buildMessageList(),
           ),
-          //user input
+          //USER INPUT
           _buildMessageInput(),
-
           const SizedBox(
             height: 25,
           )
@@ -68,45 +61,25 @@ class ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  //build message list
+  //BUILD MESSAGE LIST
   Widget _buildMessageList() {
-    final ModelProfile? profile = ref.read(userProvider);
+    final ModelProfile? profile = ref.watch(userProvider);
+    ref.watch(messageReadProvider(profile!.profileUid, widget.receiverUserID));
+    final messages = ref.watch(getMessagesProvider(widget.receiverUserID, profile.profileUid));
     final ThemeData theme = Theme.of(context);
 
-    return StreamBuilder(
-      stream: _chatService.getMessages(widget.receiverUserID, profile!.profileUid), //THIS IS WRONG
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error${snapshot.error}');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(color: theme.colorScheme.secondary),
-          );
-        }
-
+    return messages.when(
+      error: (error, stackTrace) => Text('Error: $error'),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: theme.colorScheme.secondary),
+      ),
+      data: (messages) {
         return ListView(
           reverse: true,
-          children: snapshot.data!.docs.map((document) => _buildMessageItem(document)).toList(),
+          children: messages.docs.map((message) => _buildMessageItem(message)).toList(),
         );
       },
     );
-  }
-
-  Future<void> messageRead() async {
-    final String profileUid = ref.watch(userProvider)!.profileUid;
-
-    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: profileUid).where('lastMessage.senderUid', isEqualTo: widget.receiverUserID).where('lastMessage.read', isEqualTo: false).get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      await querySnapshot.docs.first.reference.update({
-        'lastMessage': {
-          ...querySnapshot.docs.first['lastMessage'],
-          'read': true,
-        },
-      });
-    }
   }
 
   //build message item
@@ -146,12 +119,9 @@ class ChatPageState extends ConsumerState<ChatPage> {
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Row(
         children: [
-          //textfield
           Expanded(
             child: TextFieldInput(textEditingController: _messageController, labelText: 'Enter message', textInputType: TextInputType.text),
           ),
-
-          //send button
           IconButton(
               onPressed: sendMessage,
               icon: const Icon(

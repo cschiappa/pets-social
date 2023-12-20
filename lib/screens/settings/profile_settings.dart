@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/main.dart';
+import 'package:pets_social/providers/profile/profile_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
 import '../../services/auth_methods.dart';
 import '../../services/firestore_methods.dart';
@@ -40,27 +41,19 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   //USER'S PROFILES LIST
   Widget _buildProfileList() {
     final ThemeData theme = Theme.of(context);
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('error');
-        }
+    final accountProfiles = ref.watch(getAccountProfilesProvider);
+    return accountProfiles.when(
+        error: (error, stackTrace) => Text('Error: $error'),
+        loading: () => LinearProgressIndicator(
+              color: theme.colorScheme.secondary,
+            ),
+        data: (accountProfiles) {
+          final hasMultipleProfiles = accountProfiles.docs.length > 1;
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LinearProgressIndicator(
-            color: theme.colorScheme.secondary,
+          return ListView(
+            children: accountProfiles.docs.map<Widget>((doc) => _buildProfileListItem(doc, hasMultipleProfiles)).toList(),
           );
-        }
-
-        final profileDocs = snapshot.data!.docs;
-        final hasMultipleProfiles = profileDocs.length > 1;
-
-        return ListView(
-          children: snapshot.data!.docs.map<Widget>((doc) => _buildProfileListItem(doc, hasMultipleProfiles)).toList(),
-        );
-      },
-    );
+        });
   }
 
   //USER'S PROFILES LIST ITEMS

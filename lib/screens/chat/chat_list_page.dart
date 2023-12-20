@@ -112,13 +112,6 @@ class _ChatListState extends ConsumerState<ChatList> {
     );
   }
 
-  //CHECK UNREAD MESSAGES
-  Future<List<Map<String, dynamic>>> checkReads(String receiverUid, String senderUid) async {
-    final QuerySnapshot messages = await FirebaseFirestore.instance.collection('chats').where('lastMessage.receiverUid', isEqualTo: receiverUid).where('lastMessage.senderUid', isEqualTo: senderUid).get();
-
-    return messages.docs.map((doc) => doc['lastMessage'] as Map<String, dynamic>).toList();
-  }
-
   String cropMessage(String message, int maxLetters) {
     if (message.length <= maxLetters) {
       return message;
@@ -134,27 +127,18 @@ class _ChatListState extends ConsumerState<ChatList> {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
     final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
+    final lastMessages = ref.watch(getLastMessageProvider(profile!.profileUid, data['profileUid']));
 
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: checkReads(profile!.profileUid, data['profileUid']),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return LinearProgressIndicator(
-            color: theme.colorScheme.secondary,
-          );
-        }
-
-        if (snapshot.hasError) {
-          return const Text('Error checking unread messages');
-        }
-
-        List<Map<String, dynamic>> lastMessages = snapshot.data ?? [];
-
+    return lastMessages.when(
+      error: (error, stacktrace) => Text('Error: $error'),
+      loading: () => LinearProgressIndicator(
+        color: theme.colorScheme.secondary,
+      ),
+      data: (lastMessages) {
         bool hasUnreadMessages = lastMessages.any((lastMessage) => !lastMessage['read']);
         String message = lastMessages.isNotEmpty ? lastMessages[0]['message'] : '';
         String croppedMessage = cropMessage(message, 25);
 
-        // Display all users except the current user
         if (profile.profileUid != data['profileUid']) {
           return ListTile(
             leading: CircleAvatar(
@@ -167,14 +151,10 @@ class _ChatListState extends ConsumerState<ChatList> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   )
                 : Text(data['username']),
-            subtitle: hasUnreadMessages
-                ? Text(
-                    croppedMessage,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    croppedMessage,
-                  ),
+            subtitle: Text(
+              croppedMessage,
+              //style: hasUnreadMessages ? const TextStyle(fontWeight: FontWeight.bold) : null,
+            ),
             trailing: hasUnreadMessages
                 ? Icon(
                     Icons.fiber_manual_record,

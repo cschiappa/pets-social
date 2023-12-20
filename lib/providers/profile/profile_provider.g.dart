@@ -6,6 +6,20 @@ part of 'profile_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$authMethodsHash() => r'a0dfdb99538f56e08bdb8421ee03e4d869c7fe9e';
+
+/// See also [authMethods].
+@ProviderFor(authMethods)
+final authMethodsProvider = Provider<AuthMethods>.internal(
+  authMethods,
+  name: r'authMethodsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$authMethodsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef AuthMethodsRef = ProviderRef<AuthMethods>;
 String _$getBlockedProfilesHash() =>
     r'b9c6b1c75ac5a977d3b00bb54b46df8a186587cd';
 
@@ -164,5 +178,24 @@ class _GetBlockedProfilesProviderElement
   List<dynamic>? get blockedProfiles =>
       (origin as GetBlockedProfilesProvider).blockedProfiles;
 }
+
+String _$getAccountProfilesHash() =>
+    r'be666e77e3744a1faf920f96b811e1284534bfc6';
+
+/// See also [getAccountProfiles].
+@ProviderFor(getAccountProfiles)
+final getAccountProfilesProvider =
+    AutoDisposeStreamProvider<QuerySnapshot<Map<String, dynamic>>>.internal(
+  getAccountProfiles,
+  name: r'getAccountProfilesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getAccountProfilesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef GetAccountProfilesRef
+    = AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
