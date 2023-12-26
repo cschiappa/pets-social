@@ -82,9 +82,7 @@ class _ChatListState extends ConsumerState<ChatList> {
                 );
               },
             )
-          : profile!.following.isEmpty
-              ? const Center(child: Text('Follow someone to start chatting!'))
-              : _buildUserList(),
+          : _buildUserList(),
     );
   }
 
@@ -102,7 +100,7 @@ class _ChatListState extends ConsumerState<ChatList> {
       data: (chats) {
         if (chats.isEmpty) {
           return const Center(
-            child: Text('No chats found.'),
+            child: Text('Find someone to start chatting!'),
           );
         }
         return ListView(

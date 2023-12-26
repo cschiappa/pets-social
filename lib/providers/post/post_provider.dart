@@ -16,9 +16,9 @@ FirestoreMethods firestore(FirestoreRef ref) {
 
 //GET ALL POSTS IN DESCENDING
 @riverpod
-Future<List<ModelPost>> getPostsDescending(GetPostsDescendingRef ref) {
+Future<List<ModelPost>> getPostsDescending(GetPostsDescendingRef ref, ModelProfile profile) {
   final repository = ref.watch(firestoreProvider);
-  return repository.getPostsDescending();
+  return repository.getPostsDescending(profile);
 }
 
 //GET FEED POSTS

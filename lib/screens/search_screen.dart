@@ -7,6 +7,7 @@ import 'package:pets_social/features/app_router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/providers/post/post_provider.dart';
 import 'package:pets_social/providers/profile/profile_provider.dart';
+import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import '../models/post.dart';
 import '../utils/utils.dart';
@@ -45,7 +46,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final postsState = ref.watch(getPostsDescendingProvider);
+    ModelProfile profile = ref.watch(userProvider)!;
+    final postsState = ref.watch(getPostsDescendingProvider(profile));
 
     return Scaffold(
       //SEARCHBAR

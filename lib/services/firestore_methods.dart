@@ -416,10 +416,10 @@ class FirestoreMethods {
   }
 
   //GET ALL POSTS DESCENDING
-  Future<List<ModelPost>> getPostsDescending() async {
+  Future<List<ModelPost>> getPostsDescending(ModelProfile profile) async {
     QuerySnapshot querySnapshot = await _firestore.collection('posts').orderBy('datePublished', descending: true).get();
 
-    return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
+    return querySnapshot.docs.where((doc) => !profile.blockedUsers.contains(doc['profileUid'])).map((doc) => ModelPost.fromSnap(doc)).toList();
   }
 
   //GET FEED POSTS

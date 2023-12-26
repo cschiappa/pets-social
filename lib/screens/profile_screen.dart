@@ -385,14 +385,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         textColor: Colors.black,
                         borderColor: Colors.grey,
                         function: () async {
-                          await FirestoreMethods().followUser(
-                            profile.profileUid,
-                            userData['profileUid'],
-                          );
+                          // await FirestoreMethods().followUser(
+                          //   profile.profileUid,
+                          //   userData['profileUid'],
+                          // );
                           setState(() {
                             isFollowing = false;
-                            followers--;
+                            //followers--;
                           });
+                          ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, userData['profileUid']);
                         },
                       )
                     : FollowButton(
@@ -401,16 +402,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         textColor: Colors.white,
                         borderColor: theme.colorScheme.secondary,
                         function: () async {
-                          await FirestoreMethods().followUser(
-                            profile.profileUid,
-                            userData['profileUid'],
-                          );
+                          // await FirestoreMethods().followUser(
+                          //   profile.profileUid,
+                          //   userData['profileUid'],
+                          // );
                           setState(
                             () {
                               isFollowing = true;
-                              followers++;
+                              //followers++;
                             },
                           );
+                          ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, userData['profileUid']);
                         },
                       ),
           ],

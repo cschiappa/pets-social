@@ -97,111 +97,12 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final width = MediaQuery.of(context).size.width;
     final ModelProfile? profile = ref.watch(userProvider);
     final postsState = ref.watch(getFeedPostsProvider(profile));
-    final chatsState = ref.watch(numberOfUnreadChatsProvider(profile!.profileUid));
-
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      drawer: Drawer(
-        backgroundColor: theme.colorScheme.background,
-        width: 280,
-        child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 73,
-                width: double.infinity,
-                child: DrawerHeader(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20.0),
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 157, 110, 157), // Start color
-                        Color.fromARGB(255, 240, 177, 136), // End color
-                      ],
-                    ),
-                  ),
-                  child: Image.asset(
-                    'assets/logo.png',
-                    color: theme.colorScheme.primary,
-                    scale: 6.5,
-                    alignment: Alignment.topCenter,
-                  ),
-                ),
-              ),
-              _buildProfileList(),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ListTile(
-                    tileColor: Colors.grey[500],
-                    title: const Text('Add a New Pet Profile'),
-                    trailing: const Icon(Icons.person_add),
-                    onTap: () {
-                      _profileBottomSheet(context);
-                    },
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-      appBar: ResponsiveLayout.isWeb(context)
-          ? null
-          : AppBar(
-              leading: Builder(builder: (context) {
-                return IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  icon: const Icon(
-                    Icons.groups,
-                    size: 30,
-                  ),
-                );
-              }),
-              backgroundColor: theme.appBarTheme.backgroundColor,
-              centerTitle: true,
-              title: Image.asset(
-                'assets/logo.png',
-                color: theme.colorScheme.tertiary,
-                alignment: Alignment.topCenter,
-                scale: 6.5,
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    context.goNamed(AppRouter.chatList.name);
-                  },
-                  icon: chatsState.when(
-                    loading: () => Center(
-                      child: CircularProgressIndicator(color: theme.colorScheme.secondary),
-                    ),
-                    error: (error, stackTrace) => Text('Error: $error'),
-                    data: (chats) {
-                      return chats > 0
-                          ? Badge.count(
-                              textColor: Colors.white,
-                              backgroundColor: theme.colorScheme.secondary,
-                              count: chats,
-                              child: const Icon(
-                                Icons.forum,
-                                size: 25,
-                              ),
-                            )
-                          : const Icon(
-                              Icons.forum,
-                              size: 25,
-                            );
-                    },
-                  ),
-                ),
-              ],
-            ),
+      drawer: _drawer(),
+      appBar: ResponsiveLayout.isWeb(context) ? null : _appBar(),
       body: LayoutBuilder(builder: (context, constraints) {
         return LiquidPullToRefresh(
             key: _refreshIndicatorKey,
@@ -290,6 +191,116 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         });
         Navigator.of(context).pop();
       },
+    );
+  }
+
+  Widget _drawer() {
+    final ThemeData theme = Theme.of(context);
+
+    return Drawer(
+      backgroundColor: theme.colorScheme.background,
+      width: 280,
+      child: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 73,
+              width: double.infinity,
+              child: DrawerHeader(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20.0),
+                  ),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 157, 110, 157), // Start color
+                      Color.fromARGB(255, 240, 177, 136), // End color
+                    ],
+                  ),
+                ),
+                child: Image.asset(
+                  'assets/logo.png',
+                  color: theme.colorScheme.primary,
+                  scale: 6.5,
+                  alignment: Alignment.topCenter,
+                ),
+              ),
+            ),
+            _buildProfileList(),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ListTile(
+                  tileColor: Colors.grey[500],
+                  title: const Text('Add a New Pet Profile'),
+                  trailing: const Icon(Icons.person_add),
+                  onTap: () {
+                    _profileBottomSheet(context);
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _appBar() {
+    final ModelProfile? profile = ref.watch(userProvider);
+
+    final chatsState = ref.watch(numberOfUnreadChatsProvider(profile!.profileUid));
+
+    final ThemeData theme = Theme.of(context);
+    return AppBar(
+      leading: Builder(builder: (context) {
+        return IconButton(
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+          icon: const Icon(
+            Icons.groups,
+            size: 30,
+          ),
+        );
+      }),
+      backgroundColor: theme.appBarTheme.backgroundColor,
+      centerTitle: true,
+      title: Image.asset(
+        'assets/logo.png',
+        color: theme.colorScheme.tertiary,
+        alignment: Alignment.topCenter,
+        scale: 6.5,
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            context.goNamed(AppRouter.chatList.name);
+          },
+          icon: chatsState.when(
+            loading: () => Center(
+              child: CircularProgressIndicator(color: theme.colorScheme.secondary),
+            ),
+            error: (error, stackTrace) => Text('Error: $error'),
+            data: (chats) {
+              return chats > 0
+                  ? Badge.count(
+                      textColor: Colors.white,
+                      backgroundColor: theme.colorScheme.secondary,
+                      count: chats,
+                      child: const Icon(
+                        Icons.forum,
+                        size: 25,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.forum,
+                      size: 25,
+                    );
+            },
+          ),
+        ),
+      ],
     );
   }
 

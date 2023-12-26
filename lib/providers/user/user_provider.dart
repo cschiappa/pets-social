@@ -45,6 +45,15 @@ class UserProvider extends StateNotifier<ModelProfile?> {
       await updateBlockedProfiles(blockedId);
     }
   }
+
+  //UPDATE FOLLOWING/FOLLOWERS ON FIRESTORE
+  Future<void> updateFollowProfiles(String profileUid, String followId) async {
+    if (state != null) {
+      await FirestoreMethods().followUser(state!.profileUid, followId);
+      state = state!.copyWith(following: state!.following);
+      state = state!.copyWith(followers: state!.followers);
+    }
+  }
 }
 
 final userProvider = StateNotifierProvider<UserProvider, ModelProfile?>((ref) {

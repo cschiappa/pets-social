@@ -104,6 +104,7 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
     final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
     final String contentType = getContentTypeFromUrl(widget.snap['fileType']);
+    final bool isBlocked = profile!.blockedUsers.contains(widget.snap['profileUid']);
 
     return SizedBox(
       child: Container(
@@ -127,7 +128,7 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
                 //DOUBLE TAP FOR LIKE
                 GestureDetector(
                   onDoubleTap: () async {
-                    await FirestoreMethods().likePost(widget.snap['postId'], profile!.profileUid, widget.snap['likes']);
+                    await FirestoreMethods().likePost(widget.snap['postId'], profile.profileUid, widget.snap['likes']);
                     setState(() {
                       isLikeAnimating = true;
                     });
@@ -339,6 +340,7 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
                                                 ),
                                               ),
                                             widget.snap['profileUid'] == profile.profileUid
+                                                //DELETE OPTION FOR USER POST
                                                 ? InkWell(
                                                     onTap: () async {
                                                       Navigator.of(context).pop();
@@ -375,17 +377,28 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
                                                       child: const Text('Delete'),
                                                     ),
                                                   )
-                                                : InkWell(
-                                                    onTap: () async {
-                                                      Navigator.pop(context);
-                                                      // FirestoreMethods().blockUser(profile.profileUid, widget.snap['profileUid']);
-                                                      ref.watch(userProvider.notifier).blockProfile(widget.snap['profileUid']);
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                      child: const Text('Block User'),
-                                                    ),
-                                                  ),
+                                                //BLOCK OPTION FOR OTHER'S POSTS
+                                                : isBlocked
+                                                    ? InkWell(
+                                                        onTap: () async {
+                                                          Navigator.pop(context);
+                                                          ref.watch(userProvider.notifier).unblockProfile(widget.snap['profileUid']);
+                                                        },
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                          child: const Text('Unblock Profile'),
+                                                        ),
+                                                      )
+                                                    : InkWell(
+                                                        onTap: () async {
+                                                          Navigator.pop(context);
+                                                          ref.watch(userProvider.notifier).blockProfile(widget.snap['profileUid']);
+                                                        },
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                          child: const Text('Block Profile'),
+                                                        ),
+                                                      ),
                                           ],
                                         );
                                       }),
@@ -513,6 +526,7 @@ class _PostCardExpState extends ConsumerState<PostCardExp> {
                         onTap: () async {
                           updatePost(setState).then((value) {
                             if (value != 'Post updated succesfully') {
+                              Navigator.of(context).pop();
                               showSnackBar(value, context);
                             } else {
                               Navigator.of(context).pop();

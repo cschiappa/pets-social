@@ -21,23 +21,7 @@ final firestoreProvider = Provider<FirestoreMethods>.internal(
 
 typedef FirestoreRef = ProviderRef<FirestoreMethods>;
 String _$getPostsDescendingHash() =>
-    r'364be3f006058457d8ed33cfdf931cc1bdffa871';
-
-/// See also [getPostsDescending].
-@ProviderFor(getPostsDescending)
-final getPostsDescendingProvider =
-    AutoDisposeFutureProvider<List<ModelPost>>.internal(
-  getPostsDescending,
-  name: r'getPostsDescendingProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getPostsDescendingHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef GetPostsDescendingRef = AutoDisposeFutureProviderRef<List<ModelPost>>;
-String _$getFeedPostsHash() => r'28db209c5be396101226c42b4c55115a9aa04e57';
+    r'4a20a138869dbf58c520ad31f1d0fa36bd857267';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -59,6 +43,136 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [getPostsDescending].
+@ProviderFor(getPostsDescending)
+const getPostsDescendingProvider = GetPostsDescendingFamily();
+
+/// See also [getPostsDescending].
+class GetPostsDescendingFamily extends Family<AsyncValue<List<ModelPost>>> {
+  /// See also [getPostsDescending].
+  const GetPostsDescendingFamily();
+
+  /// See also [getPostsDescending].
+  GetPostsDescendingProvider call(
+    ModelProfile profile,
+  ) {
+    return GetPostsDescendingProvider(
+      profile,
+    );
+  }
+
+  @override
+  GetPostsDescendingProvider getProviderOverride(
+    covariant GetPostsDescendingProvider provider,
+  ) {
+    return call(
+      provider.profile,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getPostsDescendingProvider';
+}
+
+/// See also [getPostsDescending].
+class GetPostsDescendingProvider
+    extends AutoDisposeFutureProvider<List<ModelPost>> {
+  /// See also [getPostsDescending].
+  GetPostsDescendingProvider(
+    ModelProfile profile,
+  ) : this._internal(
+          (ref) => getPostsDescending(
+            ref as GetPostsDescendingRef,
+            profile,
+          ),
+          from: getPostsDescendingProvider,
+          name: r'getPostsDescendingProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getPostsDescendingHash,
+          dependencies: GetPostsDescendingFamily._dependencies,
+          allTransitiveDependencies:
+              GetPostsDescendingFamily._allTransitiveDependencies,
+          profile: profile,
+        );
+
+  GetPostsDescendingProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.profile,
+  }) : super.internal();
+
+  final ModelProfile profile;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<ModelPost>> Function(GetPostsDescendingRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetPostsDescendingProvider._internal(
+        (ref) => create(ref as GetPostsDescendingRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        profile: profile,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<ModelPost>> createElement() {
+    return _GetPostsDescendingProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetPostsDescendingProvider && other.profile == profile;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, profile.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetPostsDescendingRef on AutoDisposeFutureProviderRef<List<ModelPost>> {
+  /// The parameter `profile` of this provider.
+  ModelProfile get profile;
+}
+
+class _GetPostsDescendingProviderElement
+    extends AutoDisposeFutureProviderElement<List<ModelPost>>
+    with GetPostsDescendingRef {
+  _GetPostsDescendingProviderElement(super.provider);
+
+  @override
+  ModelProfile get profile => (origin as GetPostsDescendingProvider).profile;
+}
+
+String _$getFeedPostsHash() => r'28db209c5be396101226c42b4c55115a9aa04e57';
 
 /// See also [getFeedPosts].
 @ProviderFor(getFeedPosts)
