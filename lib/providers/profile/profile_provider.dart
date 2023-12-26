@@ -12,6 +12,13 @@ AuthMethods authMethods(AuthMethodsRef ref) {
   return AuthMethods();
 }
 
+//GET PROFIILE DATA
+@riverpod
+Stream<ModelProfile> getProfileData(GetProfileDataRef ref, String? profileUid) {
+  final repository = ref.watch(authMethodsProvider);
+  return repository.getProfileData(profileUid);
+}
+
 //GET BLOCKED PROFILES
 @riverpod
 Stream<QuerySnapshot<Map<String, dynamic>>> getBlockedProfiles(GetBlockedProfilesRef ref, List<dynamic>? blockedProfiles) {

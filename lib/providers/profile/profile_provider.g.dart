@@ -20,8 +20,7 @@ final authMethodsProvider = Provider<AuthMethods>.internal(
 );
 
 typedef AuthMethodsRef = ProviderRef<AuthMethods>;
-String _$getBlockedProfilesHash() =>
-    r'b9c6b1c75ac5a977d3b00bb54b46df8a186587cd';
+String _$getProfileDataHash() => r'f1cdd8bd0c8ceea51fca066b9082485f57d8d4c3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,6 +42,136 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [getProfileData].
+@ProviderFor(getProfileData)
+const getProfileDataProvider = GetProfileDataFamily();
+
+/// See also [getProfileData].
+class GetProfileDataFamily extends Family<AsyncValue<ModelProfile>> {
+  /// See also [getProfileData].
+  const GetProfileDataFamily();
+
+  /// See also [getProfileData].
+  GetProfileDataProvider call(
+    String? profileUid,
+  ) {
+    return GetProfileDataProvider(
+      profileUid,
+    );
+  }
+
+  @override
+  GetProfileDataProvider getProviderOverride(
+    covariant GetProfileDataProvider provider,
+  ) {
+    return call(
+      provider.profileUid,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getProfileDataProvider';
+}
+
+/// See also [getProfileData].
+class GetProfileDataProvider extends AutoDisposeStreamProvider<ModelProfile> {
+  /// See also [getProfileData].
+  GetProfileDataProvider(
+    String? profileUid,
+  ) : this._internal(
+          (ref) => getProfileData(
+            ref as GetProfileDataRef,
+            profileUid,
+          ),
+          from: getProfileDataProvider,
+          name: r'getProfileDataProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getProfileDataHash,
+          dependencies: GetProfileDataFamily._dependencies,
+          allTransitiveDependencies:
+              GetProfileDataFamily._allTransitiveDependencies,
+          profileUid: profileUid,
+        );
+
+  GetProfileDataProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.profileUid,
+  }) : super.internal();
+
+  final String? profileUid;
+
+  @override
+  Override overrideWith(
+    Stream<ModelProfile> Function(GetProfileDataRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetProfileDataProvider._internal(
+        (ref) => create(ref as GetProfileDataRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        profileUid: profileUid,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<ModelProfile> createElement() {
+    return _GetProfileDataProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetProfileDataProvider && other.profileUid == profileUid;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, profileUid.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetProfileDataRef on AutoDisposeStreamProviderRef<ModelProfile> {
+  /// The parameter `profileUid` of this provider.
+  String? get profileUid;
+}
+
+class _GetProfileDataProviderElement
+    extends AutoDisposeStreamProviderElement<ModelProfile>
+    with GetProfileDataRef {
+  _GetProfileDataProviderElement(super.provider);
+
+  @override
+  String? get profileUid => (origin as GetProfileDataProvider).profileUid;
+}
+
+String _$getBlockedProfilesHash() =>
+    r'b9c6b1c75ac5a977d3b00bb54b46df8a186587cd';
 
 /// See also [getBlockedProfiles].
 @ProviderFor(getBlockedProfiles)

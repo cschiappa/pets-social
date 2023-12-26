@@ -34,6 +34,11 @@ class AuthMethods {
     return ModelProfile.fromSnap(snap);
   }
 
+  //GET PROFILE DATA
+  Stream<ModelProfile> getProfileData(String? profileUid) {
+    return _firestore.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').doc(profileUid).snapshots().map((snap) => ModelProfile.fromSnap(snap));
+  }
+
   //PASSWORD CHECKER
   bool isPasswordValid(String password) {
     const lengthRequirement = 5;

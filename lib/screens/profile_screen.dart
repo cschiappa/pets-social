@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/features/app_router.dart';
+import 'package:pets_social/models/post.dart';
 import 'package:pets_social/providers/post/post_provider.dart';
+import 'package:pets_social/providers/profile/profile_provider.dart';
 import 'package:pets_social/providers/user/user_provider.dart';
 import 'package:pets_social/services/auth_methods.dart';
 import 'package:pets_social/services/firestore_methods.dart';
@@ -28,14 +30,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  Map<dynamic, dynamic> userData = {};
-  int postLen = 0;
-  int likes = 0;
-  int fish = 0;
-  int bones = 0;
-  int followers = 0;
-  bool isFollowing = false;
-  bool isLoading = false;
   late String userId = "";
   late TextEditingController _bioController = TextEditingController();
   late TextEditingController _usernameController = TextEditingController();
@@ -64,10 +58,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     final ModelProfile? profile = ref.read(userProvider);
 
-    //verifies if profile belongs to current profile or another profile
-    userId = widget.profileUid ?? profile!.profileUid;
-    getData();
-
     _usernameController = TextEditingController(text: profile!.username);
     _bioController = TextEditingController(text: profile.bio);
   }
@@ -77,39 +67,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _bioController.dispose();
     _usernameController.dispose();
     super.dispose();
-  }
-
-  //GET DATA
-  getData() async {
-    final ModelProfile? profile = ref.read(userProvider);
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      var userSnap = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: userId).get();
-
-      //GET POST LENGTH
-      var postSnap = await FirebaseFirestore.instance.collection('posts').where('profileUid', isEqualTo: userId).get();
-
-      postLen = postSnap.docs.length;
-      userData = userSnap.docs.first.data();
-      followers = userData['followers'].length;
-      isFollowing = userData['followers'].contains(profile!.profileUid);
-
-      for (var post in postSnap.docs) {
-        likes += post.data()['likes'].length as int;
-        fish += post.data()['fish'].length as int;
-        bones += post.data()['bones'].length as int;
-      }
-    } catch (e) {
-      showSnackBar(
-        e.toString(),
-        context,
-      );
-    }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   //RESET FIELDS FUNCTION
@@ -150,217 +107,241 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = ref.watch(userProvider);
+    userId = widget.profileUid ?? profile!.profileUid;
     final ThemeData theme = Theme.of(context);
+    final profileData = ref.watch(getProfileDataProvider(userId));
     final profilePosts = ref.watch(getProfilePostsProvider(userId));
 
-    return isLoading
-        ? Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.secondary,
-            ),
-          )
-        : Scaffold(
-            appBar: AppBar(
-              backgroundColor: theme.appBarTheme.backgroundColor,
-              //APPBAR ROW
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(userData['username']),
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          child: ListView(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shrinkWrap: true,
-                            children: settingsOptions
-                                .map(
-                                  (e) => InkWell(
-                                    onTap: () {
-                                      if (e == 'Saved Posts') {
-                                        Navigator.pop(context);
+    return profileData.when(
+      error: (error, stackTrace) => Text('Error: $error'),
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          color: theme.colorScheme.secondary,
+        ),
+      ),
+      data: (profileData) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: theme.appBarTheme.backgroundColor,
+            //APPBAR ROW
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(profileData.username),
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shrinkWrap: true,
+                          children: settingsOptions
+                              .map(
+                                (e) => InkWell(
+                                  onTap: () {
+                                    if (e == 'Saved Posts') {
+                                      Navigator.pop(context);
 
-                                        context.goNamed(AppRouter.savedPosts.name, extra: widget.snap);
-                                      } else if (e == 'Settings') {
-                                        Navigator.pop(context);
+                                      context.goNamed(AppRouter.savedPosts.name, extra: widget.snap);
+                                    } else if (e == 'Settings') {
+                                      Navigator.pop(context);
 
-                                        context.goNamed(AppRouter.settings.name);
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                      child: Text(e),
-                                    ),
+                                      context.goNamed(AppRouter.settings.name);
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                    child: Text(e),
                                   ),
-                                )
-                                .toList(),
-                          ),
+                                ),
+                              )
+                              .toList(),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.more_vert),
-                  ),
-                ],
-              ),
-              centerTitle: false,
-            ),
-            body: Container(
-              padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 0),
-              child: Stack(
-                children: [
-                  //GRADIENT CONTAINER
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10.0),
-                        bottomRight: Radius.circular(10.0),
                       ),
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 157, 110, 157), // Start color
-                          Color.fromARGB(255, 240, 177, 136), // End color
+                    );
+                  },
+                  icon: const Icon(Icons.more_vert),
+                ),
+              ],
+            ),
+            centerTitle: false,
+          ),
+          body: Container(
+            padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 0),
+            child: Stack(
+              children: [
+                //GRADIENT CONTAINER
+                Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
+                    ),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 157, 110, 157), // Start color
+                        Color.fromARGB(255, 240, 177, 136), // End color
+                      ],
+                    ),
+                  ),
+                  alignment: Alignment.topCenter,
+                  height: 60,
+                ),
+                ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          //PROFILE PIC
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: theme.colorScheme.background,
+                                width: 5.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                profileData.photoUrl ?? '',
+                              ),
+                              radius: 40,
+                            ),
+                          ),
+                          //USERNAME
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              profileData.username,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          //DESCRIPTION
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              profileData.bio ?? '',
+                            ),
+                          ),
+                          //PROFILE STATS ROW
+                          profileStats(profileData.followers.length),
+                          //SIGN OUT/FOLLOW BUTTON AND SETTINGS WHEEL
+                          signOutButtonAndSettingsRow(profile, theme, profileData),
                         ],
                       ),
                     ),
-                    alignment: Alignment.topCenter,
-                    height: 60,
-                  ),
-                  ListView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            //PROFILE PIC
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: theme.colorScheme.background,
-                                  width: 5.0,
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  userData['photoUrl'],
-                                ),
-                                radius: 40,
+                    const Divider(),
+                    //PICTURES GRID
+                    profilePosts.when(
+                        error: (error, stacktrace) => Text('error: $error'),
+                        loading: () => Center(
+                              child: CircularProgressIndicator(
+                                color: theme.colorScheme.secondary,
                               ),
                             ),
-                            //USERNAME
-                            Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                userData['username'],
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            //DESCRIPTION
-                            Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                userData['bio'],
-                              ),
-                            ),
-                            //PROFILE STATS ROW
-                            profileStats(),
-                            //SIGN OUT/FOLLOW BUTTON AND SETTINGS WHEEL
-                            signOutButtonAndSettingsRow(profile, theme),
-                          ],
-                        ),
-                      ),
-                      const Divider(),
-                      //PICTURES GRID
-                      profilePosts.when(
-                          error: (error, stacktrace) => Text('error: $error'),
-                          loading: () => Center(
-                                child: CircularProgressIndicator(
-                                  color: theme.colorScheme.secondary,
-                                ),
-                              ),
-                          data: (profilePosts) {
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              itemCount: profilePosts.docs.length,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
-                              itemBuilder: (context, index) {
-                                DocumentSnapshot post = profilePosts.docs[index];
+                        data: (profilePosts) {
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            itemCount: profilePosts.docs.length,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
+                            itemBuilder: (context, index) {
+                              ModelPost post = ModelPost.fromSnap(profilePosts.docs[index]);
 
-                                Widget mediaWidget;
-                                final String contentType = getContentTypeFromUrl(post['fileType']);
-                                //return video
-                                if (contentType == 'video') {
-                                  mediaWidget = ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image(
-                                      image: NetworkImage(post['videoThumbnail']),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  );
-                                } else {
-                                  // return image
-                                  mediaWidget = ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image(
-                                      image: NetworkImage(post['postUrl']),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  );
-                                }
-                                return GestureDetector(
-                                  onTap: () {
-                                    post['profileUid'] == profile!.profileUid
-                                        ? context.goNamed(
-                                            AppRouter.openPostFromProfile.name,
-                                            pathParameters: {
-                                              'postId': post['postId'],
-                                              'profileUid': post['profileUid'],
-                                              'username': userData['username'],
-                                            },
-                                          )
-                                        : context.goNamed(
-                                            AppRouter.openPostFromFeed.name,
-                                            pathParameters: {
-                                              'postId': post['postId'],
-                                              'profileUid': post['profileUid'],
-                                              'username': userData['username'],
-                                            },
-                                          );
-                                  },
-                                  child: mediaWidget,
+                              Widget mediaWidget;
+                              final String contentType = getContentTypeFromUrl(post.fileType);
+                              //return video
+                              if (contentType == 'video') {
+                                mediaWidget = ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image(
+                                    image: NetworkImage(post.videoThumbnail),
+                                    fit: BoxFit.cover,
+                                  ),
                                 );
-                              },
-                            );
-                          }),
-                    ],
-                  ),
-                ],
-              ),
+                              } else {
+                                // return image
+                                mediaWidget = ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image(
+                                    image: NetworkImage(post.postUrl),
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  post.profileUid == profile!.profileUid
+                                      ? context.goNamed(
+                                          AppRouter.openPostFromProfile.name,
+                                          pathParameters: {
+                                            'postId': post.postId,
+                                            'profileUid': post.profileUid,
+                                            'username': profileData.username,
+                                          },
+                                        )
+                                      : context.goNamed(
+                                          AppRouter.openPostFromFeed.name,
+                                          pathParameters: {
+                                            'postId': post.postId,
+                                            'profileUid': post.profileUid,
+                                            'username': profileData.username,
+                                          },
+                                        );
+                                },
+                                child: mediaWidget,
+                              );
+                            },
+                          );
+                        }),
+                  ],
+                ),
+              ],
             ),
-          );
+          ),
+        );
+      },
+    );
   }
 
   //PROFILE STATS ROW
-  Widget profileStats() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        buildStatColumn(likes, "likes"),
-        buildStatColumn(fish, "fish"),
-        buildStatColumn(bones, "bones"),
-        buildStatColumn(followers, "followers"),
-      ],
+  Widget profileStats(followers) {
+    final profilePosts = ref.read(getProfilePostsProvider(userId));
+    return profilePosts.when(
+      data: (profilePosts) {
+        int likes = 0;
+        int fish = 0;
+        int bones = 0;
+
+        for (var post in profilePosts.docs) {
+          likes += post.data()['likes'].length as int;
+          fish += post.data()['fish'].length as int;
+          bones += post.data()['bones'].length as int;
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            buildStatColumn(likes, "likes"),
+            buildStatColumn(fish, "fish"),
+            buildStatColumn(bones, "bones"),
+            buildStatColumn(followers, "followers"),
+          ],
+        );
+      },
+      loading: () => Container(),
+      error: (error, stackTrace) => Text("Error: $error"),
     );
   }
 
   //SIGNOUT/FOLLOW BUTTON AND SETTINGS WHEEL
-  Widget signOutButtonAndSettingsRow(ModelProfile? profile, ThemeData theme) {
+  Widget signOutButtonAndSettingsRow(ModelProfile? profile, ThemeData theme, ModelProfile profileData) {
+    bool isFollowing = profileData.followers.contains(profile!.profileUid);
     return Row(
-      mainAxisAlignment: userData['profileUid'] == profile!.profileUid ? MainAxisAlignment.end : MainAxisAlignment.center,
+      mainAxisAlignment: profileData.profileUid == profile.profileUid ? MainAxisAlignment.end : MainAxisAlignment.center,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -385,15 +366,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         textColor: Colors.black,
                         borderColor: Colors.grey,
                         function: () async {
-                          // await FirestoreMethods().followUser(
-                          //   profile.profileUid,
-                          //   userData['profileUid'],
-                          // );
-                          setState(() {
-                            isFollowing = false;
-                            //followers--;
-                          });
-                          ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, userData['profileUid']);
+                          ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, profileData.profileUid);
                         },
                       )
                     : FollowButton(
@@ -402,22 +375,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         textColor: Colors.white,
                         borderColor: theme.colorScheme.secondary,
                         function: () async {
-                          // await FirestoreMethods().followUser(
-                          //   profile.profileUid,
-                          //   userData['profileUid'],
-                          // );
-                          setState(
-                            () {
-                              isFollowing = true;
-                              //followers++;
-                            },
-                          );
-                          ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, userData['profileUid']);
+                          ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, profileData.profileUid);
                         },
                       ),
           ],
         ),
-        if (userData['profileUid'] == profile.profileUid)
+        if (profileData.profileUid == profile.profileUid)
           IconButton(
               onPressed: () {
                 _profileBottomSheet(context);
