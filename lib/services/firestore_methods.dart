@@ -447,11 +447,11 @@ class FirestoreMethods {
     return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
   }
 
-  //GET PROFILES WHERE
-  Future<List<ModelProfile>> getProfilesWhere(String profileUid) async {
+  //GET PROFILE WHERE
+  Future<ModelProfile> getProfileFromPost(String profileUid) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
 
-    return querySnapshot.docs.map((doc) => ModelProfile.fromSnap(doc)).toList();
+    return ModelProfile.fromSnap(querySnapshot.docs.first);
   }
 
   //GET COMMENTS

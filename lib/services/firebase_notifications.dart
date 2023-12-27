@@ -35,7 +35,7 @@ class FirebaseApi {
     //   AppRouter.prizesScreen.name,
     //   arguments: message,
     // );
-    router.pushNamed(AppRouter.prizesScreen.name, extra: message);
+    router.goNamed(AppRouter.prizesScreen.name, extra: message);
   }
 
   //LOCAL NOTIFICATION

@@ -113,18 +113,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   child: CircularProgressIndicator(color: theme.colorScheme.secondary),
                 ),
                 error: (error, stackTrace) => Text('Error: $error'),
-                data: (posts) {
-                  if (posts.isEmpty) {
+                data: (postsState) {
+                  if (postsState.isEmpty) {
                     return const Center(
                       child: Text('No posts found.'),
                     );
                   }
 
                   return MasonryGridView.builder(
-                    itemCount: posts.length,
+                    itemCount: postsState.length,
                     itemBuilder: (context, index) {
-                      ModelPost postIndex = posts[index];
-                      final getProfiles = ref.watch(getProfilesWhereProvider(postIndex.profileUid));
+                      ModelPost postIndex = postsState[index];
+                      final getProfiles = ref.watch(getProfileFromPostProvider(postsState[index].profileUid));
 
                       return getProfiles.when(
                           loading: () => Container(),
@@ -154,9 +154,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               mediaWidget = const Text('file format not available');
                             }
 
-                            ModelProfile profileIndex = getProfiles[index];
                             // Fetch username
-                            String username = getProfiles.isNotEmpty ? profileIndex.username : '';
+                            String username = getProfiles.username;
 
                             return GestureDetector(
                               onTap: () {

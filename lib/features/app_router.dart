@@ -190,8 +190,8 @@ final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation
           ]),
         ]),
       ]),
+      //SEARCH SCREEN
       StatefulShellBranch(routes: [
-        //SEARCH SCREEN
         GoRoute(name: AppRouter.searchScreen.name, path: AppRouter.searchScreen.path, builder: (context, state) => const SearchScreen(), routes: <RouteBase>[
           //NAVIGATE TO PROFILE
           GoRoute(
@@ -213,16 +213,16 @@ final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation
           ),
         ]),
       ]),
+      //ADD POST SCREEN
       StatefulShellBranch(routes: [
-        //ADD POST SCREEN
         GoRoute(
           name: AppRouter.addpostScreen.name,
           path: AppRouter.addpostScreen.path,
           builder: (context, state) => const AddPostScreen(),
         ),
       ]),
+      //PRIZES SCREEN
       StatefulShellBranch(routes: [
-        //PRIZES SCREEN
         GoRoute(name: AppRouter.prizesScreen.name, path: AppRouter.prizesScreen.path, builder: (context, state) => const PrizesScreen(), routes: <RouteBase>[
           //NAVIGATE TO PROFILE
           GoRoute(
@@ -244,8 +244,8 @@ final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation
           ),
         ]),
       ]),
+      //PROFILE SCREEN
       StatefulShellBranch(routes: [
-        //PROFILE SCREEN
         GoRoute(
             name: AppRouter.profileScreen.name,
             path: AppRouter.profileScreen.path,

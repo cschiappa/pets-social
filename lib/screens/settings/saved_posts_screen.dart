@@ -51,9 +51,8 @@ class _SavedPostsState extends ConsumerState<SavedPosts> {
                   itemCount: savedPosts.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
                   itemBuilder: (context, index) {
-                    //ModelPost post = ModelPost.fromSnap(snapshot.data!.docs[index]);
                     ModelPost postIndex = savedPosts[index];
-                    final getProfiles = ref.watch(getProfilesWhereProvider(postIndex.profileUid));
+                    final getProfiles = ref.watch(getProfileFromPostProvider(postIndex.profileUid));
 
                     return getProfiles.when(
                       error: (error, stacktrace) => Text('error: $error'),
@@ -83,10 +82,6 @@ class _SavedPostsState extends ConsumerState<SavedPosts> {
                           mediaWidget = const Text('file format not available');
                         }
 
-                        ModelProfile profileIndex = getProfiles[index];
-                        // Fetch profile username
-                        String username = getProfiles.isNotEmpty ? profileIndex.username : '';
-
                         return GestureDetector(
                           onTap: () {
                             context.goNamed(
@@ -94,7 +89,7 @@ class _SavedPostsState extends ConsumerState<SavedPosts> {
                               pathParameters: {
                                 'postId': postIndex.postId,
                                 'profileUid': postIndex.profileUid,
-                                'username': username,
+                                'username': getProfiles.username,
                               },
                             );
                           },

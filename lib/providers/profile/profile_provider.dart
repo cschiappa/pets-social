@@ -49,7 +49,7 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles(GetAccountProfile
 }
 
 @riverpod
-Future<List<ModelProfile>> getProfilesWhere(GetProfilesWhereRef ref, String profileUid) {
+Future<ModelProfile> getProfileFromPost(GetProfileFromPostRef ref, String profileUid) {
   final repository = ref.watch(firestoreProvider);
-  return repository.getProfilesWhere(profileUid);
+  return repository.getProfileFromPost(profileUid);
 }
