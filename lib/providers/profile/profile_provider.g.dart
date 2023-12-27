@@ -170,6 +170,183 @@ class _GetProfileDataProviderElement
   String? get profileUid => (origin as GetProfileDataProvider).profileUid;
 }
 
+String _$updateProfileHash() => r'1c2d096187e6eb05489efec0d9b473c1751af918';
+
+/// See also [updateProfile].
+@ProviderFor(updateProfile)
+const updateProfileProvider = UpdateProfileFamily();
+
+/// See also [updateProfile].
+class UpdateProfileFamily extends Family<AsyncValue<String>> {
+  /// See also [updateProfile].
+  const UpdateProfileFamily();
+
+  /// See also [updateProfile].
+  UpdateProfileProvider call(
+    String profileUid,
+    Uint8List? file,
+    String newUsername,
+    String newBio,
+  ) {
+    return UpdateProfileProvider(
+      profileUid,
+      file,
+      newUsername,
+      newBio,
+    );
+  }
+
+  @override
+  UpdateProfileProvider getProviderOverride(
+    covariant UpdateProfileProvider provider,
+  ) {
+    return call(
+      provider.profileUid,
+      provider.file,
+      provider.newUsername,
+      provider.newBio,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateProfileProvider';
+}
+
+/// See also [updateProfile].
+class UpdateProfileProvider extends AutoDisposeFutureProvider<String> {
+  /// See also [updateProfile].
+  UpdateProfileProvider(
+    String profileUid,
+    Uint8List? file,
+    String newUsername,
+    String newBio,
+  ) : this._internal(
+          (ref) => updateProfile(
+            ref as UpdateProfileRef,
+            profileUid,
+            file,
+            newUsername,
+            newBio,
+          ),
+          from: updateProfileProvider,
+          name: r'updateProfileProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateProfileHash,
+          dependencies: UpdateProfileFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateProfileFamily._allTransitiveDependencies,
+          profileUid: profileUid,
+          file: file,
+          newUsername: newUsername,
+          newBio: newBio,
+        );
+
+  UpdateProfileProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.profileUid,
+    required this.file,
+    required this.newUsername,
+    required this.newBio,
+  }) : super.internal();
+
+  final String profileUid;
+  final Uint8List? file;
+  final String newUsername;
+  final String newBio;
+
+  @override
+  Override overrideWith(
+    FutureOr<String> Function(UpdateProfileRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateProfileProvider._internal(
+        (ref) => create(ref as UpdateProfileRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        profileUid: profileUid,
+        file: file,
+        newUsername: newUsername,
+        newBio: newBio,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<String> createElement() {
+    return _UpdateProfileProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateProfileProvider &&
+        other.profileUid == profileUid &&
+        other.file == file &&
+        other.newUsername == newUsername &&
+        other.newBio == newBio;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, profileUid.hashCode);
+    hash = _SystemHash.combine(hash, file.hashCode);
+    hash = _SystemHash.combine(hash, newUsername.hashCode);
+    hash = _SystemHash.combine(hash, newBio.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin UpdateProfileRef on AutoDisposeFutureProviderRef<String> {
+  /// The parameter `profileUid` of this provider.
+  String get profileUid;
+
+  /// The parameter `file` of this provider.
+  Uint8List? get file;
+
+  /// The parameter `newUsername` of this provider.
+  String get newUsername;
+
+  /// The parameter `newBio` of this provider.
+  String get newBio;
+}
+
+class _UpdateProfileProviderElement
+    extends AutoDisposeFutureProviderElement<String> with UpdateProfileRef {
+  _UpdateProfileProviderElement(super.provider);
+
+  @override
+  String get profileUid => (origin as UpdateProfileProvider).profileUid;
+  @override
+  Uint8List? get file => (origin as UpdateProfileProvider).file;
+  @override
+  String get newUsername => (origin as UpdateProfileProvider).newUsername;
+  @override
+  String get newBio => (origin as UpdateProfileProvider).newBio;
+}
+
 String _$getBlockedProfilesHash() =>
     r'b9c6b1c75ac5a977d3b00bb54b46df8a186587cd';
 

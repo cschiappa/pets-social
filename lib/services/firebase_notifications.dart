@@ -255,4 +255,13 @@ class FirebaseApi {
       debugPrint('Error saving notification data: $e');
     }
   }
+
+  //GET NOTIFICATION LIST
+  Stream<List<DocumentSnapshot>> getNotifications(String profileUid) {
+    final Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('notifications').where('receiver', isEqualTo: profileUid).orderBy('datePublished', descending: true);
+
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs;
+    });
+  }
 }

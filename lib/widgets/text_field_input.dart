@@ -4,15 +4,11 @@ class TextFieldInput extends StatefulWidget {
   final TextEditingController textEditingController;
   final bool isPass;
   final String labelText;
+  final String? initialValue;
+  final Function(String)? onChanged;
 
   final TextInputType textInputType;
-  const TextFieldInput(
-      {Key? key,
-      required this.textEditingController,
-      this.isPass = false,
-      required this.labelText,
-      required this.textInputType})
-      : super(key: key);
+  const TextFieldInput({Key? key, required this.textEditingController, this.isPass = false, required this.labelText, required this.textInputType, this.initialValue, this.onChanged}) : super(key: key);
 
   @override
   State<TextFieldInput> createState() => _TextFieldInputState();
@@ -38,6 +34,8 @@ class _TextFieldInputState extends State<TextFieldInput> {
       ),
       keyboardType: widget.textInputType,
       obscureText: widget.isPass,
+      initialValue: widget.initialValue,
+      onChanged: widget.onChanged,
     );
   }
 }

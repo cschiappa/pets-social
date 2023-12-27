@@ -279,7 +279,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
           },
           icon: chatsState.when(
             loading: () => Center(
-              child: CircularProgressIndicator(color: theme.colorScheme.secondary),
+              child: Container(),
             ),
             error: (error, stackTrace) => Text('Error: $error'),
             data: (chats) {

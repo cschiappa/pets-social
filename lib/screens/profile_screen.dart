@@ -34,7 +34,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late TextEditingController _bioController = TextEditingController();
   late TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
-  bool _isLoading = false;
+  final bool _isLoading = false;
   final List<String> settingsOptions = ['Saved Posts', 'Settings'];
 
   //SELECT IMAGE
@@ -49,15 +49,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   //FIELD VALUES
   void fieldsValues() {
     final ModelProfile? profile = ref.read(userProvider);
-    _usernameController = TextEditingController(text: profile!.username);
-    _bioController = TextEditingController(text: profile.bio);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final ModelProfile? profile = ref.read(userProvider);
-
     _usernameController = TextEditingController(text: profile!.username);
     _bioController = TextEditingController(text: profile.bio);
   }
@@ -81,34 +72,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   //EDIT PROFILE FUNCTION
   void updateProfile() async {
     final ModelProfile? profile = ref.read(userProvider);
-    setState(() {
-      _isLoading = true;
-    });
-    String res = await FirestoreMethods().updateProfile(
-      profileUid: profile!.profileUid,
-      newUsername: _usernameController.text,
-      newBio: _bioController.text,
-      file: _image,
-    );
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (res != 'success') {
-      if (!mounted) return;
-      showSnackBar(res, context);
-    } else {
-      if (!mounted) return;
-      Navigator.of(context).pop();
+    try {
+      ref.read(
+        updateProfileProvider(profile!.profileUid, _image, _usernameController.text, _bioController.text),
+      );
+      showSnackBar('Success!', context);
+    } catch (e) {
+      showSnackBar(e.toString(), context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = ref.watch(userProvider);
-    userId = widget.profileUid ?? profile!.profileUid;
     final ThemeData theme = Theme.of(context);
+    userId = widget.profileUid ?? profile!.profileUid;
     final profileData = ref.watch(getProfileDataProvider(userId));
     final profilePosts = ref.watch(getProfilePostsProvider(userId));
 
@@ -424,6 +402,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   //EDIT PROFILE BOTTOM SHEET
   _profileBottomSheet(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    fieldsValues();
     return CustomBottomSheet.show(
       context: context,
       listWidget: [
