@@ -41,7 +41,7 @@ class FirebaseApi {
   //LOCAL NOTIFICATION
   Future initLocalNotifications() async {
     //const iOS = IOSInitializationSettings();
-    const android = AndroidInitializationSettings('@drawable/ic_launcher');
+    const android = AndroidInitializationSettings("@mipmap/ic_launcher_round");
     const settings = InitializationSettings(android: android);
 
     await _localNotifications.initialize(

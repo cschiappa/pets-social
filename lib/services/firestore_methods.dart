@@ -447,7 +447,7 @@ class FirestoreMethods {
     return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
   }
 
-  //GET PROFILE WHERE
+  //GET PROFILE FROM POST
   Future<ModelProfile> getProfileFromPost(String profileUid) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
 
