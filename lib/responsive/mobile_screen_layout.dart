@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pets_social/features/extensions.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({required this.navigationShell, Key? key}) : super(key: key ?? const ValueKey<String>('MobileScreenLayout'));

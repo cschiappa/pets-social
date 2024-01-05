@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pets_social/features/app_router.dart';
-import 'package:pets_social/providers/theme/theme_provider.dart';
-import 'package:pets_social/providers/user/user_provider.dart';
-import 'package:pets_social/services/firebase_notifications.dart';
+import 'package:pets_social/features/auth/controller/auth_provider.dart';
+import 'package:pets_social/router.dart';
+import 'package:pets_social/theme/theme_provider.dart';
+import 'package:pets_social/features/user/controller/user_provider.dart';
+import 'package:pets_social/features/notification/repository/notification_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
@@ -24,7 +25,7 @@ void main() async {
   final bool? notification = prefs.getBool('notification');
 
   if (notification == true) {
-    await FirebaseApi().initNotifications();
+    await NotificationRepository().initNotifications();
   }
 
   runApp(
@@ -41,11 +42,18 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themeData = ref.watch(themeProvider).themeData;
 
-    return MaterialApp.router(
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      title: 'Pet Social',
-      theme: themeData,
-    );
+    return ref.watch(authStateChangeProvider).when(
+          data: (data) {
+            final routerConfig = data != null ? loggedInRoutes : loggedOutRoutes;
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              title: 'Pets Social',
+              theme: themeData,
+              routerConfig: routerConfig,
+            );
+          },
+          error: (error, stackTrace) => Text(error.toString()),
+          loading: () => const CircularProgressIndicator(),
+        );
   }
 }
