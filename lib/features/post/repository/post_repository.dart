@@ -2,8 +2,6 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pets_social/core/providers/firebase_providers.dart';
 import 'package:pets_social/models/feedback.dart';
 import 'package:pets_social/features/notification/repository/notification_repository.dart';
 import 'package:pets_social/core/constants/firebase_constants.dart';
@@ -17,13 +15,16 @@ class PostRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
   final StorageRepository _storageRepository;
+  final NotificationRepository _notificationRepository;
   PostRepository({
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
     required StorageRepository storageRepository,
+    required NotificationRepository notificationRepository,
   })  : _firestore = firestore,
         _auth = auth,
-        _storageRepository = storageRepository;
+        _storageRepository = storageRepository,
+        _notificationRepository = notificationRepository;
 
   //UPLOAD POST
   Future<String> uploadPost(
@@ -85,7 +86,7 @@ class PostRepository {
           },
         );
 
-        NotificationRepository().notificationMethod(postId, profileUid, 'liked');
+        _notificationRepository.notificationMethod(postId, profileUid, 'liked');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -108,7 +109,7 @@ class PostRepository {
           },
         );
 
-        NotificationRepository().notificationMethod(postId, profileUid, 'gave a fish to');
+        _notificationRepository.notificationMethod(postId, profileUid, 'gave a fish to');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -131,7 +132,7 @@ class PostRepository {
           },
         );
 
-        NotificationRepository().notificationMethod(postId, profileUid, 'gave a bone to');
+        _notificationRepository.notificationMethod(postId, profileUid, 'gave a bone to');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -175,13 +176,14 @@ class PostRepository {
 
   //DELETE POST
   Future<void> deletePost(String postId) async {
+    final postPath = FirestorePath.post(postId);
     try {
       final QuerySnapshot<Map<String, dynamic>> notification = await _firestore.collection('notifications').where('postId', isEqualTo: postId).get();
 
       for (QueryDocumentSnapshot<Map<String, dynamic>> documentSnapshot in notification.docs) {
         await documentSnapshot.reference.delete();
       }
-      _firestore.collection('posts').doc(postId).delete();
+      _firestore.doc(postPath).delete();
     } catch (err) {
       debugPrint(err.toString());
     }

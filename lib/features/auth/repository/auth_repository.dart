@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pets_social/core/utils.dart';
 import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/core/constants/firebase_constants.dart';
@@ -26,6 +27,7 @@ class AuthRepository {
         _storageRepository = storageRepository,
         _notificationRepository = notificationRepository;
 
+  //GET AUTHENTICATION CHANGES
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
   //GET PROFILE DETAILS
@@ -34,7 +36,8 @@ class AuthRepository {
     DocumentSnapshot snap;
 
     if (profileUid != null) {
-      snap = await _firestore.collection('users').doc(currentUser.uid).collection('profiles').doc(profileUid).get();
+      final String profilePath = FirestorePath.profile(currentUser.uid, profileUid);
+      snap = await _firestore.doc(profilePath).get();
     } else {
       QuerySnapshot querySnapshot = await _firestore.collection('users').doc(currentUser.uid).collection('profiles').limit(1).get();
 
@@ -45,21 +48,6 @@ class AuthRepository {
       }
     }
     return ModelProfile.fromSnap(snap);
-  }
-
-  //PASSWORD CHECKER
-  bool isPasswordValid(String password) {
-    const lengthRequirement = 5;
-    final uppercaseRegex = RegExp(r'[A-Z]');
-    final lowercaseRegex = RegExp(r'[a-z]');
-    final numberRegex = RegExp(r'[0-9]');
-    final specialCharacterRegex = RegExp(r'[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]');
-
-    if (password.length < lengthRequirement || !uppercaseRegex.hasMatch(password) || !lowercaseRegex.hasMatch(password) || !numberRegex.hasMatch(password) || !specialCharacterRegex.hasMatch(password)) {
-      return false;
-    }
-
-    return true;
   }
 
   //SIGN UP
@@ -100,11 +88,14 @@ class AuthRepository {
               blockedUsers: [],
             );
 
+            final String userPath = FirestorePath.user(cred.user!.uid);
+            final String profilePath = FirestorePath.profile(cred.user!.uid, profileUid);
+
             final batch = _firestore.batch();
-            var accountCollection = _firestore.collection('users').doc(cred.user!.uid);
+            var accountCollection = _firestore.doc(userPath);
             batch.set(accountCollection, account.toJson());
 
-            var profileCollection = _firestore.collection('users').doc(cred.user!.uid).collection('profiles').doc(profile.profileUid);
+            var profileCollection = _firestore.doc(profilePath);
 
             batch.set(profileCollection, profile.toJson());
 
@@ -213,12 +204,5 @@ class AuthRepository {
       debugPrint('current password is incorrect');
       return false;
     }
-  }
-
-  //DATE FORMATTER
-  String formatDate(String date) {
-    DateTime newDate = DateTime.parse(date);
-    final formatedDate = DateFormat.MMMMd().format(newDate);
-    return formatedDate;
   }
 }

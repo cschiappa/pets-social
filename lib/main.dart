@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:pets_social/features/auth/controller/auth_provider.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/theme/theme_provider.dart';
-import 'package:pets_social/features/user/controller/user_provider.dart';
+
 import 'package:pets_social/features/notification/repository/notification_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,10 +12,6 @@ import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-
-// //Riverpod Providers
-// final userProvider = ChangeNotifierProvider<UserProvider>((ref) => UserProvider());
-// final themeData = ChangeNotifierProvider<ThemeProvider>((ref) => ThemeProvider());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +22,12 @@ void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final bool? notification = prefs.getBool('notification');
 
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
   if (notification == true) {
-    await NotificationRepository().initNotifications();
+    await NotificationRepository(firestore: firestore, auth: auth, messaging: messaging).initNotifications();
   }
 
   runApp(
@@ -42,18 +44,11 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themeData = ref.watch(themeProvider).themeData;
 
-    return ref.watch(authStateChangeProvider).when(
-          data: (data) {
-            final routerConfig = data != null ? loggedInRoutes : loggedOutRoutes;
-            return MaterialApp.router(
-              debugShowCheckedModeBanner: false,
-              title: 'Pets Social',
-              theme: themeData,
-              routerConfig: routerConfig,
-            );
-          },
-          error: (error, stackTrace) => Text(error.toString()),
-          loading: () => const CircularProgressIndicator(),
-        );
+    return MaterialApp.router(
+      routerConfig: router,
+      debugShowCheckedModeBanner: false,
+      title: 'Pet Social',
+      theme: themeData,
+    );
   }
 }

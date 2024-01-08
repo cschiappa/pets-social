@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/core/utils.dart';
 import 'package:pets_social/features/auth/controller/auth_provider.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';
@@ -100,7 +101,7 @@ class _AccountSettingsPageState extends ConsumerState<ConsumerStatefulWidget> {
                           String newPasswordConfirmation = _newPasswordController.text;
                           bool isCurrentPasswordValid = await authRepository.verifyCurrentPassword(currentPassword);
                           if (isCurrentPasswordValid) {
-                            if (authRepository.isPasswordValid(newPassword)) {
+                            if (isPasswordValid(newPassword)) {
                               if (newPassword == newPasswordConfirmation) {
                                 if (!mounted) return;
                                 authRepository.changePassword(context, newPassword);

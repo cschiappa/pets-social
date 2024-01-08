@@ -8,7 +8,6 @@ import 'package:pets_social/features/auth/repository/auth_repository.dart';
 import 'package:pets_social/features/post/repository/post_repository.dart';
 import 'package:pets_social/features/profile/controller/profile_provider.dart';
 import 'package:pets_social/main.dart';
-import 'package:pets_social/features/user/controller/user_provider.dart';
 
 class ProfileSettings extends ConsumerStatefulWidget {
   const ProfileSettings({super.key});

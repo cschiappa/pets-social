@@ -84,27 +84,37 @@ class AppRouter {
   static const Routes feedback = Routes(name: 'feedback', path: 'feedback');
 }
 
-// FutureOr<String?> onRedirect(BuildContext context, GoRouterState state) {
-//   final List<String> initialRoutes = [AppRouter.login.path, AppRouter.signup.path, AppRouter.recoverPassword.path, AppRouter.welcomePage.path];
+FutureOr<String?> onRedirect(BuildContext context, GoRouterState state) {
+  final List<String> initialRoutes = [AppRouter.login.path, AppRouter.signup.path, AppRouter.recoverPassword.path, AppRouter.welcomePage.path];
 
-//   final bool isInitialRoute = initialRoutes.contains(state.matchedLocation);
+  final bool isInitialRoute = initialRoutes.contains(state.matchedLocation);
 
-//   if (FirebaseAuth.instance.currentUser == null && !isInitialRoute) {
-//     return AppRouter.login.path;
-//   }
+  if (FirebaseAuth.instance.currentUser == null && !isInitialRoute) {
+    return AppRouter.login.path;
+  }
 
-//   if (FirebaseAuth.instance.currentUser != null && isInitialRoute) {
-//     return AppRouter.feedScreen.path;
-//   }
+  if (FirebaseAuth.instance.currentUser != null && isInitialRoute) {
+    return AppRouter.feedScreen.path;
+  }
 
-//   return null;
-// }
+  return null;
+}
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 
-final GoRouter loggedOutRoutes = GoRouter(initialLocation: AppRouter.login.path, routes: <RouteBase>[
+final GoRouter router = GoRouter(navigatorKey: rootNavigatorKey, initialLocation: AppRouter.login.path, redirect: onRedirect, routes: <RouteBase>[
+  //DEEPLINK OPEN POST
+  GoRoute(
+    name: AppRouter.openPostFromDeeplink.name,
+    path: AppRouter.openPostFromDeeplink.path,
+    builder: (context, state) => OpenPost(
+      postId: state.pathParameters["postId"]!,
+      profileUid: state.pathParameters["profileUid"]!,
+      username: state.pathParameters["username"]!,
+    ),
+  ),
   //WELCOME SCREEN
   GoRoute(
     name: AppRouter.welcomePage.name,
@@ -128,19 +138,6 @@ final GoRouter loggedOutRoutes = GoRouter(initialLocation: AppRouter.login.path,
     name: AppRouter.recoverPassword.name,
     path: AppRouter.recoverPassword.path,
     builder: (context, state) => const ForgotPasswordPage(),
-  ),
-]);
-
-final GoRouter loggedInRoutes = GoRouter(initialLocation: AppRouter.feedScreen.path, routes: <RouteBase>[
-  //DEEPLINK OPEN POST
-  GoRoute(
-    name: AppRouter.openPostFromDeeplink.name,
-    path: AppRouter.openPostFromDeeplink.path,
-    builder: (context, state) => OpenPost(
-      postId: state.pathParameters["postId"]!,
-      profileUid: state.pathParameters["profileUid"]!,
-      username: state.pathParameters["username"]!,
-    ),
   ),
   //BOTTOM NAVIGATION BAR
   StatefulShellRoute.indexedStack(

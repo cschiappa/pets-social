@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/utils.dart';
 import 'package:pets_social/features/post/controller/post_provider.dart';
 import 'package:pets_social/features/profile/controller/profile_provider.dart';
-import 'package:pets_social/features/user/controller/user_provider.dart';
+
 import 'package:pets_social/models/post.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/router.dart';

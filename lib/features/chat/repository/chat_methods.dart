@@ -39,14 +39,14 @@ class ChatRepository {
 
       batch.set(firestore.doc(chatPath), chatRoom.toJson());
 
-      var messageCollection = firestore.collection('chats').doc(chatRoomId).collection('messages').doc();
+      var messageCollection = firestore.doc(chatPath).collection('messages').doc();
 
       batch.set(messageCollection, newMessage.toJson());
 
       await batch.commit();
 
       //GET LAST MESSAGE
-      final lastMessageQuery = await firestore.collection('chats').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: true).get();
+      final lastMessageQuery = await firestore.doc(chatPath).collection('messages').orderBy('timestamp', descending: true).get();
 
       //SAVE USERS AND LAST MESSAGE TO CHAT ROOM ID
       if (lastMessageQuery.docs.isNotEmpty) {
@@ -70,8 +70,9 @@ class ChatRepository {
     List<String> ids = [userUid, otherUserUid];
     ids.sort();
     String chatRoomId = ids.join("_");
+    final String chatPath = FirestorePath.chat(chatRoomId);
 
-    return firestore.collection('chats').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: true).snapshots();
+    return firestore.doc(chatPath).collection('messages').orderBy('timestamp', descending: true).snapshots();
   }
 
   //UPDATE MESSAGE READ VALUE

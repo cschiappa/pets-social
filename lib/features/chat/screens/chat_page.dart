@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/features/chat/controller/chat_provider.dart';
 import 'package:pets_social/features/profile/controller/profile_provider.dart';
-import 'package:pets_social/features/user/controller/user_provider.dart';
+
 import 'package:pets_social/features/chat/repository/chat_methods.dart';
 import 'package:pets_social/core/widgets/chat_bubble.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';

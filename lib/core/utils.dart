@@ -24,8 +24,7 @@ pickImage(ImageSource source) async {
 pickVideo(ImageSource source) async {
   final ImagePicker videoPicker = ImagePicker();
 
-  XFile? file = await videoPicker.pickVideo(
-      source: source, maxDuration: const Duration(minutes: 10));
+  XFile? file = await videoPicker.pickVideo(source: source, maxDuration: const Duration(minutes: 10));
 
   if (file != null) {
     var filePath = file.path;
@@ -41,6 +40,21 @@ pickVideo(ImageSource source) async {
     return (fileBytes, fileExtension, thumbnail, filePath);
   }
   debugPrint('No video selected');
+}
+
+//PASSWORD CHECKER
+bool isPasswordValid(String password) {
+  const lengthRequirement = 5;
+  final uppercaseRegex = RegExp(r'[A-Z]');
+  final lowercaseRegex = RegExp(r'[a-z]');
+  final numberRegex = RegExp(r'[0-9]');
+  final specialCharacterRegex = RegExp(r'[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]');
+
+  if (password.length < lengthRequirement || !uppercaseRegex.hasMatch(password) || !lowercaseRegex.hasMatch(password) || !numberRegex.hasMatch(password) || !specialCharacterRegex.hasMatch(password)) {
+    return false;
+  }
+
+  return true;
 }
 
 //Determine if file is an image or video

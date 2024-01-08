@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:pets_social/core/constants/firebase_constants.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/models/notification.dart';
 import 'package:googleapis_auth/googleapis_auth.dart';
@@ -18,7 +19,16 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
 }
 
 class NotificationRepository {
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseFirestore _firestore;
+  final FirebaseAuth _auth;
+  final FirebaseMessaging _messaging;
+  NotificationRepository({
+    required FirebaseFirestore firestore,
+    required FirebaseAuth auth,
+    required FirebaseMessaging messaging,
+  })  : _firestore = firestore,
+        _auth = auth,
+        _messaging = messaging;
 
   final _androidChannel = const AndroidNotificationChannel(
     'high_importance_channel',
@@ -31,11 +41,7 @@ class NotificationRepository {
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
 
-    // navigatorKey.currentState?.pushNamed(
-    //   AppRouter.prizesScreen.name,
-    //   arguments: message,
-    // );
-    loggedInRoutes.goNamed(AppRouter.prizesScreen.name, extra: message);
+    router.goNamed(AppRouter.prizesScreen.name, extra: message);
   }
 
   //LOCAL NOTIFICATION
@@ -58,13 +64,13 @@ class NotificationRepository {
 
   //PUSH NOTIFICATION
   Future initPushNotifications() async {
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    await _messaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
 
-    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
+    _messaging.getInitialMessage().then(handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     FirebaseMessaging.onMessage.listen((message) {
@@ -90,8 +96,8 @@ class NotificationRepository {
 
   //INIT-NOTIFICATIONS GROUP
   Future<void> initNotifications() async {
-    await _firebaseMessaging.requestPermission();
-    final fCMToken = await _firebaseMessaging.getToken();
+    await _messaging.requestPermission();
+    final fCMToken = await _messaging.getToken();
     debugPrint('Token: $fCMToken');
     initPushNotifications();
     initLocalNotifications();
@@ -100,13 +106,14 @@ class NotificationRepository {
     await saveTokenToDatabase(fCMToken!);
 
     // Any time the token refreshes, store this in the database too.
-    FirebaseMessaging.instance.onTokenRefresh.listen(saveTokenToDatabase);
+    _messaging.onTokenRefresh.listen(saveTokenToDatabase);
   }
 
   //SAVE TOKEN TO DATABASE
   Future<void> saveTokenToDatabase(String token) async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+    final String userPath = FirestorePath.user(_auth.currentUser!.uid);
+    if (_auth.currentUser != null) {
+      await _firestore.doc(userPath).update({
         'tokens': FieldValue.arrayUnion([token]),
       });
     }
@@ -114,20 +121,22 @@ class NotificationRepository {
 
   //REMOVE TOKEN FROM DATABASE
   Future<void> removeTokenFromDatabase() async {
-    final token = await _firebaseMessaging.getToken();
+    final token = await _messaging.getToken();
+    final userPath = FirestorePath.user(_auth.currentUser!.uid);
 
     if (FirebaseAuth.instance.currentUser != null) {
-      await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+      await _firestore.doc(userPath).update({
         'tokens': FieldValue.arrayRemove([token]),
       });
     }
   }
 
-// SEND NOTIFICATION
+  // SEND NOTIFICATION
   Future<void> sendNotificationToUser(String userUid, String title, String body, String postId, String receiverUid, String senderUid) async {
     const String url = 'https://fcm.googleapis.com/v1/projects/pets-social-3d14e/messages:send';
+    final userPath = FirestorePath.user(_auth.currentUser!.uid);
 
-    final user = await FirebaseFirestore.instance.collection('users').doc(userUid).get();
+    final user = await _firestore.doc(userPath).get();
 
     final List<String> userFCMTokenList = List<String>.from(user['tokens']);
 
@@ -188,24 +197,24 @@ class NotificationRepository {
 
 //NOTIFICATION METHOD FOR POSTS
   Future<void> notificationMethod(String postId, String profileUid, String action) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final String postPath = FirestorePath.post(postId);
     //get user that made the post
-    final user = await firestore.collection('posts').doc(postId).get().then((value) {
+    final user = await _firestore.doc(postPath).get().then((value) {
       return value.data()!['uid'];
     });
 
     //get profile that made the post
-    final receiverUid = await firestore.collection('posts').doc(postId).get().then((value) {
+    final receiverUid = await _firestore.doc(postPath).get().then((value) {
       return value.data()!['profileUid'];
     });
 
     //get profile that liked the post
-    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       final actionUser = querySnapshot.docs[0].data()['username'];
 
-      await NotificationRepository().sendNotificationToUser(user, 'Pets Social', '$actionUser $action your post.', postId, receiverUid, profileUid);
+      await sendNotificationToUser(user, 'Pets Social', '$actionUser $action your post.', postId, receiverUid, profileUid);
     }
   }
 
@@ -223,7 +232,7 @@ class NotificationRepository {
       if (querySnapshot.docs.isNotEmpty) {
         final actionUser = querySnapshot.docs[0].data()['username'];
 
-        await NotificationRepository().sendNotificationToUser(
+        await sendNotificationToUser(
           user,
           'Pets Social',
           '$actionUser started following you.',

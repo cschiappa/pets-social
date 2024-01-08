@@ -8,7 +8,6 @@ import 'package:pets_social/features/profile/controller/profile_provider.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/models/profile.dart';
 
-import 'package:pets_social/features/user/controller/user_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import '../../models/post.dart';
 import '../../core/utils.dart';

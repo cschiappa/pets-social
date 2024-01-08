@@ -25,7 +25,7 @@ ProfileRepository profileRepository(ProfileRepositoryRef ref) {
 
 //GET PROFIILE DATA
 @riverpod
-Stream<ModelProfile> getProfileData(GetProfileDataRef ref, String? profileUid) {
+Stream<ModelProfile> getProfileData(GetProfileDataRef ref, String profileUid) {
   final repository = ref.watch(profileRepositoryProvider);
   return repository.getProfileData(profileUid);
 }

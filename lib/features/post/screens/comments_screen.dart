@@ -5,7 +5,6 @@ import 'package:pets_social/core/widgets/comment_card.dart';
 import 'package:pets_social/features/post/controller/post_provider.dart';
 import 'package:pets_social/features/profile/controller/profile_provider.dart';
 
-import 'package:pets_social/features/user/controller/user_provider.dart';
 import 'package:pets_social/features/post/repository/post_repository.dart';
 import 'package:pets_social/models/profile.dart';
 

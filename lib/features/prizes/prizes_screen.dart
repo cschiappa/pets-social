@@ -8,7 +8,6 @@ import 'package:pets_social/features/profile/controller/profile_provider.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/models/notification.dart';
 
-import 'package:pets_social/features/user/controller/user_provider.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 
 import 'package:timeago/timeago.dart' as timeago;

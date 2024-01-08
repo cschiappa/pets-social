@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pets_social/core/providers/firebase_providers.dart';
 import 'package:pets_social/core/providers/storage_methods.dart';
+import 'package:pets_social/features/notification/controller/notification_provider.dart';
 import 'package:pets_social/main.dart';
 import 'package:pets_social/models/post.dart';
 import 'package:pets_social/models/profile.dart';
@@ -16,6 +17,7 @@ PostRepository postRepository(PostRepositoryRef ref) {
     firestore: ref.watch(firestoreProvider),
     auth: ref.read(authProvider),
     storageRepository: ref.read(storageRepositoryProvider),
+    notificationRepository: ref.read(notificationRepositoryProvider),
   );
 }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/features/profile/controller/profile_provider.dart';
-import 'package:pets_social/features/user/controller/user_provider.dart';
 
 class ResponsiveLayout extends ConsumerStatefulWidget {
   final Widget mobile;

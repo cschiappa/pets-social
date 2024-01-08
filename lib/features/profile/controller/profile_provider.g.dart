@@ -21,7 +21,7 @@ final profileRepositoryProvider = Provider<ProfileRepository>.internal(
 );
 
 typedef ProfileRepositoryRef = ProviderRef<ProfileRepository>;
-String _$getProfileDataHash() => r'a0a5d6aedd91a2d37e32f45570a973aab433bd01';
+String _$getProfileDataHash() => r'6b9eed477734b7f203bd15c6cd9049c02a1a51b2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -55,7 +55,7 @@ class GetProfileDataFamily extends Family<AsyncValue<ModelProfile>> {
 
   /// See also [getProfileData].
   GetProfileDataProvider call(
-    String? profileUid,
+    String profileUid,
   ) {
     return GetProfileDataProvider(
       profileUid,
@@ -90,7 +90,7 @@ class GetProfileDataFamily extends Family<AsyncValue<ModelProfile>> {
 class GetProfileDataProvider extends AutoDisposeStreamProvider<ModelProfile> {
   /// See also [getProfileData].
   GetProfileDataProvider(
-    String? profileUid,
+    String profileUid,
   ) : this._internal(
           (ref) => getProfileData(
             ref as GetProfileDataRef,
@@ -118,7 +118,7 @@ class GetProfileDataProvider extends AutoDisposeStreamProvider<ModelProfile> {
     required this.profileUid,
   }) : super.internal();
 
-  final String? profileUid;
+  final String profileUid;
 
   @override
   Override overrideWith(
@@ -159,7 +159,7 @@ class GetProfileDataProvider extends AutoDisposeStreamProvider<ModelProfile> {
 
 mixin GetProfileDataRef on AutoDisposeStreamProviderRef<ModelProfile> {
   /// The parameter `profileUid` of this provider.
-  String? get profileUid;
+  String get profileUid;
 }
 
 class _GetProfileDataProviderElement
@@ -168,7 +168,7 @@ class _GetProfileDataProviderElement
   _GetProfileDataProviderElement(super.provider);
 
   @override
-  String? get profileUid => (origin as GetProfileDataProvider).profileUid;
+  String get profileUid => (origin as GetProfileDataProvider).profileUid;
 }
 
 String _$updateProfileHash() => r'7cb6072902f445d4d278d75a631a837b28d70ade';

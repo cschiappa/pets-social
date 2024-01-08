@@ -25,18 +25,20 @@ class ProfileRepository {
         _notificationRepository = notificationRepository;
 
   //GET PROFILE DATA
-  Stream<ModelProfile> getProfileData(String? profileUid) {
-    return _firestore.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').doc(profileUid).snapshots().map((snap) => ModelProfile.fromSnap(snap));
+  Stream<ModelProfile> getProfileData(String profileUid) {
+    final String profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+    return _firestore.doc(profilePath).snapshots().map((snap) => ModelProfile.fromSnap(snap));
   }
 
   //GET PROFILES FROM CURRENT USER
   Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles() {
-    return FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('profiles').snapshots();
+    final String userPath = FirestorePath.user(_auth.currentUser!.uid);
+    return _firestore.doc(userPath).collection('profiles').snapshots();
   }
 
   //GET PROFILE FROM POST
   Future<ModelProfile> getProfileFromPost(String profileUid) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
+    QuerySnapshot querySnapshot = await _firestore.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
 
     return ModelProfile.fromSnap(querySnapshot.docs.first);
   }
@@ -44,9 +46,9 @@ class ProfileRepository {
   //FOLLOW AND UNFOLLOW USER
   Future<void> followUser(String profileUid, String followId) async {
     try {
-      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+      final String profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
 
-      DocumentSnapshot snap = await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).get();
+      DocumentSnapshot snap = await _firestore.doc(profilePath).get();
       List following = (snap.data()! as dynamic)['following'];
 
       if (following.contains(followId)) {
@@ -80,9 +82,9 @@ class ProfileRepository {
   //BLOCK USER
   Future<void> blockUser(String profileUid, String blockedId) async {
     try {
-      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+      final String profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
 
-      DocumentSnapshot snap = await _firestore.collection('users').doc(_auth.currentUser!.uid).collection('profiles').doc(profileUid).get();
+      DocumentSnapshot snap = await _firestore.doc(profilePath).get();
       List blockedUsers = (snap.data()! as dynamic)['blockedUsers'];
 
       if (blockedUsers.contains(blockedId)) {
@@ -130,7 +132,7 @@ class ProfileRepository {
         ModelProfile profile = ModelProfile(
           username: username,
           profileUid: profileUid,
-          email: FirebaseAuth.instance.currentUser!.email.toString(),
+          email: _auth.currentUser!.email.toString(),
           bio: bio ?? "",
           photoUrl: photoUrl,
           following: [],
@@ -139,7 +141,7 @@ class ProfileRepository {
           blockedUsers: [],
         );
 
-        final profilePath = FirestorePath.profile(uid, profile.profileUid);
+        final String profilePath = FirestorePath.profile(uid, profile.profileUid);
 
         await _firestore.doc(profilePath).set(profile.toJson());
 
@@ -157,7 +159,7 @@ class ProfileRepository {
   Future<void> deleteProfile(profileUid, context) async {
     if (profileUid != null) {
       try {
-        final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+        final String profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
         await _firestore.doc(profilePath).delete();
       } catch (e) {
         debugPrint('Error deleting account: $e');
@@ -180,7 +182,7 @@ class ProfileRepository {
   }) async {
     String res = "Some error occurred";
     try {
-      final profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
+      final String profilePath = FirestorePath.profile(_auth.currentUser!.uid, profileUid);
       if (newUsername.length <= 15 && newBio.length <= 150) {
         if (file != null) {
           photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, false);

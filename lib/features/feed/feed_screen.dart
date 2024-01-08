@@ -46,6 +46,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ref.read(userProvider.notifier).refreshProfile();
+      // final ModelProfile? profile = ref.watch(userProvider);
+      // ref.read(getProfileDataProvider(profile?.profileUid));
     });
   }
 
